@@ -56,22 +56,14 @@ class App extends React.Component {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
+                        <tr onClick={this.showModal}>
                             <td>2</td>
                             <td>Jacob</td>
                             <td>Thornton</td>
                         </tr>
-                        <tr>
-                            <td colSpan="2">Larry the Bird</td>
-                            <td>@twitter</td>
-                        </tr>
                     </tbody>
                 </Table>
                 
-                <Button variant="primary" onClick={this.showModal}>
-                    Show Modal
-                </Button>
-
                 <Modal show={this.state.modalIsOpen} onHide={this.hideModal}>
                     <Modal.Header closeButton>
                         <Modal.Title>Modal heading</Modal.Title>
