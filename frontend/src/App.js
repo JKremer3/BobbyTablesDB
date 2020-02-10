@@ -4,22 +4,22 @@ import './App.css';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <div className="App">
+          <select id="State">
+              <option value="WA">WA</option>
+              <option value="ID">ID</option>
+              <option value="FL">FL</option>
+              <option value="CA">CA</option>
+          </select>
+          <select id="City">
+              <option value="WA">Pullman</option>
+              <option value="ID">Vancouver</option>
+              <option value="FL">Seattle</option>
+              <option value="CA">Spokane</option>
+          </select>
+      <div></div>
+      <div></div>
+  </div>
   );
 }
 
