@@ -11,6 +11,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Table from 'react-bootstrap/Table';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 
 class App extends React.Component {
     constructor(props){
@@ -25,18 +26,26 @@ class App extends React.Component {
         return (
             <div className="App">
                 <div >
-                    <select id="State">
-                        <option value="WA">WA</option>
-                        <option value="ID">ID</option>
-                        <option value="FL">FL</option>
-                        <option value="CA">CA</option>
-                    </select>
-                    <select id="City">
-                        <option value="WA">Pullman</option>
-                        <option value="ID">Vancouver</option>
-                        <option value="FL">Seattle</option>
-                        <option value="CA">Spokane</option>
-                    </select>
+                    <Form>
+                        <Form.Group controlId="exampleForm.ControlSelect1">
+                            <Form.Label>State</Form.Label>
+                            <Form.Control as="select">
+                                <option value="WA">WA</option>
+                                <option value="ID">ID</option>
+                                <option value="FL">FL</option>
+                                <option value="CA">CA</option>
+                            </Form.Control>
+                        </Form.Group> 
+                        <Form.Group controlId="exampleForm.ControlSelect2">
+                            <Form.Label>City</Form.Label>
+                            <Form.Control as="select">
+                                <option value="WA">Pullman</option>
+                                <option value="ID">Vancouver</option>
+                                <option value="FL">Seattle</option>
+                                <option value="CA">Spokane</option>
+                            </Form.Control>
+                        </Form.Group> 
+                    </Form>
                 </div>
                 <Table striped bordered hover>
                     <thead>
