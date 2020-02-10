@@ -1,18 +1,25 @@
+// react includes 
 import React from 'react';
 import ReactDOM from 'react-dom';
+
+// these were from the Create React App script
 import logo from './logo.svg';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import Table from 'react-bootstrap/Table';
 import './App.css';
 
-class App extends React.Component {
-    constructor(){
-        
-    }
+// bootstrap includes 
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Table from 'react-bootstrap/Table';
+import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
 
-    toggleModal(){
-         
+class App extends React.Component {
+    constructor(props){
+        super(props)
+        this.state = { modalIsOpen: false, modalStateIGuess: "" };  
     }
+    
+    showModal = () => this.setState({ modalIsOpen: true });
+    hideModal = () => this.setState({ modalIsOpen: false });
 
     render(){
         return (
@@ -41,11 +48,6 @@ class App extends React.Component {
                     </thead>
                     <tbody>
                         <tr>
-                            <td>1</td>
-                            <td>Mark</td>
-                            <td>Otto</td>
-                        </tr>
-                        <tr>
                             <td>2</td>
                             <td>Jacob</td>
                             <td>Thornton</td>
@@ -56,7 +58,25 @@ class App extends React.Component {
                         </tr>
                     </tbody>
                 </Table>
-                <div></div>
+                
+                <Button variant="primary" onClick={this.showModal}>
+                    Show Modal
+                </Button>
+
+                <Modal show={this.state.modalIsOpen} onHide={this.hideModal}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Modal heading</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>Wassup Gamers</Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={this.hideModal}>
+                            Close
+                        </Button>
+                        <Button variant="primary" onClick={this.hideModal}>
+                            Save Changes
+                        </Button>
+                    </Modal.Footer>
+                </Modal> 
             </div>
         );
     }
