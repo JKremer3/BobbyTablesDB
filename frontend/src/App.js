@@ -17,7 +17,7 @@ class App extends React.Component {
     constructor(props){
         super(props)
         this.state = { modalIsOpen: false, modalStateIGuess: "", states:[], cities:[], selectedState: "" }; 
-        this.updateCities = this.updateCities.bind(this); 
+        this.updateCities = this.updateCities.bind(this);
     }
     
     showModal = () => this.setState({ modalIsOpen: true });
@@ -43,26 +43,25 @@ class App extends React.Component {
           });
       }
 
-    updateCities(e){
+      updateCities(e){
         this.setState({selectedState: e.target.value})
-        console.log("selectedState " + this.state.selectedState)
-        fetch("http://localhost:3030/city/" + this.state.selectedState)
-          .then((response) => {
-            return response.json();
-          })
-          .then(data => {
-            console.log(data)
-            let citiesFromApi = data.map(city => {
-              return {value: city.city, display: city.city}
-            });
-            console.log(citiesFromApi)
-            this.setState({
-              cities: [{value: '', display: '(Select A City)'}].concat(citiesFromApi)
-            });
-          }).catch(error => {
-            console.log(error);
+        fetch("http://localhost:3030/city/" + e.target.value)
+        .then((response) => {
+          return response.json();
+        })
+        .then(data => {
+          console.log(data)
+          let citiesFromApi = data.map(city => {
+            return {value: city.city, display: city.city}
           });
-    }
+          console.log(citiesFromApi)
+          this.setState({
+            cities: [{value: '', display: '(Select A City)'}].concat(citiesFromApi)
+          });
+        }).catch(error => {
+          console.log(error);
+        });
+      }
 
     render(){
         return (
@@ -71,7 +70,7 @@ class App extends React.Component {
                     <Form>
                         <Form.Group controlId="exampleForm.ControlSelect1">
                             <Form.Label>State</Form.Label>
-                            <Form.Control as="select" value={this.state.states.value} onChange={this.updateCities}>
+                            <Form.Control as="select" value={this.state.selectedState} onChange={this.updateCities}>
                             {this.state.states.map((state) => <option key={state.value} value={state.value}>{state.display}</option>)}
                             </Form.Control>
                         </Form.Group> 
