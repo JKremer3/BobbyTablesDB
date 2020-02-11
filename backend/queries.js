@@ -66,6 +66,27 @@ const getBusinessInfo = (request, response) => {
     });
 }
 
+const getBusinessSC = (request, response) => {
+    const state = request.params.state;
+
+    pool.query('SELECT COUNT (DISTINCT name) FROM business WHERE state = $1', [state],  (error, results) => {
+        if (error) {
+            throw error
+        }
+        response.status(200).json(results.rows)
+    });
+}
+
+const getBusinessCC = (request, response) => {
+    const city = request.params.city;
+    pool.query('SELECT COUNT (DISTINCT name) FROM business WHERE city = $1', [city], (error, results) => {
+        if (error) {
+            throw error
+        }
+        response.status(200).json(results.rows)
+    });
+}
+
 module.exports = {
     getState,
     getAllStates,
@@ -73,4 +94,6 @@ module.exports = {
     getAllBusinesses,
     getBusinessesInCity,
     getBusinessInfo,
+    getBusinessSC,
+    getBusinessCC,
 }
