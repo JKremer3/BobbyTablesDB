@@ -16,8 +16,12 @@ import Form from 'react-bootstrap/Form';
 class App extends React.Component {
     constructor(props){
         super(props)
-        this.state = { modalIsOpen: false, modalStateIGuess: "", states:[], cities:[], selectedState: "" }; 
+        this.state = { modalIsOpen: false, modalStateIGuess: "", states:[], cities:[], businesses:[],
+            slectedState: "", selectedCity: "", selectedBusiness: "" }; 
         this.updateCities = this.updateCities.bind(this);
+        this.updateTable = this.updateTable.bind(this);
+        this.updateModal = this.updateModal.bind(this);
+
     }
     
     showModal = () => this.setState({ modalIsOpen: true });
@@ -63,6 +67,31 @@ class App extends React.Component {
         });
       }
 
+      updateTable(e){
+        this.setState({selectedCity: e.target.value})
+        fetch("http://localhost:3030/businesses/" + e.target.value)
+        .then((response) => {
+          return response.json();
+        })
+        .then(data => {
+          console.log(data)
+          let businessFromApi = data.map(business => {
+            return {value: business.name}
+          });
+          console.log(businessFromApi)
+          this.setState({
+            businesses: businessFromApi
+          });
+        }).catch(error => {
+          console.log(error);
+        });
+      }
+
+      updateModal(name){
+          this.setState({selectedBusiness: name})
+          this.showModal()
+      }
+
     render(){
         return (
             <div className="App">
@@ -78,13 +107,13 @@ class App extends React.Component {
 
                         <Form.Group controlId="exampleForm.ControlSelect2">
                             <Form.Label>City</Form.Label>
-                            <Form.Control as="select">
+                            <Form.Control as="select" value={this.state.selectedCity} onChange={this.updateTable}>
                             {this.state.cities.map((city) => <option key={city.value} value={city.value}>{city.display}</option>)}
                             </Form.Control>
                         </Form.Group> 
                     </Form>
                 </div>
-                <Table striped bordered hover>
+                <Table striped bordered hover id="dataTable">
                     <thead>
                         <tr>
                             <th>Business Name</th>
@@ -93,19 +122,19 @@ class App extends React.Component {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr onClick={this.showModal}>
-                            <td>2</td>
-                            <td>Jacob</td>
-                            <td>Thornton</td>
-                        </tr>
+                        {this.state.businesses.map((business) => <tr key={business.value} value={business.value}>
+                            <td onClick={() => this.updateModal(business.value)}>{business.value}</td>
+                            <td>{this.state.selectedState}</td>
+                            <td>{this.state.selectedCity}</td>
+                        </tr>)}
                     </tbody>
                 </Table>
                 
                 <Modal show={this.state.modalIsOpen} onHide={this.hideModal}>
                     <Modal.Header closeButton>
-                        <Modal.Title>Modal heading</Modal.Title>
+                        <Modal.Title>{this.state.selectedBusiness}</Modal.Title>
                     </Modal.Header>
-                    <Modal.Body>Wassup Gamers</Modal.Body>
+                    <Modal.Body>Wassup</Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={this.hideModal}>
                             Close

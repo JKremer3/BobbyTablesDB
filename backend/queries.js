@@ -45,9 +45,32 @@ const getAllBusinesses = (request, response) => {
     })
 }
 
+const getBusinessesInCity = (request, response) => {
+    const city = request.params.city;
+    pool.query('SELECT DISTINCT name FROM business WHERE city = $1 ORDER BY name', [city], (error, results) => {
+        if (error) {
+            throw error
+        }
+        response.status(200).json(results.rows)
+    });
+}
+
+const getBusinessInfo = (request, response) => {
+    const name = request.params.name;
+    const city = request.params.city;
+    pool.query('SELECT DISTINCT * FROM business WHERE name = $1 AND city = $2 ORDER BY name', [name, city], (error, results) => {
+        if (error) {
+            throw error
+        }
+        response.status(200).json(results.rows)
+    });
+}
+
 module.exports = {
     getState,
     getAllStates,
     getCitiesInState,
     getAllBusinesses,
+    getBusinessesInCity,
+    getBusinessInfo,
 }

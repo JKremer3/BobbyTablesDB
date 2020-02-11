@@ -43,3 +43,7 @@ app.get('/state', db.getAllStates)
 app.get('/state/:state', db.getState)
 app.get('/city/:state', db.getCitiesInState)
 app.get('/businesses/', db.getAllBusinesses)
+app.get('/businesses/:city', db.getBusinessesInCity)
+app.get('/businesses/:city/:name', db.getBusinessInfo)
+
+
