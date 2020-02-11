@@ -16,11 +16,53 @@ import Form from 'react-bootstrap/Form';
 class App extends React.Component {
     constructor(props){
         super(props)
-        this.state = { modalIsOpen: false, modalStateIGuess: "" };  
+        this.state = { modalIsOpen: false, modalStateIGuess: "", states:[], cities:[], selectedState: "" }; 
+        this.updateCities = this.updateCities.bind(this); 
     }
     
     showModal = () => this.setState({ modalIsOpen: true });
     hideModal = () => this.setState({ modalIsOpen: false });
+
+
+    componentDidMount() {
+        fetch("http://localhost:3030/state")
+          .then((response) => {
+            return response.json();
+          })
+          .then(data => {
+            console.log(data)
+            let statesFromApi = data.map(state => {
+              return {value: state.state, display: state.state}
+            });
+            console.log(statesFromApi)
+            this.setState({
+              states: [{value: '', display: '(Select A State)'}].concat(statesFromApi)
+            });
+          }).catch(error => {
+            console.log(error);
+          });
+      }
+
+    updateCities(e){
+        this.setState({selectedState: e.target.value})
+        console.log("selectedState " + this.state.selectedState)
+        fetch("http://localhost:3030/city/" + this.state.selectedState)
+          .then((response) => {
+            return response.json();
+          })
+          .then(data => {
+            console.log(data)
+            let citiesFromApi = data.map(city => {
+              return {value: city.city, display: city.city}
+            });
+            console.log(citiesFromApi)
+            this.setState({
+              cities: [{value: '', display: '(Select A City)'}].concat(citiesFromApi)
+            });
+          }).catch(error => {
+            console.log(error);
+          });
+    }
 
     render(){
         return (
@@ -29,20 +71,16 @@ class App extends React.Component {
                     <Form>
                         <Form.Group controlId="exampleForm.ControlSelect1">
                             <Form.Label>State</Form.Label>
-                            <Form.Control as="select">
-                                <option value="WA">WA</option>
-                                <option value="ID">ID</option>
-                                <option value="FL">FL</option>
-                                <option value="CA">CA</option>
+                            <Form.Control as="select" value={this.state.states.value} onChange={this.updateCities}>
+                            {this.state.states.map((state) => <option key={state.value} value={state.value}>{state.display}</option>)}
                             </Form.Control>
                         </Form.Group> 
+                        {console.log("selectedState " + this.state.selectedState)}
+
                         <Form.Group controlId="exampleForm.ControlSelect2">
                             <Form.Label>City</Form.Label>
                             <Form.Control as="select">
-                                <option value="WA">Pullman</option>
-                                <option value="ID">Vancouver</option>
-                                <option value="FL">Seattle</option>
-                                <option value="CA">Spokane</option>
+                            {this.state.cities.map((city) => <option key={city.value} value={city.value}>{city.display}</option>)}
                             </Form.Control>
                         </Form.Group> 
                     </Form>
