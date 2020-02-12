@@ -1,0 +1,100 @@
+//
+{
+    "business_id": "gnKjwL_1w79qoiV3IC_xQQ", 
+    "name": "Musashi Japanese Restaurant", 
+    "address": "10110 Johnston Rd, Ste 15", 
+    "city": "Charlotte", 
+    "state": "NC", 
+    "postal_code": "28210", 
+    "latitude": 35.092564, 
+    "longitude": -80.859132, 
+    "stars": 4.0, 
+    "review_count": 170, 
+    "is_open": 1, 
+    "attributes": 
+        {
+            "GoodForKids": "True", 
+            "NoiseLevel": "average", 
+            "RestaurantsDelivery": "False", 
+            "GoodForMeal": 
+                {
+                    "dessert": "False", 
+                    "latenight": "False", 
+                    "lunch": "True", 
+                    "dinner": "True", 
+                    "brunch": "False", 
+                    "breakfast": "False"
+                }, 
+            "Alcohol": "beer_and_wine", 
+            "Caters": "False", 
+            "WiFi": "no", 
+            "RestaurantsTakeOut": "True", 
+            "BusinessAcceptsCreditCards": "True", 
+            "Ambience": 
+                {
+                    "romantic": "False", 
+                    "intimate": "False", 
+                    "touristy": "False", 
+                    "hipster": "False", 
+                    "divey": "False", 
+                    "classy": "False", 
+                    "trendy": "False", 
+                    "upscale": "False", 
+                    "casual": "True"
+                }, 
+            "BusinessParking": 
+                {
+                    "garage": "False", 
+                    "street": "False", 
+                    "validated": "False",
+                    "lot": "True", 
+                    "valet": "False"
+                }, 
+            "RestaurantsTableService": "True", 
+            "RestaurantsGoodForGroups": "True", 
+            "OutdoorSeating": "False", 
+            "HasTV": "True", 
+            "BikeParking": "True", 
+            "RestaurantsReservations": "True", 
+            "RestaurantsPriceRange2": "2", 
+            "RestaurantsAttire": "casual"
+        }, 
+    "categories": "Sushi Bars, Restaurants, Japanese", 
+    "hours": 
+        {
+            "Monday": "17:30-21:30", 
+            "Wednesday": "17:30-21:30", 
+            "Thursday": "17:30-21:30", 
+            "Friday": "17:30-22:0", 
+            "Saturday": "17:30-22:0", 
+            "Sunday": "17:30-21:0"
+        }
+}
+
+//Tip
+{
+    "business_id": "5KheTjYPu1HcQzQFtm4_vw", 
+    "date": "2011-12-26 01:46:17", 
+    "likes": 31, 
+    "text": "Good chips and salsa. Loud at times. Good service. Bathrooms AWFUL. So that tanks my view on this place.", 
+    "user_id": "jRyO2V1pA4CdVVqCIOPc1Q"
+}
+
+//user
+{
+    "average_stars": 3.63, 
+    "cool": 16, 
+    "fans": 4, 
+    "friends": ["09owAly0xUSt_JlDVLuNJg", "1l_O3VEl9TV_JjKAzzyz0Q", "2NnbvRnvFYjK86NOP-lo-g", "4Jsw-cZTxWN605Ep4q2wOQ", "5dzTZ1DXsj6F6mlBOpzLLA", "6_dqfAij74b-Wn-9n7ZpwA", "7YQbLHEB_uRvlPm7ccePaA", "aB2DynOxNOJK9st2ZeGTPg", "AzhP6wwftNzFqVOc2uD6IQ", "b3ciU4zRipSZs5EKpBiTSw", "CbLq35Fxw5b0tPGNRPFu2w", "cdONkkKcXxHBpmvDq0C3Kg", "CKHkbGrc1MGUjWkoK8mt-A", "dRLqHBA0Z-jnlTvWJ4aoZQ", "EzUYBHVDte8g-PN4S8Vh6Q", "FaIijOIoIev-iGtPVk45Qw", "JaYdmeOezhSevBMWltyN7Q", "jmMG-sdOoxpAk-vM3uPHRQ", "jUnYuq_c-d9lbcB3N0CpoQ", "km4G2uBmegYYv5wBvT0uTw", "KuZNK1mYJ2BMWiVo9n-mFA", "MDBtNsoBcdn2dU2vbSx4jg", "O_GWZZfQx7qv-n-CN7hsIA", "OxYXdo5tEY3pUWwkhc75cw", "qG-y23KlK3LgMmlAiUYU9A", "Ql0Z43_cX9Y9EYb5MV3cpA", "SdoIzqQNzith5n_OjQocJQ", "t8Vjy7SaBIq4mtYn8JlOUQ", "TAKTkPkHE-Duv9aCBDE6VQ", "TdecWDf5doyw7TaSAIKfhw", "TdSeeuT8QMQ7Q1XltdRNzQ", "TeP1CYCLiGDiZ0SplCWJFg", "udbtMXNc6f0fTBCbI9ijmw", "W0YKbc2Sw5vUSadGJVq48Q", "WiX-z39HRThSQmfQBW-UQA", "xA0-wO9qiSquzw_hVDyDiQ", "XSZWLyjRcWPDjRH1mytBPA", "YM_i61CqjJtyK-3GgVH7Kg", "Z18xWAU7vLqMavj9p1FRFw", "zz25_Dsf99KnwTpdl4-PDQ"], 
+    "funny": 22, 
+    "name": "Jenna", 
+    "tipcount": 0, 
+    "useful": 48, 
+    "user_id": "4XChL029mKr5hydo79Ljxg", 
+    "yelping_since": "2013-02-21 22:29:06"
+}
+
+//checkin
+{
+    "business_id": "--KQsXc-clkO7oHRqGzSzg", 
+    "date": "2010-05-02 23:57:32,2010-05-28 01:47:50,2010-06-11 19:32:04,2010-06-17 23:34:45,2010-06-18 21:48:53,2010-08-09 21:23:02,2010-08-21 19:07:57,2010-08-26 21:38:11,2010-11-03 19:41:56,2010-12-20 18:59:44,2010-12-31 21:17:26,2011-01-05 21:43:34,2011-01-12 18:29:15,2011-01-13 22:26:27,2011-01-19 23:51:20,2011-01-21 00:27:41,2011-01-23 03:15:19,2011-01-24 15:53:25,2011-01-26 16:18:13,2011-01-27 20:29:42,2011-02-01 01:16:09,2011-02-04 17:43:53,2011-03-03 23:56:55,2011-03-19 21:41:04"}
