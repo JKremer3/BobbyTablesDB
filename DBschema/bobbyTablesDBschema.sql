@@ -7,7 +7,7 @@ CREATE TABLE Buisness(
     postalCode CHAR(5) NOT NULL,
     lat REAL NOT NULL,
     long REAL NOT NULL,
-    stars REAL NOT NULL,
+    stars REAL,
     revCount INT NOT NULL,
     isOpen INT NOT NULL,
     --Begin attributes composite
