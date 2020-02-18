@@ -1,15 +1,28 @@
-CREATE TABLE Buisness(
+CREATE TABLE Business(
     --Non-Composite Attributes
-    buisId NVARCHAR(25) NOT NULL,
-    buisName NVARCHAR(100) NOT NULL,
+    busId NVARCHAR(25) NOT NULL,
+    busName NVARCHAR(100) NOT NULL,
     city NVARCHAR(30) NOT NULL,
-    buisState CHAR(2) NOT NULL,
+    busState CHAR(2) NOT NULL,
     postalCode CHAR(5) NOT NULL,
     lat REAL NOT NULL,
     long REAL NOT NULL,
     stars REAL,
     revCount INT NOT NULL,
     isOpen INT NOT NULL,
+    PRIMARY KEY(busId)
+);
+
+CREATE TABLE BusCategory(
+    --This table holds all categories associated with busness
+    busId NVARCHAR(25) NOT NULL,
+    category NVARCHAR(25),
+    PRIMARY KEY(busId,category),
+    FOREIGN KEY(busId) REFERENCES Business(busId)
+);
+
+CREATE TABLE BusAttributes(
+    busId NVARCHAR(25) NOT NULL,
     --Begin attributes composite
     goodForKids BOOLEAN,
     noiseLevel VARCHAR(10),
@@ -25,6 +38,12 @@ CREATE TABLE Buisness(
     reservation BOOLEAN,
     priceRange INT,
     attire VARCHAR(10),
+    PRIMARY KEY(busId),
+    FOREIGN KEY(busId) REFERENCES Business(busId)
+);
+
+CREATE TABLE BusGoodForMeals(
+    busId NVARCHAR(25) NOT NULL,
     --goodForMeal composite
     dessert BOOLEAN,
     lateNight BOOLEAN,
@@ -32,6 +51,12 @@ CREATE TABLE Buisness(
     dinner BOOLEAN,
     brunch BOOLEAN,
     bfast BOOLEAN,
+    PRIMARY KEY(busId),
+    FOREIGN KEY(busId) REFERENCES Business(busId)
+);
+
+CREATE TABLE BusAmbience(
+    busId NVARCHAR(25) NOT NULL,
     --Ambience composite
     romantic BOOLEAN,
     intimate BOOLEAN,
@@ -42,12 +67,23 @@ CREATE TABLE Buisness(
     trendy BOOLEAN,
     upscale BOOLEAN,
     casual BOOLEAN,
+    PRIMARY KEY(busId),
+    FOREIGN KEY(busId) REFERENCES Business(busId)
+);
+
+CREATE TABLE BusParking(
+    busId NVARCHAR(25) NOT NULL,
     --parking composite
     garagePark BOOLEAN,
     streetPark BOOLEAN,
-    lotParl BOOLEAN,
+    lotPark BOOLEAN,
     valetPark BOOLEAN,
-    --End Attributes Composite
+    PRIMARY KEY(busId),
+    FOREIGN KEY(busId) REFERENCES Business(busId)
+);
+
+CREATE TABLE BusHours(
+    busId NVARCHAR(25) NOT NULL,
     --Hours Composite
     monHrs VARCHAR(11),
     tueHrs VARCHAR(11),
@@ -56,21 +92,15 @@ CREATE TABLE Buisness(
     friHrs VARCHAR(11),
     satHrs VARCHAR(11),
     sunHrs VARCHAR(11),
-    PRIMARY KEY(buisId)
-);
-
-CREATE TABLE BuisCategory(
-    --This table holds all categories associated with buisness
-    buisId NVARCHAR(25) NOT NULL,
-    category NVARCHAR(25),
-    PRIMARY KEY(buisId,category),
-    FOREIGN KEY(buisId) REFERENCES Buisness(buisId)
+    PRIMARY KEY(busId),
+    FOREIGN KEY(busId) REFERENCES Business(busId)
 );
 
 CREATE TABLE User(
     avgStars REAL,
     cool INT NOT NULL,
     funny INT NOT NULL,
+    numLikes INT,
     userName NVARCHAR(20) NOT NULL,
     tipCount INT NOT NULL,
     useful INT NOT NULL,
@@ -82,15 +112,15 @@ CREATE TABLE User(
 
 CREATE TABLE Tip(
     --table for the tip weak entity
-    --tip requires both a valid user and buisness ID
-    buisId NVARCHAR(25) NOT NULL,
+    --tip requires both a valid user and busness ID
+    busId NVARCHAR(25) NOT NULL,
     userId NVARCHAR(25) NOT NULL,
     likeCount INT,
     tipText NVARCHAR(150) NOT NULL,
     tipDate CHAR(10) NOT NULL,
     tipTime CHAR(8) NOT NULL,
-    PRIMARY KEY(buisId, userId),
-    FOREIGN KEY buisId REFERENCES Buisness(buisId),
+    PRIMARY KEY(busId, userId),
+    FOREIGN KEY busId REFERENCES Business(busId),
     FOREIGN Key userId REFERENCES User(userId)
 );
 
@@ -106,10 +136,11 @@ CREATE TABLE Friends(
 
 CREATE TABLE checkin(
     --Table for the check-in weak entity
-    --a checkin must be associated with a valid buisness ID
-    buisId NVARCHAR(25) NOT NULL,
+    --a checkin must be associated with a valid busness ID
+    busId NVARCHAR(25) NOT NULL,
     checkDate CHAR(10) NOT NULL,
+    checkMonth CHAR(2) NOT NULL,
     checkTime CHAR(8) NOT NULL,
-    PRIMARY KEY (buisId, checkDate, checkTime),
-    FOREIGN KEY buisId REFERENCES Buisness(buisId)
+    PRIMARY KEY (busId, checkDate, checkTime),
+    FOREIGN KEY busId REFERENCES Business(busId)
 );
