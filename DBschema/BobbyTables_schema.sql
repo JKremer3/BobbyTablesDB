@@ -23,76 +23,46 @@ CREATE TABLE BusCategory(
 
 CREATE TABLE BusAttributes(
     busId NVARCHAR(25) NOT NULL,
-    --Begin attributes composite
-    goodForKids BOOLEAN,
-    noiseLevel VARCHAR(10),
-    restDelivery BOOLEAN,
-    alcohol VARCHAR(20),
-    caters BOOLEAN,
-    wifi BOOLEAN,
-    takeOut BOOLEAN,
-    accCreditCard BOOLEAN,
-    tableService BOOLEAN,
-    good4Groups BOOLEAN,
-    outdoorSeat BOOLEAN,
-    reservation BOOLEAN,
-    priceRange INT,
-    attire VARCHAR(10),
-    PRIMARY KEY(busId),
+    attributeName NVARCHAR(20) NOT NULL,
+    attributeVal NVARCHAR(30) NOT NULL,
+    PRIMARY KEY(busId, attributeName),
     FOREIGN KEY(busId) REFERENCES Business(busId)
 );
 
 CREATE TABLE BusGoodForMeals(
     busId NVARCHAR(25) NOT NULL,
-    --goodForMeal composite
-    dessert BOOLEAN,
-    lateNight BOOLEAN,
-    lunch BOOLEAN,
-    dinner BOOLEAN,
-    brunch BOOLEAN,
-    bfast BOOLEAN,
-    PRIMARY KEY(busId),
+    mealType NVARCHAR(10) NOT NULL,
+    mealVal BOOLEAN,
+    
+    PRIMARY KEY(busId, mealType),
     FOREIGN KEY(busId) REFERENCES Business(busId)
 );
 
 CREATE TABLE BusAmbience(
     busId NVARCHAR(25) NOT NULL,
-    --Ambience composite
-    romantic BOOLEAN,
-    intimate BOOLEAN,
-    touristy BOOLEAN,
-    hipster BOOLEAN,
-    divey BOOLEAN,
-    classy BOOLEAN,
-    trendy BOOLEAN,
-    upscale BOOLEAN,
-    casual BOOLEAN,
-    PRIMARY KEY(busId),
+    ambienceType NVARCHAR(9) NOT NULL,
+    ambienceVal BOOLEAN,
+
+    PRIMARY KEY(busId, ambienceType),
     FOREIGN KEY(busId) REFERENCES Business(busId)
 );
 
 CREATE TABLE BusParking(
     busId NVARCHAR(25) NOT NULL,
-    --parking composite
-    garagePark BOOLEAN,
-    streetPark BOOLEAN,
-    lotPark BOOLEAN,
-    valetPark BOOLEAN,
-    PRIMARY KEY(busId),
+    parkingType NVARCHAR(15) NOT NULL,
+    parkVal BOOLEAN,
+    
+    PRIMARY KEY(busId, parkingType),
     FOREIGN KEY(busId) REFERENCES Business(busId)
 );
 
 CREATE TABLE BusHours(
     busId NVARCHAR(25) NOT NULL,
+    dayOfWeek  NVARCHAR(9) NOT NULL,
+    hrsOpen VARCHAR(11)
     --Hours Composite
-    monHrs VARCHAR(11),
-    tueHrs VARCHAR(11),
-    wedHrs VARCHAR(11),
-    thuHrs VARCHAR(11),
-    friHrs VARCHAR(11),
-    satHrs VARCHAR(11),
-    sunHrs VARCHAR(11),
-    PRIMARY KEY(busId),
+    
+    PRIMARY KEY(busId, dayOfWeek),
     FOREIGN KEY(busId) REFERENCES Business(busId)
 );
 
