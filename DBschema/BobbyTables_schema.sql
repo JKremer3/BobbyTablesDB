@@ -10,6 +10,8 @@ CREATE TABLE Business(
     stars REAL,
     revCount INT NOT NULL,
     isOpen INT NOT NULL,
+    numCheckins INT,
+    numTips INT,
     PRIMARY KEY(busId)
 );
 
