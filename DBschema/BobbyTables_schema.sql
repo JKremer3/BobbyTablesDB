@@ -5,8 +5,8 @@ CREATE TABLE Business(
     city NVARCHAR(30) NOT NULL,
     busState CHAR(2) NOT NULL,
     postalCode CHAR(5) NOT NULL,
-    lat REAL NOT NULL,
-    long REAL NOT NULL,
+    lat CHAR(13) NOT NULL, --i.e. "40° 44' 54" N"
+    long CHAR(13) NOT NULL,
     stars REAL,
     revCount INT NOT NULL,
     isOpen INT NOT NULL,
@@ -61,8 +61,9 @@ CREATE TABLE BusParking(
 CREATE TABLE BusHours(
     busId NVARCHAR(25) NOT NULL,
     dayOfWeek  NVARCHAR(9) NOT NULL,
-    hrsOpen VARCHAR(11)
-    --Hours Composite
+    hrOpen NVARCHAR(5),
+    hrClosed VARCHAR(5)
+    
     
     PRIMARY KEY(busId, dayOfWeek),
     FOREIGN KEY(busId) REFERENCES Business(busId)
@@ -72,7 +73,10 @@ CREATE TABLE User(
     avgStars REAL,
     cool INT NOT NULL,
     funny INT NOT NULL,
-    numLikes INT,
+    totalLikes INT,
+    fans INT,
+    userLat CHAR(13),
+    userLong CHAR(13),
     userName NVARCHAR(20) NOT NULL,
     tipCount INT NOT NULL,
     useful INT NOT NULL,
@@ -91,7 +95,7 @@ CREATE TABLE Tip(
     tipText NVARCHAR(150) NOT NULL,
     tipDate CHAR(10) NOT NULL,
     tipTime CHAR(8) NOT NULL,
-    PRIMARY KEY(busId, userId),
+    PRIMARY KEY (busId, userId, tipDate),
     FOREIGN KEY busId REFERENCES Business(busId),
     FOREIGN Key userId REFERENCES User(userId)
 );
@@ -110,6 +114,7 @@ CREATE TABLE checkin(
     --Table for the check-in weak entity
     --a checkin must be associated with a valid busness ID
     busId NVARCHAR(25) NOT NULL,
+    checkYear CHAR(4) NOT NULL,
     checkDate CHAR(10) NOT NULL,
     checkMonth CHAR(2) NOT NULL,
     checkTime CHAR(8) NOT NULL,
