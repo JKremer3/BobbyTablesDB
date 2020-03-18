@@ -120,6 +120,6 @@ CREATE TABLE checkin(
     checkDate CHAR(10) NOT NULL,
     checkMonth CHAR(2) NOT NULL,
     checkTime CHAR(8) NOT NULL,
-    PRIMARY KEY (busId, checkDate, checkMonth, checkYear checkTime),
+    PRIMARY KEY (busId, checkDate, checkMonth, checkYear, checkTime),
     FOREIGN KEY busId REFERENCES Business(busId)
 );
