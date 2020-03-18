@@ -5,8 +5,8 @@ CREATE TABLE Business(
     city NVARCHAR(30) NOT NULL,
     busState CHAR(2) NOT NULL,
     postalCode CHAR(5) NOT NULL,
-    lat CHAR(13) NOT NULL, --i.e. "40° 44' 54" N"
-    long CHAR(13) NOT NULL,
+    lat numeric(9, 6),
+    long numeric(9, 6),
     stars REAL,
     revCount INT NOT NULL,
     isOpen INT NOT NULL,
@@ -83,6 +83,8 @@ CREATE TABLE User(
     userId NVARCHAR(25) NOT NULL,
     yelpStartDate CHAR(10) NOT NULL,
     yelpStartTime CHAR(8) NOT NULL,
+    lat numeric(9, 6),
+    long numeric(9, 6),
     PRIMARY KEY (userId)
 );
 
@@ -118,6 +120,6 @@ CREATE TABLE checkin(
     checkDate CHAR(10) NOT NULL,
     checkMonth CHAR(2) NOT NULL,
     checkTime CHAR(8) NOT NULL,
-    PRIMARY KEY (busId, checkDate, checkTime),
+    PRIMARY KEY (busId, checkDate, checkMonth, checkYear, checkTime),
     FOREIGN KEY busId REFERENCES Business(busId)
 );
