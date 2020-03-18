@@ -61,7 +61,8 @@ CREATE TABLE BusParking(
 CREATE TABLE BusHours(
     busId NVARCHAR(25) NOT NULL,
     dayOfWeek  NVARCHAR(9) NOT NULL,
-    hrsOpen VARCHAR(11)
+    timeOpen VARCHAR(11),
+    timeClose VARCHAR(11),
     --Hours Composite
     
     PRIMARY KEY(busId, dayOfWeek),
@@ -79,6 +80,8 @@ CREATE TABLE User(
     userId NVARCHAR(25) NOT NULL,
     yelpStartDate CHAR(10) NOT NULL,
     yelpStartTime CHAR(8) NOT NULL,
+    lat REAL,
+    long REAL,
     PRIMARY KEY (userId)
 );
 
@@ -110,9 +113,10 @@ CREATE TABLE checkin(
     --Table for the check-in weak entity
     --a checkin must be associated with a valid busness ID
     busId NVARCHAR(25) NOT NULL,
-    checkDate CHAR(10) NOT NULL,
+    checkYear CHAR(4) NOT NULL,
+    checkDay CHAR(10) NOT NULL,
     checkMonth CHAR(2) NOT NULL,
     checkTime CHAR(8) NOT NULL,
-    PRIMARY KEY (busId, checkDate, checkTime),
+    PRIMARY KEY (busId, checkDay, checkMonth, checkYear checkTime),
     FOREIGN KEY busId REFERENCES Business(busId)
 );
