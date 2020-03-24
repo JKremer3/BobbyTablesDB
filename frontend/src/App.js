@@ -125,8 +125,9 @@ class App extends React.Component {
 
   render() {
     return (
-      <div className="App">
-        <div >
+      <div className="App" style={{display: "flex", justifyContent: "center" }} >
+        <div style={{width: "500px"}} >
+        <div>
           <Form>
             <Form.Group controlId="exampleForm.ControlSelect1">
               <Form.Label>State</Form.Label>
@@ -181,6 +182,7 @@ class App extends React.Component {
                         </Button>
           </Modal.Footer>
         </Modal>
+      </div>
       </div>
     );
   }
