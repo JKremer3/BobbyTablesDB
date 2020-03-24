@@ -16,6 +16,7 @@ def parseBusinessData():
         #read each JSON abject and extract data
         while line:
             data = json.loads(line)
+            # instead of write out create sql insert
             outfile.write(cleanStr4SQL('business info: ' +
                 data['business_id'])+' ; ')  # business id
             outfile.write(cleanStr4SQL(data['name'])+' ; ')  # name
