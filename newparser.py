@@ -50,12 +50,13 @@ def insert2BusinessTable():
             categories = data["categories"].split(', ')
             for x in categories:
                 busCategory = " INSERT INTO buscategory (busId, category) VALUES ('" + \
-                    data['business_id'] + "', '" + str(x) + "'""); "
+                    data['business_id'] + "', '" + cleanStr4SQL(str(x)) + "'""); "
                 #print(busCategory)
                 try:
                     cur.execute(busCategory)
                 except:
                     print("Insert to busCategory failed!")
+                    print(busCategory)
                 # need to apply changes or lose them
                 conn.commit()
 
@@ -73,12 +74,12 @@ def insert2BusinessTable():
                         else:
                             newvalue = value
                         busGoodForMeals = " INSERT INTO busgoodformeals (busId, mealtype, mealval) VALUES ('" + data['business_id'] + "', '" + str(newkey[1]) + "', " \
-                            + str(value) + "); "
-                        #print(busGoodForMeals)
+                            + cleanStr4SQL(str(newvalue)) + "); "
                         try:
                             cur.execute(busGoodForMeals)
                         except:
                             print("Insert to busGoodForMeals failed!")
+                            print(busGoodForMeals)
                     elif (key.startswith("Ambience")):  # busAmbience
                         if (key == 'Ambience'):
                             newkey = (key , key)
@@ -89,12 +90,12 @@ def insert2BusinessTable():
                         else:
                             newvalue = value
                         busAmbience = " INSERT INTO busambience (busId, ambiencetype, ambienceval) VALUES ('" + data['business_id'] + "', '" + str(newkey[1]) + "', " \
-                            + str(value) + "); "
-                        #print(busAmbience)
+                            + cleanStr4SQL(str(newvalue)) + "); "
                         try:
                             cur.execute(busAmbience)
                         except:
                             print("Insert to busAmbience failed!")
+                            print(busAmbience)
                     elif (key.startswith("BusinessParking")):  # busParking
                         if (key == 'BusinessParking'):
                             newkey = (key, key)
@@ -106,20 +107,20 @@ def insert2BusinessTable():
                             newvalue = value
                         #print(newvalue)
                         busParking = " INSERT INTO busParking (busId, parkingType, parkVal) VALUES ('" + data['business_id'] + "', '" + str(newkey[1]) + "', " \
-                            + str(newvalue) + "); "
-                        #print(busParking)
+                            + cleanStr4SQL(str(newvalue)) + "); "
                         try:
                             cur.execute(busParking)
                         except:
                             print("Insert to busParking failed!")
+                            print(busParking)
                     else:                                   # all other attributes
                         attributes = " INSERT INTO busattributes (busId, attributename, attributeval) VALUES ('" + data['business_id'] + "', '" + str(key) + "', '" \
-                            + str(value) + "'""); "
-                        #print(attributes)
+                            + cleanStr4SQL(str(value)) + "'""); "
                         try:
                             cur.execute(attributes)
                         except:
                             print("Insert to busAttributes failed!")
+                            print(attributes)
                     conn.commit()
 
             #try:

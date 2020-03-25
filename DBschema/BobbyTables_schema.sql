@@ -19,22 +19,22 @@ CREATE TABLE Business(
 CREATE TABLE BusCategory(
     --This table holds all categories associated with busness
     busId VARCHAR(25) NOT NULL,
-    category VARCHAR(25),
+    category VARCHAR(35),
     PRIMARY KEY(busId,category),
     FOREIGN KEY(busId) REFERENCES Business(busId)
 );
 
 CREATE TABLE BusAttributes(
     busId VARCHAR(25) NOT NULL,
-    attributeName VARCHAR(20) NOT NULL,
-    attributeVal VARCHAR(30) NOT NULL,
+    attributeName VARCHAR(35) NOT NULL,
+    attributeVal VARCHAR(35) NOT NULL,
     PRIMARY KEY(busId, attributeName),
     FOREIGN KEY(busId) REFERENCES Business(busId)
 );
 
 CREATE TABLE BusGoodForMeals(
     busId VARCHAR(25) NOT NULL,
-    mealType VARCHAR(10) NOT NULL,
+    mealType VARCHAR(30) NOT NULL,
     mealVal BOOLEAN,
     
     PRIMARY KEY(busId, mealType),
@@ -43,7 +43,7 @@ CREATE TABLE BusGoodForMeals(
 
 CREATE TABLE BusAmbience(
     busId VARCHAR(25) NOT NULL,
-    ambienceType VARCHAR(9) NOT NULL,
+    ambienceType VARCHAR(20) NOT NULL,
     ambienceVal BOOLEAN,
 
     PRIMARY KEY(busId, ambienceType),
@@ -52,7 +52,7 @@ CREATE TABLE BusAmbience(
 
 CREATE TABLE BusParking(
     busId VARCHAR(25) NOT NULL,
-    parkingType VARCHAR(15) NOT NULL,
+    parkingType VARCHAR(20) NOT NULL,
     parkVal BOOLEAN,
     
     PRIMARY KEY(busId, parkingType),
