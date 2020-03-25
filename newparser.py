@@ -34,18 +34,24 @@ def insert2BusinessTable():
             data = json.loads(line)
             # Generate the INSERT statement for the cussent business
             # TODO: The below INSERT statement is based on a simple (and incomplete) businesstable schema. Update the statement based on your own table schema and
-            # include values for all businessTable attributes
+            # business
             business = "INSERT INTO business (busId, busName, address, busState, city, postalCode, lat, long, stars, numCheckins, numTips, isOpen, revCount) " \
-                      "VALUES ('" + data['business_id'] + "','" + cleanStr4SQL(data["name"]) + "','" + cleanStr4SQL(data["address"]) + "','" + \
-                      cleanStr4SQL(data["state"]) + "','" + cleanStr4SQL(data["city"]) + "','" + data["postal_code"] + "'," + str(data["latitude"]) + "," + \
-                      str(data["longitude"]) + "," + str(data["stars"]
-                                                         ) + ", 0 , 0 ," + str(data["is_open"]) + ", 0 );"
+                "VALUES ('" + data['business_id'] + "','" + cleanStr4SQL(data["name"]) + "','" + cleanStr4SQL(data["address"]) + "','" + \
+                cleanStr4SQL(data["state"]) + "','" + cleanStr4SQL(data["city"]) + "','" + data["postal_code"] + "'," + str(data["latitude"]) + "," + \
+                str(data["longitude"]) + "," + str(data["stars"]
+                                                   ) + ", 0 , 0 ," + str(data["is_open"]) + ", 0 );"
+            try:
+                cur.execute(business)
+            except:
+                print("Insert to business failed!")
+            conn.commit()
 
             #busCategories
             categories = data["categories"].split(', ')
             for x in categories:
-                busCategory = " INSERT INTO buscategory (busId, category) VALUES ('" + data['business_id'] + "', '" + str(x) + "'""); "
-                print(busCategory)
+                busCategory = " INSERT INTO buscategory (busId, category) VALUES ('" + \
+                    data['business_id'] + "', '" + str(x) + "'""); "
+                #print(busCategory)
                 try:
                     cur.execute(busCategory)
                 except:
@@ -53,16 +59,74 @@ def insert2BusinessTable():
                 # need to apply changes or lose them
                 conn.commit()
 
+            # Attributes
+            flatatrib = flatten(data["attributes"])
+            for key, value in flatatrib.items():
+                if (key and value):
+                    if(key.startswith("GoodForMeal")):  # busGoodForMeals
+                        if (key == 'GoodForMeal'):
+                            newkey = (key , key)
+                        else:
+                            newkey = key.split('_')
+                        if (value == 'None'):
+                            newvalue = 'False'
+                        else:
+                            newvalue = value
+                        busGoodForMeals = " INSERT INTO busgoodformeals (busId, mealtype, mealval) VALUES ('" + data['business_id'] + "', '" + str(newkey[1]) + "', " \
+                            + str(value) + "); "
+                        #print(busGoodForMeals)
+                        try:
+                            cur.execute(busGoodForMeals)
+                        except:
+                            print("Insert to busGoodForMeals failed!")
+                    elif (key.startswith("Ambience")):  # busAmbience
+                        if (key == 'Ambience'):
+                            newkey = (key , key)
+                        else:
+                            newkey = key.split('_')
+                        if (value == 'None'):
+                            newvalue = 'False'
+                        else:
+                            newvalue = value
+                        busAmbience = " INSERT INTO busambience (busId, ambiencetype, ambienceval) VALUES ('" + data['business_id'] + "', '" + str(newkey[1]) + "', " \
+                            + str(value) + "); "
+                        #print(busAmbience)
+                        try:
+                            cur.execute(busAmbience)
+                        except:
+                            print("Insert to busAmbience failed!")
+                    elif (key.startswith("BusinessParking")):  # busParking
+                        if (key == 'BusinessParking'):
+                            newkey = (key, key)
+                        else:
+                            newkey = key.split('_')
+                        if (value == 'None'):
+                            newvalue = 'False'
+                        else:
+                            newvalue = value
+                        #print(newvalue)
+                        busParking = " INSERT INTO busParking (busId, parkingType, parkVal) VALUES ('" + data['business_id'] + "', '" + str(newkey[1]) + "', " \
+                            + str(newvalue) + "); "
+                        #print(busParking)
+                        try:
+                            cur.execute(busParking)
+                        except:
+                            print("Insert to busParking failed!")
+                    else:                                   # all other attributes
+                        attributes = " INSERT INTO busattributes (busId, attributename, attributeval) VALUES ('" + data['business_id'] + "', '" + str(key) + "', '" \
+                            + str(value) + "'""); "
+                        #print(attributes)
+                        try:
+                            cur.execute(attributes)
+                        except:
+                            print("Insert to busAttributes failed!")
+                    conn.commit()
 
-            try:
-                cur.execute(business)
-            except:
-                print("Insert to business failed!")
             #try:
             #    cur.execute(busCategory)
             #except:
             #    print("Insert to busCategory failed!")
-            conn.commit()
+            #conn.commit()
             # optionally you might write the INSERT statement to a file.
             # outfile.write(business)
 
