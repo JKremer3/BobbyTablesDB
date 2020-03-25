@@ -35,19 +35,36 @@ def insert2BusinessTable():
             # Generate the INSERT statement for the cussent business
             # TODO: The below INSERT statement is based on a simple (and incomplete) businesstable schema. Update the statement based on your own table schema and
             # include values for all businessTable attributes
-            sql_str = "INSERT INTO business (busId, busName, address, busState, city, postalCode, lat, long, stars, numCheckins, numTips, isOpen, revCount) " \
+            business = "INSERT INTO business (busId, busName, address, busState, city, postalCode, lat, long, stars, numCheckins, numTips, isOpen, revCount) " \
                       "VALUES ('" + data['business_id'] + "','" + cleanStr4SQL(data["name"]) + "','" + cleanStr4SQL(data["address"]) + "','" + \
                       cleanStr4SQL(data["state"]) + "','" + cleanStr4SQL(data["city"]) + "','" + data["postal_code"] + "'," + str(data["latitude"]) + "," + \
                       str(data["longitude"]) + "," + str(data["stars"]
                                                          ) + ", 0 , 0 ," + str(data["is_open"]) + ", 0 );"
-            print(sql_str)
+
+            #busCategories
+            categories = data["categories"].split(', ')
+            for x in categories:
+                busCategory = " INSERT INTO buscategory (busId, category) VALUES ('" + data['business_id'] + "', '" + str(x) + "'""); "
+                print(busCategory)
+                try:
+                    cur.execute(busCategory)
+                except:
+                    print("Insert to busCategory failed!")
+                # need to apply changes or lose them
+                conn.commit()
+
+
             try:
-                cur.execute(sql_str)
+                cur.execute(business)
             except:
                 print("Insert to business failed!")
+            #try:
+            #    cur.execute(busCategory)
+            #except:
+            #    print("Insert to busCategory failed!")
             conn.commit()
             # optionally you might write the INSERT statement to a file.
-            # outfile.write(sql_str)
+            # outfile.write(business)
 
             line = f.readline()
             count_line += 1
