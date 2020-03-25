@@ -2,6 +2,7 @@ CREATE TABLE Business(
     --Non-Composite Attributes
     busId VARCHAR(25) NOT NULL,
     busName VARCHAR(100) NOT NULL,
+    address VARCHAR(100) NOT NULL,
     city VARCHAR(30) NOT NULL,
     busState CHAR(2) NOT NULL,
     postalCode CHAR(5) NOT NULL,
