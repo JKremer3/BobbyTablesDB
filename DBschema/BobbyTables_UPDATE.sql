@@ -9,3 +9,17 @@ WHERE Business.busId = tipTbl.busId;
 UPDATE Users, (select userId, count(*) as tipCount from Tip group by userId) as tipTbl
 SET Users.tipCount = tipTbl.tipCount
 WHERE Users.userId = tipTbl.userId;
+
+UPDATE Users, (select userId, count(*) as tipCount from Tip group by userId) as tipTbl
+SET Users.tipCount = tipTbl.tipCount
+WHERE Users.userId = tipTbl.userId;
+
+UPDATE Users
+SET totalLikes = sumTbl.likeSum
+from
+(
+    SELECT userId, SUM(likeCount) likeSum
+    FROM Tip
+    group by userId
+) sumTbl
+WHERE Users.userId = sumTbl.userId;
