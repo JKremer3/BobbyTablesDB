@@ -5,3 +5,7 @@ WHERE Business.busId = checkTbl.busId;
 UPDATE Business, (select busId, count(*) as tipCount from Tip group by busId) as tipTbl
 SET Business.numTips = tipTbl.tipCount
 WHERE Business.busId = tipTbl.busId;
+
+UPDATE Users, (select userId, count(*) as tipCount from Tip group by userId) as tipTbl
+SET Users.tipCount = tipTbl.tipCount
+WHERE Users.userId = tipTbl.userId;
