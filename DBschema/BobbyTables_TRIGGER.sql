@@ -50,4 +50,28 @@ LANGUAGE plpgsql;
 CREATE TRIGGER UpdateUsersTips
 AFTER INSERT OR DELETE ON Tip
 FOR EACH ROW
-EXECUTE PROCEDURE update_users_tips();  
+EXECUTE PROCEDURE update_users_tips();
+
+--function to update Users records with their tip count
+create or replace function update_users_totalLikes() 
+    RETURNS trigger 
+as $update_users_totalLikes$ 
+    BEGIN
+        UPDATE Users
+            SET totalLikes = sumTbl.likeSum
+            from
+            (
+                SELECT userId, SUM(likeCount) likeSum
+                FROM Tip
+                group by userId
+            ) sumTbl
+            WHERE Users.userId = sumTbl.userId;
+        RETURN NEW;
+$update_users_totalLikes$ 
+LANGUAGE plpgsql;
+
+--Trigger statement to call update_users_totalLikes() 
+CREATE TRIGGER UpdateUsersTotalLikes
+AFTER INSERT OR DELETE OR UPDATE ON Tip
+FOR EACH ROW
+EXECUTE PROCEDURE update_users_totalLikes() ;  
