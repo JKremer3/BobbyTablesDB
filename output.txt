@@ -1,0 +1,2 @@
+Insert to busParking failed!
+ INSERT INTO busParking (busId, parkingType, parkVal) VALUES ('wopyolJM2hOAt3dPRmahNA', 'garage', False); 

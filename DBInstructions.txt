@@ -1,0 +1,9 @@
+First create a database.
+Create tables from DBschema.
+Modify newparser.js to include your database info. (There is a TODO tag for this).
+If you dare, run python3 newparser.js (Allow for about 30-40 minutes to fill database).
+
+Alternatively and much faster:
+First create a database called business.
+psql business < businessDB.SQL
+Done!
