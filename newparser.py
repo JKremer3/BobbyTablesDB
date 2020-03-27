@@ -15,6 +15,7 @@ def int2BoolStr(value):
 
 
 def insert2BusinessTable():
+    print("inserting business info")
     #reading the JSON file
     with open('./business.JSON', 'r') as f:  # TODO: update path for the input file
         #outfile =  open('./yelp_business.SQL', 'w')  #uncomment this line if you are writing the INSERT statements to an output file.
@@ -32,11 +33,9 @@ def insert2BusinessTable():
 
         while line:
             data = json.loads(line)
-            # Generate the INSERT statement for the cussent business
-            # TODO: The below INSERT statement is based on a simple (and incomplete) businesstable schema. Update the statement based on your own table schema and
-            # business
+            # Generate the INSERT statement for the current business
             business = "INSERT INTO business (busId, busName, address, busState, city, postalCode, lat, long, stars, numCheckins, numTips, isOpen, revCount) " \
-                "VALUES ('" + data['business_id'] + "','" + cleanStr4SQL(data["name"]) + "','" + cleanStr4SQL(data["address"]) + "','" + \
+                "VALUES ('" + cleanStr4SQL(data['business_id']) + "','" + cleanStr4SQL(data["name"]) + "','" + cleanStr4SQL(data["address"]) + "','" + \
                 cleanStr4SQL(data["state"]) + "','" + cleanStr4SQL(data["city"]) + "','" + data["postal_code"] + "'," + str(data["latitude"]) + "," + \
                 str(data["longitude"]) + "," + str(data["stars"]
                                                    ) + ", 0 , 0 ," + str(data["is_open"]) + ", 0 );"
@@ -101,7 +100,7 @@ def insert2BusinessTable():
                             newkey = (key, key)
                         else:
                             newkey = key.split('_')
-                        if (value == 'None'):
+                        if (value == 'None' or value == '{}'):
                             newvalue = 'False'
                         else:
                             newvalue = value
@@ -113,6 +112,7 @@ def insert2BusinessTable():
                         except:
                             print("Insert to busParking failed!")
                             print(busParking)
+
                     else:                                   # all other attributes
                         attributes = " INSERT INTO busattributes (busId, attributename, attributeval) VALUES ('" + data['business_id'] + "', '" + str(key) + "', '" \
                             + cleanStr4SQL(str(value)) + "'""); "
@@ -123,13 +123,20 @@ def insert2BusinessTable():
                             print(attributes)
                     conn.commit()
 
-            #try:
-            #    cur.execute(busCategory)
-            #except:
-            #    print("Insert to busCategory failed!")
-            #conn.commit()
-            # optionally you might write the INSERT statement to a file.
-            # outfile.write(business)
+            # Hours
+            busHours = []
+            for key, value in data["hours"].items():
+                if (key and value):
+                    newtime = value.split('-')
+                    #busHours = busHours + [(key, [newtime[0], newtime[1]])]
+                    busHours = " INSERT INTO busHours (busId, dayofweek, hropen, hrclosed) VALUES ('" + data['business_id'] + "', '" + str(key) + "', '" \
+                            + cleanStr4SQL(str(newtime[0])) + "', '" + cleanStr4SQL(str(newtime[0])) + "'""); "
+                    try:
+                        cur.execute(busHours)
+                    except:
+                        print("Insert to busHours failed!")
+                        print(busHours)
+                conn.commit()
 
             line = f.readline()
             count_line += 1
@@ -141,6 +148,147 @@ def insert2BusinessTable():
     #outfile.close()  #uncomment this line if you are writing the INSERT statements to an output file.
     f.close()
 
+def insert2UsersTable():
+    print("inserting users")
+    #reading the JSON file
+    with open('./users.JSON', 'r') as f:  # open file
+        #outfile =  open('./yelp_business.SQL', 'w')  #uncomment this line if you are writing the INSERT statements to an output file.
+        line = f.readline()
+        count_line = 0
+
+        #connect to yelpdb database on postgres server using psycopg2
+        #TODO: update the database name, username, and password
+        try:
+            conn = psycopg2.connect(
+                "dbname='business' user='postgres' host='localhost' password='bobby'")
+        except:
+            print('Unable to connect to the database!')
+        cur = conn.cursor()
+
+        while line:
+            data = json.loads(line)
+            datetime = data['yelping_since'].split(' ')
+            # Generate the INSERT statement for the current business
+            users = "INSERT INTO users (avgStars, cool, funny, totalLikes, fans, userLat, userLong, userName, tipCount, useful, userId, yelpStartDate," \
+                "yelpStartTime, lat, long) " \
+                "VALUES (" + str(data["average_stars"]) + "," + str(data["cool"]) + "," + str(data["funny"]) + ", 0," \
+                     + str(data["fans"]) + ", '0', '0','" + cleanStr4SQL(data["name"]) + "'," + str(data["tipcount"]) + "," + \
+                str(data["useful"]) + ",'" + cleanStr4SQL(data["user_id"]) + "','" + str(datetime[0]) + "','" + str(datetime[1]) + "', 0 , 0);"
+
+            try:
+                cur.execute(users)
+            except:
+                print("Insert to users failed!")
+                print(users)
+            conn.commit()
+
+            # optionally you might write the INSERT statement to a file.
+            # outfile.write(users)
+
+            line = f.readline()
+            count_line += 1
+
+        cur.close()
+        conn.close()
+
+    print(count_line)
+    #outfile.close()  #uncomment this line if you are writing the INSERT statements to an output file.
+    f.close()
+
+def insert2TipTable():
+    #reading the JSON file
+    print("inserting tips")
+    with open('./tip.JSON', 'r') as f:  # open file
+        #outfile =  open('./yelp_tip.SQL', 'w')  #uncomment this line if you are writing the INSERT statements to an output file.
+        line = f.readline()
+        count_line = 0
+
+        #connect to yelpdb database on postgres server using psycopg2
+        #TODO: update the database name, username, and password
+        try:
+            conn = psycopg2.connect(
+                "dbname='business' user='postgres' host='localhost' password='bobby'")
+        except:
+            print('Unable to connect to the database!')
+        cur = conn.cursor()
+
+        while line:
+            data = json.loads(line)
+            datetime = data['date'].split(' ')
+
+            # Generate the INSERT statement for the current business
+            tip = "INSERT INTO tip (busId, userId, likeCount, tipText, tipDate, tipTime) " \
+                "VALUES ('" + cleanStr4SQL(data["business_id"]) + "','" + cleanStr4SQL(data["user_id"]) + "'," + str(data["likes"]) + ",'" \
+                     + cleanStr4SQL(data["text"]) + "','" + cleanStr4SQL(datetime[0]) + "','" + cleanStr4SQL(datetime[1]) + "');"
+
+            try:
+                cur.execute(tip)
+            except:
+                print("Insert to tip failed!")
+                print(tip)
+            conn.commit()
+
+            # optionally you might write the INSERT statement to a file.
+            # outfile.write(tip)
+
+            line = f.readline()
+            count_line += 1
+
+        cur.close()
+        conn.close()
+
+    print(count_line)
+    #outfile.close()  #uncomment this line if you are writing the INSERT statements to an output file.
+    f.close()
+
+def insert2CheckinTable():
+    #reading the JSON file
+    print("inserting checkin")
+    with open('./checkin.JSON', 'r') as f:  # open file
+        #outfile =  open('./yelp_checkin.SQL', 'w')  #uncomment this line if you are writing the INSERT statements to an output file.
+        line = f.readline()
+        count_line = 0
+
+        #connect to yelpdb database on postgres server using psycopg2
+        #TODO: update the database name, username, and password
+        try:
+            conn = psycopg2.connect(
+                "dbname='business' user='postgres' host='localhost' password='bobby'")
+        except:
+            print('Unable to connect to the database!')
+        cur = conn.cursor()
+
+        while line:
+            data = json.loads(line)
+            datetimes = data['date'].split(',')
+            for x in datetimes:
+                datetime = x.split(' ')
+                date = datetime[0].split('-')
+
+            # Generate the INSERT statement for the current business
+            checkin = "INSERT INTO checkin (busId, checkYear, checkDate, checkMonth, checkTime) " \
+                "VALUES ('" + cleanStr4SQL(data["business_id"]) + "','" + str(date[0]) + "'," + str(date[1]) + ",'" \
+                     + cleanStr4SQL(date[2]) + "','" + cleanStr4SQL(datetime[1]) + "');"
+
+            try:
+                cur.execute(checkin)
+            except:
+                print("Insert to checkin failed!")
+                print(checkin)
+            conn.commit()
+
+            # optionally you might write the INSERT statement to a file.
+            # outfile.write(tip)
+
+            line = f.readline()
+            count_line += 1
+
+        cur.close()
+        conn.close()
+
+    print(count_line)
+    #outfile.close()  #uncomment this line if you are writing the INSERT statements to an output file.
+    f.close()
 
 def parseBusinessData():
     #read the JSON file
@@ -279,7 +427,11 @@ def parseTipData():
     f.close()
 
 
-insert2BusinessTable()
+#insert2BusinessTable() #working
+#insert2UsersTable() #working missing some users ~50
+#insert2TipTable() #missing some tips ~10000
+insert2CheckinTable()
+
 #parseBusinessData()
 #parseUserData()
 #parseCheckinData()

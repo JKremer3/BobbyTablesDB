@@ -95,7 +95,7 @@ CREATE TABLE Tip(
     busId VARCHAR(25) NOT NULL,
     userId VARCHAR(25) NOT NULL,
     likeCount INT,
-    tipText VARCHAR(150) NOT NULL,
+    tipText VARCHAR(500) NOT NULL,
     tipDate CHAR(10) NOT NULL,
     tipTime CHAR(8) NOT NULL,
     PRIMARY KEY (busId, userId, tipDate),
