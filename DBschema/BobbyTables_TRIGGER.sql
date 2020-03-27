@@ -1,14 +1,12 @@
 --function to update business records with their checkin count
-create or replace function update_business_checkins() 
-    RETURNS trigger 
-as $update_business_checkins$ 
-    BEGIN
-        UPDATE Business, (select busId, count(*) as checkCount from checkin group by busId) as checkTbl
-            SET Business.numCheckins = checkTbl.checkCount
-            WHERE Business.busId = checkTbl.busId;
-        RETURN NEW;
-$update_business_checkins$ 
-LANGUAGE plpgsql;
+create or replace function update_business_checkins() RETURNS trigger 
+as '
+BEGIN
+	UPDATE Business
+	SET numCheckins = (select count(busId) from checkin WHERE Business.busId = checkin.busId);
+    RETURN NEW;
+END
+'LANGUAGE plpgsql;
 
 --Trigger statement to call update_business_checkins()
 CREATE TRIGGER UpdateBusCheckins
