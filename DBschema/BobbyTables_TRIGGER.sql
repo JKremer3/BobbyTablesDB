@@ -15,16 +15,14 @@ FOR EACH ROW
 EXECUTE PROCEDURE update_business_checkins();
 
 --function to update business records with their tip count
-create or replace function update_business_tips() 
-    RETURNS trigger 
-as $update_business_tips$ 
-    BEGIN
-        UPDATE Business, (select busId, count(*) as tipCount from Tip group by busId) as tipTbl
-            SET Business.numTips = tipTbl.tipCount
-            WHERE Business.busId = tipTbl.busId;
-        RETURN NEW;
-$update_business_tips$ 
-LANGUAGE plpgsql;
+create or replace function update_business_tips() RETURNS trigger 
+as '
+BEGIN
+	UPDATE Business 
+	SET numTips = (select count(busId) from Tip WHERE Business.busId = Tip.busId);
+	RETURN NEW;
+END
+'LANGUAGE plpgsql;
 
 --Trigger statement to call update_business_tips()
 CREATE TRIGGER UpdateBusTips
