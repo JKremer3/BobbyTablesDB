@@ -152,7 +152,7 @@ def insert2UsersTable():
     print("inserting users")
     #reading the JSON file
     with open('./users.JSON', 'r') as f:  # open file
-        #outfile =  open('./yelp_business.SQL', 'w')  #uncomment this line if you are writing the INSERT statements to an output file.
+        #outfile =  open('./yelp_users.SQL', 'w')  #uncomment this line if you are writing the INSERT statements to an output file.
         line = f.readline()
         count_line = 0
 
@@ -276,6 +276,50 @@ def insert2CheckinTable():
                 print("Insert to checkin failed!")
                 print(checkin)
             conn.commit()
+
+            # optionally you might write the INSERT statement to a file.
+            # outfile.write(tip)
+
+            line = f.readline()
+            count_line += 1
+
+        cur.close()
+        conn.close()
+
+    print(count_line)
+    #outfile.close()  #uncomment this line if you are writing the INSERT statements to an output file.
+    f.close()
+
+def insert2FriendTable():
+    #reading the JSON file
+    print("inserting friend")
+    with open('./users.JSON', 'r') as f:  # open file
+        #outfile =  open('./yelp_friend.SQL', 'w')  #uncomment this line if you are writing the INSERT statements to an output file.
+        line = f.readline()
+        count_line = 0
+
+        #connect to yelpdb database on postgres server using psycopg2
+        #TODO: update the database name, username, and password
+        try:
+            conn = psycopg2.connect(
+                "dbname='business' user='postgres' host='localhost' password='bobby'")
+        except:
+            print('Unable to connect to the database!')
+        cur = conn.cursor()
+
+        while line:
+            data = json.loads(line)
+
+            # Generate the INSERT statement for the current business
+            for friend_id in data['friends']:
+                friend = "INSERT INTO friends (userId, friendId) " \
+                    "VALUES ('" + cleanStr4SQL(data["user_id"]) + "','" + cleanStr4SQL(friend_id) + "');"
+                try:
+                    cur.execute(friend)
+                except:
+                    print("Insert to friend failed!")
+                    print(friend)
+                conn.commit()
 
             # optionally you might write the INSERT statement to a file.
             # outfile.write(tip)
@@ -427,10 +471,11 @@ def parseTipData():
     f.close()
 
 
-#insert2BusinessTable() #working
-#insert2UsersTable() #working missing some users ~50
-#insert2TipTable() #missing some tips ~10000
-insert2CheckinTable()
+insert2BusinessTable() #working
+insert2UsersTable() #working but missing some users ~50 (possibly null/malformed)
+insert2TipTable() #working but missing some tips ~10000
+insert2CheckinTable() # working
+insert2FriendTable() # working with minimal failures (could be due to missing users)
 
 #parseBusinessData()
 #parseUserData()
