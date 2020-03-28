@@ -87,6 +87,48 @@ const getBusinessCC = (request, response) => {
     });
 }
 
+const getZipcodes = (request, response) => {
+    const city = request.params.city;
+    pool.query('SELECT DISTINCT postalCode FROM business WHERE city = $1 ORDER BY postalCode', [city], (error, results) => {
+        if (error) {
+            throw error
+        }
+        response.status(200).json(results.rows)
+    });
+}
+
+const getCatagoriesInZip = (request, response) => {
+    const busid = request.params.busid;
+    pool.query('SELECT DISTINCT category FROM BusCategory WHERE busId = $1', [busid], (error, results) => {
+        if (error) {
+            throw error
+        }
+        response.status(200).json(results.rows)
+    });
+}
+
+const getTipsforBusiness = (request, response) => {
+    const busid = request.params.busid;
+    pool.query('SELECT * FROM Tip WHERE busId = $1', [busid], (error, results) => {
+        if (error) {
+            throw error
+        }
+        response.status(200).json(results.rows)
+    });
+}
+
+const insertTip = (request, response) => {
+    console.log("in insertTip")
+    const {busid, userid, tiptext, tipdate, tiptime} = request.body;
+    pool.query('INSERT INTO Tip (busId, userId, likeCount, tipText, tipDate, tipTime)' +
+                ' VALUES ( $1, $2, 0, $3, $4, $5 )', [busid, userid, tiptext, tipdate, tiptime], (error, results) => {
+        if (error) {
+            throw error
+        }
+        response.status(200).json(results.rows)
+    });
+}
+
 module.exports = {
     getState,
     getAllStates,
@@ -96,4 +138,8 @@ module.exports = {
     getBusinessInfo,
     getBusinessSC,
     getBusinessCC,
+    getZipcodes,
+    getCatagoriesInZip,
+    getTipsforBusiness,
+    insertTip,
 }
