@@ -139,7 +139,8 @@ UPDATE Tip
 SET likeCount = likeCount+1
 WHERE userId = 'rRrFcSEZOTw6iZagsIwTFQ' AND 
       busId = 'M007_bAIM34x1yd138zhSQ' AND 
-      tipdate ='2020-03-27 13:00';
+      tipdate ='2020-03-27' AND
+      tipTime = '13:00';
 
 SELECT userId, userName, tipcount, totallikes
 FROM Users
