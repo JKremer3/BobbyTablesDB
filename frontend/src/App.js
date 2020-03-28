@@ -20,7 +20,7 @@ class App extends React.Component {
     super(props)
     this.state = {
     modalIsOpen: false, modalStateIGuess: "", busstates: [], cities: [], zips: [], businessCategories: [], businesses: [],
-      slectedState: "", selectedCity: "", selectedBusiness: "", sCount: "", cCount: "", activeCategories: []
+      slectedState: "", selectedCity: "", selectedZip: "", selectedBusiness: "", sCount: "", cCount: "", activeCategories: []
     };
 
     this.bName = React.createRef();
@@ -72,15 +72,34 @@ class App extends React.Component {
       });
   }
 
+  updateZips = (e) => {
+    this.setState({ selectedState: e.target.value })
+    fetch("http://localhost:3030/zip/" + e.target.value)
+      .then((response) => {
+        return response.json();
+      })
+      .then(data => {
+        let zipsFromApi = data.map(zip => {
+          return { value: zip.postalCode, display: zip.postalcode }
+        });
+        this.setState({
+          zips: [{ value: '', display: '(Select A Zip)' }].concat(zipsFromApi),
+          businesses: []
+        });
+      }).catch(error => {
+        console.log(error);
+      });
+  }
+
   updateTable = (e) => {
-    this.setState({ selectedCity: e.target.value })
+    this.setState({ selectedZip: e.target.value })
     fetch("http://localhost:3030/businesses/" + e.target.value)
       .then((response) => {
         return response.json();
       })
       .then(data => {
         let businessFromApi = data.map(business => {
-          return { value: business.busName }
+          return { value: business.busname }
         });
         this.setState({
           businesses: businessFromApi
@@ -118,8 +137,8 @@ class App extends React.Component {
     })
   }
 
-  updateModal = (name) => {
-    this.setState({ selectedBusiness: name });
+  updateModal = (busname) => {
+    this.setState({ selectedBusiness: busname });
     this.fetchStateCount();
     this.fetchCityCount();
     this.showModal();
@@ -159,19 +178,18 @@ class App extends React.Component {
                 <Form.Control as="select" value={this.state.selectedState} onChange={this.updateCities}>
                   {this.state.busstates.map((busstate) => <option key={busstate.value} value={busstate.value}>
                     {busstate.display}
-                    <input type="checkbox" id="vehicle1" name="vehicle1" value="Bike"></input>
                   </option>)}
                 </Form.Control>
             </Form.Group>
             <Form.Group controlId="exampleForm.ControlSelect2">
               <Form.Label>City</Form.Label>
-              <Form.Control as="select" value={this.state.selectedCity} onChange={this.updateTable}>
+              <Form.Control as="select" value={this.state.selectedCity} onChange={this.updateZips}>
                 {this.state.cities.map((city) => <option key={city.value} value={city.value}>{city.display}</option>)}
               </Form.Control>
             </Form.Group>
             <Form.Group controlId="exampleForm.ControlSelect3">
               <Form.Label>Zip Code</Form.Label>
-              <Form.Control as="select" value={this.state.selectedZipCode} onChange={this.updateTable}>
+              <Form.Control as="select" value={this.state.selectedZip} onChange={this.updateTable}>
                 {this.state.zips.map((zip) => <option key={zip.value} value={zip.value}>{zip.display}</option>)}
               </Form.Control>
             </Form.Group>

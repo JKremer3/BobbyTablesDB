@@ -45,9 +45,9 @@ const getAllBusinesses = (request, response) => {
     })
 }
 
-const getBusinessesInCity = (request, response) => {
-    const city = request.params.city;
-    pool.query('SELECT DISTINCT busName FROM business WHERE city = $1 ORDER BY busName', [city], (error, results) => {
+const getBusinessesInZip = (request, response) => {
+    const zip = request.params.zip;
+    pool.query('SELECT DISTINCT busName FROM business WHERE postalcode = $1 ORDER BY busName', [zip], (error, results) => {
         if (error) {
             throw error
         }
@@ -57,8 +57,8 @@ const getBusinessesInCity = (request, response) => {
 
 const getBusinessInfo = (request, response) => {
     const name = request.params.name;
-    const city = request.params.city;
-    pool.query('SELECT DISTINCT * FROM business WHERE name = $1 AND city = $2 ORDER BY name', [name, city], (error, results) => {
+    const zip = request.params.zip;
+    pool.query('SELECT DISTINCT * FROM business WHERE name = $1 AND postalcode = $2 ORDER BY name', [name, zip], (error, results) => {
         if (error) {
             throw error
         }
@@ -69,7 +69,7 @@ const getBusinessInfo = (request, response) => {
 const getBusinessSC = (request, response) => {
     const state = request.params.state;
 
-    pool.query('SELECT COUNT (DISTINCT name) FROM business WHERE state = $1', [state],  (error, results) => {
+    pool.query('SELECT COUNT (DISTINCT busName) FROM business WHERE busState = $1', [state],  (error, results) => {
         if (error) {
             throw error
         }
@@ -79,7 +79,7 @@ const getBusinessSC = (request, response) => {
 
 const getBusinessCC = (request, response) => {
     const city = request.params.city;
-    pool.query('SELECT COUNT (DISTINCT name) FROM business WHERE city = $1', [city], (error, results) => {
+    pool.query('SELECT COUNT (DISTINCT busName) FROM business WHERE city = $1', [city], (error, results) => {
         if (error) {
             throw error
         }
@@ -135,7 +135,7 @@ module.exports = {
     getAllStates,
     getCitiesInState,
     getAllBusinesses,
-    getBusinessesInCity,
+    getBusinessesInZip,
     getBusinessInfo,
     getBusinessSC,
     getBusinessCC,
