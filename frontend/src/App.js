@@ -20,14 +20,14 @@ class App extends React.Component {
     super(props)
     this.state = {
     modalIsOpen: false, modalStateIGuess: "", busstates: [], cities: [], zips: [], businessCategories: [], businesses: [],
-      slectedState: "", selectedCity: "", selectedZip: "", selectedBusiness: "", sCount: "", cCount: "", activeCategories: []
+      slectedState: "", selectedCity: "", selectedZip: "", selectedBusiness: "", sCount: "", tCount: "", activeCategories: []
     };
 
     this.bName = React.createRef();
     this.cName = React.createRef();
     this.sName = React.createRef();
     this.sCount = React.createRef();
-    this.cCount = React.createRef();
+    this.tCount = React.createRef();
 
   }
 
@@ -91,8 +91,9 @@ class App extends React.Component {
       });
   }
 
-  updateTable = () => {
-    fetch("http://localhost:3030/businesses/" + this.state.selectedZip)
+  updateTable = (value) => {
+    console.log(value)
+    fetch("http://localhost:3030/businesses/" + value)
       .then((response) => {
         return response.json();
       })
@@ -100,6 +101,8 @@ class App extends React.Component {
         let businessFromApi = data.map(business => {
           return { value: business.busname }
         });
+        console.log(data)
+        console.log(businessFromApi)
         this.setState({
           businesses: businessFromApi
         });
@@ -123,13 +126,13 @@ class App extends React.Component {
   }
 
   fetchCityCount = () => {
-    fetch("http://localhost:3030/count/city/" + this.state.selectedCity)
+    fetch("http://localhost:3030/tip/" + this.state.selectedBusiness)
     .then((response) => {
       return response.json();
     })
     .then(data => {
       this.setState ({
-        cCount: data[0].count
+        tCount: data[0].count
       })
     }).catch(error => {
       console.log(error)
@@ -137,6 +140,7 @@ class App extends React.Component {
   }
 
   fetchCategories = (e) => { 
+    this.updateTable(e.target.value)
     this.setState({ selectedZip: e.target.value })
     fetch("http://localhost:3030/zip/cat/" + e.target.value)                          
     .then((response) => {                         
@@ -148,7 +152,6 @@ class App extends React.Component {
       });
       this.setState({
         businessCategories: catFromApi,
-        businesses: []
       });
     }).catch(error => {
       console.log(error);
@@ -185,6 +188,7 @@ class App extends React.Component {
     this.setState({activeCategories: activeCategories});
   }
 
+  
   render() {
     return (
       <div className="App" style={{display: "flex", justifyContent: "center" }} >
@@ -254,8 +258,8 @@ class App extends React.Component {
               <div id="bName">Name: {this.state.selectedBusiness}</div>
               <div id="cName">City: {this.state.selectedCity}</div>
               <div id="sName">State: {this.state.selectedState}</div>
-              <div id="cCount">Businesses in City: {this.state.cCount}</div>
-              <div id="sCount">Businesses in State: {this.state.sCount}</div>
+              <div id="tCount">Tips: {this.state.tCount}</div>
+
             </div>
           </Modal.Body>
           <Modal.Footer>
