@@ -126,21 +126,25 @@ class App extends React.Component {
   }
 
   activateCategory = (cat) => {
-    activeCategories = this.state.activeCategories
-    activeCategories.push(cat)
-    this.setState({activeCategories: activeCategories})
+    console.log("Activate Category called (" + cat + ")");
+    var activeCategories = this.state.activeCategories;
+    const index = activeCategories.indexOf(cat);
+    if (index == -1) {
+      activeCategories.push(cat);
+    }
+    this.setState({activeCategories: activeCategories});
   }
 
   deactivateCategory = (cat) => {
-    activeCategories = this.state.activeCategories
+    console.log("Deactivate Category called (" + cat + ")");
+    var activeCategories = this.state.activeCategories
 
-    const index = array.indexOf(cat);
+    const index = activeCategories.indexOf(cat);
     if (index > -1) {
-      array.splice(index, 1);
+      activeCategories.splice(index, 1);
     }
 
-    this.setState({activeCategories: activeCategories})
-
+    this.setState({activeCategories: activeCategories});
   }
 
   render() {
@@ -185,9 +189,15 @@ class App extends React.Component {
         <div>
             <Form.Label>Zip Code</Form.Label>
           {this.state.busstates.map((businessCategory) => 
+            this.state.activeCategories.indexOf(businessCategory.value) == -1 ? 
             <React.Fragment>
-              <Button variant="primary" onClick={() => console.log(businessCategory.value)}>{businessCategory.display}</Button>{' '}
+              <Button variant="primary" onClick={() => this.activateCategory(businessCategory.value)} >{businessCategory.display}</Button>{' '}
             </React.Fragment>
+            :
+            <React.Fragment>
+              <Button variant="primary" onClick={() => this.deactivateCategory(businessCategory.value)} active>{businessCategory.display}</Button>{' '}
+            </React.Fragment>
+
           )}
         </div>
         <Table striped bordered hover id="dataTable">
