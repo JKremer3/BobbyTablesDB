@@ -9,7 +9,7 @@ END
 'LANGUAGE plpgsql;
 
 --Trigger statement to call update_business_checkins()
-CREATE TRIGGER UpdateBusCheckins
+CREATE OR UPDATE TRIGGER UpdateBusCheckins
 AFTER INSERT OR DELETE ON checkin
 FOR EACH ROW
 EXECUTE PROCEDURE update_business_checkins();
@@ -25,7 +25,7 @@ END
 'LANGUAGE plpgsql;
 
 --Trigger statement to call update_business_tips()
-CREATE TRIGGER UpdateBusTips
+CREATE OR UPDATE TRIGGER UpdateBusTips
 AFTER INSERT OR DELETE ON Tip
 FOR EACH ROW
 EXECUTE PROCEDURE update_business_tips();
@@ -41,7 +41,7 @@ END
 ' LANGUAGE plpgsql;
 
 --Trigger statement to call update_users_tips()
-CREATE TRIGGER UpdateUsersTips
+CREATE OR UPDATE TRIGGER UpdateUsersTips
 AFTER INSERT OR DELETE ON Tip
 FOR EACH ROW
 EXECUTE PROCEDURE update_users_tips();
@@ -64,7 +64,7 @@ END
 ' LANGUAGE plpgsql;
 
 --Trigger statement to call update_users_totalLikes() 
-CREATE TRIGGER UpdateUsersTotalLikes
+CREATE OR UPDATE TRIGGER UpdateUsersTotalLikes
 AFTER INSERT OR DELETE OR UPDATE ON Tip
 FOR EACH ROW
 EXECUTE PROCEDURE update_users_totalLikes(); 
