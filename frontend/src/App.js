@@ -219,11 +219,11 @@ class App extends React.Component {
           {this.state.businessCategories.map((businessCategory) => 
             this.state.activeCategories.indexOf(businessCategory.value) == -1 ? 
             <React.Fragment>
-              <Button variant="primary" onClick={() => this.activateCategory(businessCategory.value)} >{businessCategory.value}</Button>{' '}
+              <Button style={{ margin: "5px"}} variant="primary" onClick={() => this.activateCategory(businessCategory.value)} >{businessCategory.value}</Button>{' '}
             </React.Fragment>
             :
             <React.Fragment>
-              <Button variant="primary" onClick={() => this.deactivateCategory(businessCategory.value)} active>{businessCategory.value}</Button>{' '}
+              <Button style={{ margin: "5px"}} variant="primary" onClick={() => this.deactivateCategory(businessCategory.value)} active>{businessCategory.value}</Button>{' '}
             </React.Fragment>
 
           )}
