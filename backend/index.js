@@ -10,9 +10,6 @@ app.use(function (req, res, next) {
     // Website you wish to allow to connect
     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
 
-    // Request methods you wish to allow
-    res.setHeader('Access-Control-Allow-Methods', 'GET');
-
     // Request headers you wish to allow
     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
 
@@ -48,5 +45,6 @@ app.get('/businesses/:city/:name', db.getBusinessInfo)
 app.get('/count/state/:state', db.getBusinessSC)
 app.get('/count/city/:city', db.getBusinessCC)
 app.get('/zip/:city', db.getZipcodes)
-app.get('/zip/cat/:busId', db.getCatagoriesInZip)
-app.get('/businesses/:busId', db.getTipsforBusiness)
+app.get('/zip/cat/:busid', db.getCatagoriesInZip)
+app.get('/tip/:busid', db.getTipsforBusiness)
+app.post('/tip/insert', db.getTipsforBusiness)

@@ -98,8 +98,8 @@ const getZipcodes = (request, response) => {
 }
 
 const getCatagoriesInZip = (request, response) => {
-    const city = request.params.city;
-    pool.query('SELECT DISTINCT category FROM BusCategory WHERE busId = $1', [busId], (error, results) => {
+    const busid = request.params.busid;
+    pool.query('SELECT DISTINCT category FROM BusCategory WHERE busId = $1', [busid], (error, results) => {
         if (error) {
             throw error
         }
@@ -108,8 +108,20 @@ const getCatagoriesInZip = (request, response) => {
 }
 
 const getTipsforBusiness = (request, response) => {
-    const city = request.params.city;
-    pool.query('SELECT * FROM Tip WHERE busId = $1', [busId], (error, results) => {
+    const busid = request.params.busid;
+    pool.query('SELECT * FROM Tip WHERE busId = $1', [busid], (error, results) => {
+        if (error) {
+            throw error
+        }
+        response.status(200).json(results.rows)
+    });
+}
+
+const insertTip = (request, response) => {
+    console.log("in insertTip")
+    const {busid, userid, tiptext, tipdate, tiptime} = request.body;
+    pool.query('INSERT INTO Tip (busId, userId, likeCount, tipText, tipDate, tipTime)' +
+                ' VALUES ( $1, $2, 0, $3, $4, $5 )', [busid, userid, tiptext, tipdate, tiptime], (error, results) => {
         if (error) {
             throw error
         }
@@ -129,4 +141,5 @@ module.exports = {
     getZipcodes,
     getCatagoriesInZip,
     getTipsforBusiness,
+    insertTip,
 }
