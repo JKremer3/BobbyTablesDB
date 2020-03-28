@@ -119,6 +119,7 @@ const getTipsforBusiness = (request, response) => {
 
 const insertTip = (request, response) => {
     console.log("in insertTip")
+    console.log(request.body)
     const {busid, userid, tiptext, tipdate, tiptime} = request.body;
     pool.query('INSERT INTO Tip (busId, userId, likeCount, tipText, tipDate, tipTime)' +
                 ' VALUES ( $1, $2, 0, $3, $4, $5 )', [busid, userid, tiptext, tipdate, tiptime], (error, results) => {
