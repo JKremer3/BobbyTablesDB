@@ -80,7 +80,7 @@ class App extends React.Component {
       })
       .then(data => {
         let businessFromApi = data.map(business => {
-          return { value: business.name }
+          return { value: business.busName }
         });
         this.setState({
           businesses: businessFromApi
