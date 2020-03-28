@@ -17,7 +17,7 @@ class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      modalIsOpen: false, modalStateIGuess: "", states: [], cities: [], businesses: [],
+      modalIsOpen: false, modalStateIGuess: "", busstates: [], cities: [], businesses: [],
       slectedState: "", selectedCity: "", selectedBusiness: "", sCount: "", cCount: ""
     };
 
@@ -39,11 +39,11 @@ class App extends React.Component {
         return response.json();
       })
       .then(data => {
-        let statesFromApi = data.map(state => {
-          return { value: state.state, display: state.state }
+        let statesFromApi = data.map(busstates => {
+          return { value: busstates.busstate, display: busstates.busstate }
         });
         this.setState({
-          states: [{ value: '', display: '(Select A State)' }].concat(statesFromApi),
+          busstates: [{ value: '', display: '(Select A State)' }].concat(statesFromApi),
           businesses: []
         });
       }).catch(error => {
@@ -132,7 +132,7 @@ class App extends React.Component {
             <Form.Group controlId="exampleForm.ControlSelect1">
               <Form.Label>State</Form.Label>
               <Form.Control as="select" value={this.state.selectedState} onChange={this.updateCities}>
-                {this.state.states.map((state) => <option key={state.value} value={state.value}>{state.display}</option>)}
+                {this.state.busstates.map((busstate) => <option key={busstate.value} value={busstate.value}>{busstate.display}</option>)}
               </Form.Control>
             </Form.Group>
             <Form.Group controlId="exampleForm.ControlSelect2">

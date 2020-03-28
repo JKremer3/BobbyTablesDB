@@ -9,7 +9,7 @@ const pool = new Pool({
 
 const getState = (request, response) => {
     const state = request.params.state;
-    pool.query('SELECT DISTINCT state FROM business WHERE state = $1 ', [state], (error, results) => {
+    pool.query('SELECT DISTINCT busState FROM business WHERE busState = $1 ', [state], (error, results) => {
         if (error) {
             throw error
         }
@@ -18,7 +18,7 @@ const getState = (request, response) => {
 }
 
 const getAllStates = (request, response) => {
-    pool.query('SELECT DISTINCT state FROM business ORDER BY state', (error, results) => {
+    pool.query('SELECT DISTINCT busState FROM business ORDER BY busState', (error, results) => {
         if (error) {
             throw error
         }
