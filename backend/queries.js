@@ -28,7 +28,7 @@ const getAllStates = (request, response) => {
 
 const getCitiesInState = (request, response) => {
     const state = request.params.state;
-    pool.query('SELECT DISTINCT city FROM business WHERE state = $1 ORDER BY city', [state], (error, results) => {
+    pool.query('SELECT DISTINCT city FROM business WHERE busState = $1 ORDER BY city', [state], (error, results) => {
         if (error) {
             throw error
         }
@@ -37,7 +37,7 @@ const getCitiesInState = (request, response) => {
 }
 
 const getAllBusinesses = (request, response) => {
-    pool.query('SELECT * FROM business ORDER BY name', (error, results) => {
+    pool.query('SELECT * FROM business ORDER BY busName', (error, results) => {
         if (error) {
             throw error
         }
@@ -47,7 +47,7 @@ const getAllBusinesses = (request, response) => {
 
 const getBusinessesInCity = (request, response) => {
     const city = request.params.city;
-    pool.query('SELECT DISTINCT name FROM business WHERE city = $1 ORDER BY name', [city], (error, results) => {
+    pool.query('SELECT DISTINCT busName FROM business WHERE city = $1 ORDER BY busName', [city], (error, results) => {
         if (error) {
             throw error
         }
