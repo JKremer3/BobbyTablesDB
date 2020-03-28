@@ -17,7 +17,7 @@ class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      modalIsOpen: false, modalStateIGuess: "", states: [], cities: [], zips: [], businesses: [],
+      modalIsOpen: false, modalStateIGuess: "", states: [], cities: [], zips: [], businessCategories: [], businesses: [],
       slectedState: "", selectedCity: "", selectedBusiness: "", sCount: "", cCount: ""
     };
 
@@ -146,6 +146,12 @@ class App extends React.Component {
               <Form.Label>Zip Code</Form.Label>
               <Form.Control as="select" value={this.state.selectedZipCode} onChange={this.updateTable}>
                 {this.state.zips.map((zip) => <option key={zip.value} value={zip.value}>{zip.display}</option>)}
+              </Form.Control>
+            </Form.Group>
+            <Form.Group controlId="exampleForm.ControlSelect4">
+              <Form.Label>Bussiness Categories</Form.Label>
+              <Form.Control as="select" value={this.state.selectedBusinessCategories} onChange={this.updateTable}>
+                {this.state.businessCategories.map((businessCategory) => <option key={businessCategory.value} value={businessCategory.value}>{businessCategory.display}</option>)}
               </Form.Control>
             </Form.Group>
           </Form>
