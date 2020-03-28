@@ -98,8 +98,8 @@ const getZipcodes = (request, response) => {
 }
 
 const getCatagoriesInZip = (request, response) => {
-    const busid = request.params.busid;
-    pool.query('SELECT DISTINCT category FROM BusCategory WHERE busId = $1', [busid], (error, results) => {
+    const zip = request.params.zip;
+    pool.query('SELECT DISTINCT category FROM BusCategory,Business WHERE BusCategory.busId = Business.busId AND postalCode = $1', [zip], (error, results) => {
         if (error) {
             throw error
         }

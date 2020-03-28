@@ -80,7 +80,7 @@ class App extends React.Component {
       })
       .then(data => {
         let zipsFromApi = data.map(zip => {
-          return { value: zip.postalCode, display: zip.postalcode }
+          return { value: zip.postalcode, display: zip.postalcode }
         });
         this.setState({
           zips: [{ value: '', display: '(Select A Zip)' }].concat(zipsFromApi),
@@ -137,6 +137,25 @@ class App extends React.Component {
     })
   }
 
+  fetchCategories = (e) => { 
+    this.setState({ selectedZip: e.target.value })
+    fetch("http://localhost:3030/zip/cat/" + e.target.value)                          
+    .then((response) => {                         
+      return response.json();                     
+    })                                            
+    .then(data => {
+      let catFromApi = data.map(cat => {
+        return { value: cat.category, display: cat.categoy}
+      });
+      this.setState({
+        businessCategories: catFromApi,
+        businesses: []
+      });
+    }).catch(error => {
+      console.log(error);
+    });                                           
+  } 
+
   updateModal = (busname) => {
     this.setState({ selectedBusiness: busname });
     this.fetchStateCount();
@@ -189,31 +208,22 @@ class App extends React.Component {
             </Form.Group>
             <Form.Group controlId="exampleForm.ControlSelect3">
               <Form.Label>Zip Code</Form.Label>
-              <Form.Control as="select" value={this.state.selectedZip} onChange={this.updateTable}>
+              <Form.Control as="select" value={this.state.selectedZip} onChange={this.fetchCategories}>
                 {this.state.zips.map((zip) => <option key={zip.value} value={zip.value}>{zip.display}</option>)}
-              </Form.Control>
-            </Form.Group>
-            <Form.Group controlId="exampleForm.ControlSelect4">
-              <Form.Label>Bussiness Categories</Form.Label>
-              <Form.Control as="select" value={this.state.selectedBusinessCategories} onChange={this.updateTable}>
-                {this.state.businessCategories.map((businessCategory) => 
-                  <option key={businessCategory.value} value={businessCategory.value}>
-                    {businessCategory.display}
-                    </option>)}
               </Form.Control>
             </Form.Group>
           </Form>
         </div>
         <div>
-            <Form.Label>Zip Code</Form.Label>
-          {this.state.busstates.map((businessCategory) => 
+            <Form.Label>Business Catagories</Form.Label> <br></br>
+          {this.state.businessCategories.map((businessCategory) => 
             this.state.activeCategories.indexOf(businessCategory.value) == -1 ? 
             <React.Fragment>
-              <Button variant="primary" onClick={() => this.activateCategory(businessCategory.value)} >{businessCategory.display}</Button>{' '}
+              <Button variant="primary" onClick={() => this.activateCategory(businessCategory.value)} >{businessCategory.value}</Button>{' '}
             </React.Fragment>
             :
             <React.Fragment>
-              <Button variant="primary" onClick={() => this.deactivateCategory(businessCategory.value)} active>{businessCategory.display}</Button>{' '}
+              <Button variant="primary" onClick={() => this.deactivateCategory(businessCategory.value)} active>{businessCategory.value}</Button>{' '}
             </React.Fragment>
 
           )}
