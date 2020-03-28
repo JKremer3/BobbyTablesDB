@@ -73,7 +73,7 @@ class App extends React.Component {
   }
 
   updateZips = (e) => {
-    this.setState({ selectedState: e.target.value })
+    this.setState({ selectedCity: e.target.value })
     fetch("http://localhost:3030/zip/" + e.target.value)
       .then((response) => {
         return response.json();
