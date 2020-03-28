@@ -87,6 +87,36 @@ const getBusinessCC = (request, response) => {
     });
 }
 
+const getZipcodes = (request, response) => {
+    const city = request.params.city;
+    pool.query('SELECT DISTINCT postalCode FROM business WHERE city = $1 ORDER BY postalCode', [city], (error, results) => {
+        if (error) {
+            throw error
+        }
+        response.status(200).json(results.rows)
+    });
+}
+
+const getCatagoriesInZip = (request, response) => {
+    const city = request.params.city;
+    pool.query('SELECT DISTINCT category FROM BusCategory WHERE busId = $1', [busId], (error, results) => {
+        if (error) {
+            throw error
+        }
+        response.status(200).json(results.rows)
+    });
+}
+
+const getTipsforBusiness = (request, response) => {
+    const city = request.params.city;
+    pool.query('SELECT * FROM Tip WHERE busId = $1', [busId], (error, results) => {
+        if (error) {
+            throw error
+        }
+        response.status(200).json(results.rows)
+    });
+}
+
 module.exports = {
     getState,
     getAllStates,
@@ -96,4 +126,7 @@ module.exports = {
     getBusinessInfo,
     getBusinessSC,
     getBusinessCC,
+    getZipcodes,
+    getCatagoriesInZip,
+    getTipsforBusiness,
 }
