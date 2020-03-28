@@ -1,3 +1,15 @@
+--Drop Table BusCategory;
+--Drop Table BusAttributes;
+--Drop Table BusGoodForMeals;
+--Drop Table BusAmbience;
+--Drop Table BusParking;
+--Drop Table BusHours;
+--Drop Table Friends;
+--Drop Table Tip;
+--Drop Table checkin;
+--Drop Table Users;
+--Drop Table Business;
+
 CREATE TABLE Business(
     --Non-Composite Attributes
     busId VARCHAR(25) NOT NULL,
