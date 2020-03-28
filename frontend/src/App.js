@@ -20,7 +20,7 @@ class App extends React.Component {
     super(props)
     this.state = {
     modalIsOpen: false, modalStateIGuess: "", busstates: [], cities: [], zips: [], businessCategories: [], businesses: [],
-      slectedState: "", selectedCity: "", selectedBusiness: "", sCount: "", cCount: ""
+      slectedState: "", selectedCity: "", selectedBusiness: "", sCount: "", cCount: "", activeCategories: []
     };
 
     this.bName = React.createRef();
@@ -123,6 +123,24 @@ class App extends React.Component {
     this.fetchStateCount();
     this.fetchCityCount();
     this.showModal();
+  }
+
+  activateCategory = (cat) => {
+    activeCategories = this.state.activeCategories
+    activeCategories.push(cat)
+    this.setState({activeCategories: activeCategories})
+  }
+
+  deactivateCategory = (cat) => {
+    activeCategories = this.state.activeCategories
+
+    const index = array.indexOf(cat);
+    if (index > -1) {
+      array.splice(index, 1);
+    }
+
+    this.setState({activeCategories: activeCategories})
+
   }
 
   render() {
