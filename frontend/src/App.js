@@ -11,7 +11,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Table from 'react-bootstrap/Table';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
+import ToggleButton from 'react-bootstrap/ToggleButton';
 import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
 
 class App extends React.Component {
   constructor(props) {
@@ -132,9 +134,12 @@ class App extends React.Component {
           <Form>
             <Form.Group controlId="exampleForm.ControlSelect1">
               <Form.Label>State</Form.Label>
-              <Form.Control as="select" value={this.state.selectedState} onChange={this.updateCities}>
-                {this.state.busstates.map((busstate) => <option key={busstate.value} value={busstate.value}>{busstate.display}</option>)}
-              </Form.Control>
+                <Form.Control as="select" value={this.state.selectedState} onChange={this.updateCities}>
+                  {this.state.busstates.map((busstate) => <option key={busstate.value} value={busstate.value}>
+                    {busstate.display}
+                    <input type="checkbox" id="vehicle1" name="vehicle1" value="Bike"></input>
+                  </option>)}
+                </Form.Control>
             </Form.Group>
             <Form.Group controlId="exampleForm.ControlSelect2">
               <Form.Label>City</Form.Label>
@@ -151,10 +156,21 @@ class App extends React.Component {
             <Form.Group controlId="exampleForm.ControlSelect4">
               <Form.Label>Bussiness Categories</Form.Label>
               <Form.Control as="select" value={this.state.selectedBusinessCategories} onChange={this.updateTable}>
-                {this.state.businessCategories.map((businessCategory) => <option key={businessCategory.value} value={businessCategory.value}>{businessCategory.display}</option>)}
+                {this.state.businessCategories.map((businessCategory) => 
+                  <option key={businessCategory.value} value={businessCategory.value}>
+                    {businessCategory.display}
+                    </option>)}
               </Form.Control>
             </Form.Group>
           </Form>
+        </div>
+        <div>
+            <Form.Label>Zip Code</Form.Label>
+          {this.state.busstates.map((businessCategory) => 
+            <React.Fragment>
+              <Button variant="primary" onClick={() => console.log(businessCategory.value)}>{businessCategory.display}</Button>{' '}
+            </React.Fragment>
+          )}
         </div>
         <Table striped bordered hover id="dataTable">
           <thead>
