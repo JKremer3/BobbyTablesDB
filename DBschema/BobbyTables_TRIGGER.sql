@@ -34,14 +34,13 @@ EXECUTE PROCEDURE update_business_tips();
 create or replace function update_users_tips() RETURNS trigger 
 as '
 BEGIN
-	UPDATE Users 
-	SET tipCount = (select count(userId) from Tip  WHERE Users.userId = Tip.userId);
+	UPDATE Users SET tipCount = res.ccount FROM ( SELECT userId, COUNT(userId) ccount FROM Tip GROUP BY Tip.userId) res WHERE Users.userId = res.userId;
 	RETURN NEW;
 END
 ' LANGUAGE plpgsql;
 
 --Trigger statement to call update_users_tips()
-CREATE OR UPDATE TRIGGER UpdateUsersTips
+CREATE TRIGGER UpdateUsersTips
 AFTER INSERT OR DELETE ON Tip
 FOR EACH ROW
 EXECUTE PROCEDURE update_users_tips();
@@ -50,15 +49,10 @@ EXECUTE PROCEDURE update_users_tips();
 create or replace function update_users_totalLikes() RETURNS trigger 
 as '
 BEGIN
-	UPDATE Users
-	SET totalLikes = sumTbl.likeSum
-	FROM
-	(
-		SELECT userId, SUM(likeCount) likeSum
-		FROM Tip
-		group by userId
-	) sumTbl
-	WHERE Users.userId = sumTbl.userId;
+	UPDATE Users SET totalLikes = res.likeSum FROM
+	(SELECT Tip.userID, SUM(likeCount) likeSum
+	FROM Tip
+	GROUP BY userID) res WHERE Users.userId = res.userId;
 	RETURN NEW;
 END
 ' LANGUAGE plpgsql;
