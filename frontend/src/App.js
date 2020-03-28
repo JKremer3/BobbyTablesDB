@@ -91,9 +91,8 @@ class App extends React.Component {
       });
   }
 
-  updateTable = (e) => {
-    this.setState({ selectedZip: e.target.value })
-    fetch("http://localhost:3030/businesses/" + e.target.value)
+  updateTable = () => {
+    fetch("http://localhost:3030/businesses/" + this.state.selectedZip)
       .then((response) => {
         return response.json();
       })
@@ -153,7 +152,7 @@ class App extends React.Component {
       });
     }).catch(error => {
       console.log(error);
-    });                                           
+    });                                      
   } 
 
   updateModal = (busname) => {
