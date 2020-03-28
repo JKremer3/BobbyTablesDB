@@ -165,6 +165,7 @@ class App extends React.Component {
 
   activateCategory = (cat) => {
     console.log("Activate Category called (" + cat + ")");
+    console.log("ActiveCatagories: " + this.state.activeCategories)
     var activeCategories = this.state.activeCategories;
     const index = activeCategories.indexOf(cat);
     if (index == -1) {
