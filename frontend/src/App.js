@@ -11,21 +11,23 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Table from 'react-bootstrap/Table';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
+import ToggleButton from 'react-bootstrap/ToggleButton';
 import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
 
 class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      modalIsOpen: false, modalStateIGuess: "", states: [], cities: [], zips: [], businessCategories: [], businesses: [],
-      slectedState: "", selectedCity: "", selectedBusiness: "", sCount: "", cCount: ""
+    modalIsOpen: false, modalStateIGuess: "", busstates: [], cities: [], zips: [], businessCategories: [], businesses: [],
+      slectedState: "", selectedCity: "", selectedZip: "", selectedBusiness: "", sCount: "", tCount: "", activeCategories: []
     };
 
     this.bName = React.createRef();
     this.cName = React.createRef();
     this.sName = React.createRef();
     this.sCount = React.createRef();
-    this.cCount = React.createRef();
+    this.tCount = React.createRef();
 
   }
 
@@ -39,11 +41,11 @@ class App extends React.Component {
         return response.json();
       })
       .then(data => {
-        let statesFromApi = data.map(state => {
-          return { value: state.state, display: state.state }
+        let statesFromApi = data.map(busstates => {
+          return { value: busstates.busstate, display: busstates.busstate }
         });
         this.setState({
-          states: [{ value: '', display: '(Select A State)' }].concat(statesFromApi),
+          busstates: [{ value: '', display: '(Select A State)' }].concat(statesFromApi),
           businesses: []
         });
       }).catch(error => {
@@ -70,16 +72,37 @@ class App extends React.Component {
       });
   }
 
-  updateTable = (e) => {
+  updateZips = (e) => {
     this.setState({ selectedCity: e.target.value })
-    fetch("http://localhost:3030/businesses/" + e.target.value)
+    fetch("http://localhost:3030/zip/" + e.target.value)
+      .then((response) => {
+        return response.json();
+      })
+      .then(data => {
+        let zipsFromApi = data.map(zip => {
+          return { value: zip.postalcode, display: zip.postalcode }
+        });
+        this.setState({
+          zips: [{ value: '', display: '(Select A Zip)' }].concat(zipsFromApi),
+          businesses: []
+        });
+      }).catch(error => {
+        console.log(error);
+      });
+  }
+
+  updateTable = (value) => {
+    console.log(value)
+    fetch("http://localhost:3030/businesses/" + value)
       .then((response) => {
         return response.json();
       })
       .then(data => {
         let businessFromApi = data.map(business => {
-          return { value: business.name }
+          return { value: business.busname }
         });
+        console.log(data)
+        console.log(businessFromApi)
         this.setState({
           businesses: businessFromApi
         });
@@ -103,26 +126,69 @@ class App extends React.Component {
   }
 
   fetchCityCount = () => {
-    fetch("http://localhost:3030/count/city/" + this.state.selectedCity)
+    fetch("http://localhost:3030/tip/" + this.state.selectedBusiness)
     .then((response) => {
       return response.json();
     })
     .then(data => {
       this.setState ({
-        cCount: data[0].count
+        tCount: data[0].count
       })
     }).catch(error => {
       console.log(error)
     })
   }
 
-  updateModal = (name) => {
-    this.setState({ selectedBusiness: name });
+  fetchCategories = (e) => { 
+    this.updateTable(e.target.value)
+    this.setState({ selectedZip: e.target.value })
+    fetch("http://localhost:3030/zip/cat/" + e.target.value)                          
+    .then((response) => {                         
+      return response.json();                     
+    })                                            
+    .then(data => {
+      let catFromApi = data.map(cat => {
+        return { value: cat.category, display: cat.categoy}
+      });
+      this.setState({
+        businessCategories: catFromApi,
+      });
+    }).catch(error => {
+      console.log(error);
+    });                                      
+  } 
+
+  updateModal = (busname) => {
+    this.setState({ selectedBusiness: busname });
     this.fetchStateCount();
     this.fetchCityCount();
     this.showModal();
   }
 
+  activateCategory = (cat) => {
+    console.log("Activate Category called (" + cat + ")");
+    console.log("ActiveCatagories: " + this.state.activeCategories)
+    var activeCategories = this.state.activeCategories;
+    const index = activeCategories.indexOf(cat);
+    if (index == -1) {
+      activeCategories.push(cat);
+    }
+    this.setState({activeCategories: activeCategories});
+  }
+
+  deactivateCategory = (cat) => {
+    console.log("Deactivate Category called (" + cat + ")");
+    var activeCategories = this.state.activeCategories
+
+    const index = activeCategories.indexOf(cat);
+    if (index > -1) {
+      activeCategories.splice(index, 1);
+    }
+
+    this.setState({activeCategories: activeCategories});
+  }
+
+  
   render() {
     return (
       <div className="App" style={{display: "flex", justifyContent: "center" }} >
@@ -132,29 +198,39 @@ class App extends React.Component {
           <Form>
             <Form.Group controlId="exampleForm.ControlSelect1">
               <Form.Label>State</Form.Label>
-              <Form.Control as="select" value={this.state.selectedState} onChange={this.updateCities}>
-                {this.state.states.map((state) => <option key={state.value} value={state.value}>{state.display}</option>)}
-              </Form.Control>
+                <Form.Control as="select" value={this.state.selectedState} onChange={this.updateCities}>
+                  {this.state.busstates.map((busstate) => <option key={busstate.value} value={busstate.value}>
+                    {busstate.display}
+                  </option>)}
+                </Form.Control>
             </Form.Group>
             <Form.Group controlId="exampleForm.ControlSelect2">
               <Form.Label>City</Form.Label>
-              <Form.Control as="select" value={this.state.selectedCity} onChange={this.updateTable}>
+              <Form.Control as="select" value={this.state.selectedCity} onChange={this.updateZips}>
                 {this.state.cities.map((city) => <option key={city.value} value={city.value}>{city.display}</option>)}
               </Form.Control>
             </Form.Group>
             <Form.Group controlId="exampleForm.ControlSelect3">
               <Form.Label>Zip Code</Form.Label>
-              <Form.Control as="select" value={this.state.selectedZipCode} onChange={this.updateTable}>
+              <Form.Control as="select" value={this.state.selectedZip} onChange={this.fetchCategories}>
                 {this.state.zips.map((zip) => <option key={zip.value} value={zip.value}>{zip.display}</option>)}
               </Form.Control>
             </Form.Group>
-            <Form.Group controlId="exampleForm.ControlSelect4">
-              <Form.Label>Bussiness Categories</Form.Label>
-              <Form.Control as="select" value={this.state.selectedBusinessCategories} onChange={this.updateTable}>
-                {this.state.businessCategories.map((businessCategory) => <option key={businessCategory.value} value={businessCategory.value}>{businessCategory.display}</option>)}
-              </Form.Control>
-            </Form.Group>
           </Form>
+        </div>
+        <div>
+            <Form.Label>Business Catagories</Form.Label> <br></br>
+          {this.state.businessCategories.map((businessCategory) => 
+            this.state.activeCategories.indexOf(businessCategory.value) == -1 ? 
+            <React.Fragment>
+              <Button style={{ margin: "5px"}} variant="primary" onClick={() => this.activateCategory(businessCategory.value)} >{businessCategory.value}</Button>{' '}
+            </React.Fragment>
+            :
+            <React.Fragment>
+              <Button style={{ margin: "5px"}} variant="primary" onClick={() => this.deactivateCategory(businessCategory.value)} active>{businessCategory.value}</Button>{' '}
+            </React.Fragment>
+
+          )}
         </div>
         <Table striped bordered hover id="dataTable">
           <thead>
@@ -182,8 +258,8 @@ class App extends React.Component {
               <div id="bName">Name: {this.state.selectedBusiness}</div>
               <div id="cName">City: {this.state.selectedCity}</div>
               <div id="sName">State: {this.state.selectedState}</div>
-              <div id="cCount">Businesses in City: {this.state.cCount}</div>
-              <div id="sCount">Businesses in State: {this.state.sCount}</div>
+              <div id="tCount">Tips: {this.state.tCount}</div>
+
             </div>
           </Modal.Body>
           <Modal.Footer>
