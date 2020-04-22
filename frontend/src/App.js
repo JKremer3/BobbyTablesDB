@@ -249,7 +249,7 @@ class App extends React.Component {
             </div>
 
             <div style={{ display: "flex", flexDirection: "row" }}>
-              <div style={{ display: "block", width: "500px", margin: "20px" }}>
+              <div style={{ display: "block", minWidth: "400px", maxHeight: "300px", margin: "20px", overflow: "auto" }}>
                 <Table striped bordered hover id="dataTable">
                   <thead>
                     <tr>
@@ -271,7 +271,7 @@ class App extends React.Component {
               <div style={{ display: "block", width: "500px", margin: "20px" }}>
                 <div> Tips</div>
                 <div style={{
-                  width: "500px", height: "300px", overflow: "auto",
+                  width: "400px", height: "300px", overflow: "auto",
                   background: "#d6d4d3", margin: "10", borderStyle: "solid", borderColor: "#8c8987", borderWidth: "2px"
                 }}>
                   {this.state.tips.map((tip) => <tr key={tip.value} value={tip.value}>
