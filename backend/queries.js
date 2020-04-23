@@ -117,13 +117,14 @@ const getTipsforBusiness = (request, response) => {
     });
 }
 
+//returns a json containing 12 subdivisions of {checkmonth: "", monthcount ""}
 const getChartForBusiness = (request, response) => {
     const busid = request.params.busid;
-    pool.query('', [busid], (error, results) => {
+    pool.query('select c1.checkmonth, sum(c1.checkcount) as monthcount from (select busId, checkmonth, count(busId) as checkCount from checkin where busId = $1 group by busId, checkmonth, checkyear) c1 group by checkmonth order by checkmonth', [busid], (error, results) => {
         if (error) {
             throw error
         }
-        response.status.json(results.rows)
+        response.status(200).json(results.rows)
     });
 }
 
