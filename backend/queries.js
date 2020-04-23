@@ -119,6 +119,12 @@ const getTipsforBusiness = (request, response) => {
 
 const getChartForBusiness = (request, response) => {
     const busid = request.params.busid;
+    pool.query('', [busid], (error, results) => {
+        if (error) {
+            throw error
+        }
+        response.status.json(results.rows)
+    });
 }
 
 const insertTip = (request, response) => {
