@@ -90,7 +90,7 @@ CREATE TABLE Users(
     fans INT,
     userLat CHAR(13),
     userLong CHAR(13),
-    userName VARCHAR(20) NOT NULL,
+    userName VARCHAR(40) NOT NULL,
     tipCount INT NOT NULL,
     useful INT NOT NULL,
     userId VARCHAR(25) NOT NULL,
@@ -107,10 +107,10 @@ CREATE TABLE Tip(
     busId VARCHAR(25) NOT NULL,
     userId VARCHAR(25) NOT NULL,
     likeCount INT,
-    tipText VARCHAR(500) NOT NULL,
+    tipText NVARCHAR(510) NOT NULL,
     tipDate CHAR(10) NOT NULL,
     tipTime CHAR(8) NOT NULL,
-    PRIMARY KEY (busId, userId, tipDate),
+    PRIMARY KEY (busId, userId, tipDate, tipTime),
     FOREIGN KEY (busId) REFERENCES Business(busId),
     FOREIGN Key (userId) REFERENCES Users(userId)
 );
