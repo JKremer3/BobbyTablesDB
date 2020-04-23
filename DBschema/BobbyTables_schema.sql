@@ -48,7 +48,6 @@ CREATE TABLE BusGoodForMeals(
     busId VARCHAR(25) NOT NULL,
     mealType VARCHAR(30) NOT NULL,
     mealVal BOOLEAN,
-    
     PRIMARY KEY(busId, mealType),
     FOREIGN KEY(busId) REFERENCES Business(busId)
 );
@@ -57,7 +56,6 @@ CREATE TABLE BusAmbience(
     busId VARCHAR(25) NOT NULL,
     ambienceType VARCHAR(20) NOT NULL,
     ambienceVal BOOLEAN,
-
     PRIMARY KEY(busId, ambienceType),
     FOREIGN KEY(busId) REFERENCES Business(busId)
 );
@@ -66,7 +64,6 @@ CREATE TABLE BusParking(
     busId VARCHAR(25) NOT NULL,
     parkingType VARCHAR(20) NOT NULL,
     parkVal BOOLEAN,
-    
     PRIMARY KEY(busId, parkingType),
     FOREIGN KEY(busId) REFERENCES Business(busId)
 );
@@ -76,8 +73,6 @@ CREATE TABLE BusHours(
     dayOfWeek  VARCHAR(9) NOT NULL,
     hrOpen VARCHAR(5),
     hrClosed VARCHAR(5),
-    
-    
     PRIMARY KEY(busId, dayOfWeek),
     FOREIGN KEY(busId) REFERENCES Business(busId)
 );
@@ -90,7 +85,7 @@ CREATE TABLE Users(
     fans INT,
     userLat CHAR(13),
     userLong CHAR(13),
-    userName VARCHAR(20) NOT NULL,
+    userName VARCHAR(40) NOT NULL,
     tipCount INT NOT NULL,
     useful INT NOT NULL,
     userId VARCHAR(25) NOT NULL,
@@ -107,10 +102,10 @@ CREATE TABLE Tip(
     busId VARCHAR(25) NOT NULL,
     userId VARCHAR(25) NOT NULL,
     likeCount INT,
-    tipText VARCHAR(500) NOT NULL,
+    tipText VARCHAR(510) NOT NULL,
     tipDate CHAR(10) NOT NULL,
     tipTime CHAR(8) NOT NULL,
-    PRIMARY KEY (busId, userId, tipDate),
+    PRIMARY KEY (busId, userId, tipDate, tipTime),
     FOREIGN KEY (busId) REFERENCES Business(busId),
     FOREIGN Key (userId) REFERENCES Users(userId)
 );

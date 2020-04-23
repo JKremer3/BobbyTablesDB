@@ -219,7 +219,7 @@ def insert2TipTable():
             # Generate the INSERT statement for the current business
             tip = "INSERT INTO tip (busId, userId, likeCount, tipText, tipDate, tipTime) " \
                 "VALUES ('" + cleanStr4SQL(data["business_id"]) + "','" + cleanStr4SQL(data["user_id"]) + "'," + str(data["likes"]) + ",'" \
-                     + cleanStr4SQL(data["text"]) + "','" + cleanStr4SQL(datetime[0]) + "','" + cleanStr4SQL(datetime[1]) + "');"
+                     + cleanStr4SQL(data["text"].encode('unicode_escape').decode('unicode_escape')) + "','" + cleanStr4SQL(datetime[0]) + "','" + cleanStr4SQL(datetime[1]) + "');"
 
             try:
                 cur.execute(tip)
@@ -265,17 +265,21 @@ def insert2CheckinTable():
                 datetime = x.split(' ')
                 date = datetime[0].split('-')
 
-            # Generate the INSERT statement for the current business
-            checkin = "INSERT INTO checkin (busId, checkYear, checkDate, checkMonth, checkTime) " \
-                "VALUES ('" + cleanStr4SQL(data["business_id"]) + "','" + str(date[0]) + "'," + str(date[1]) + ",'" \
-                     + cleanStr4SQL(date[2]) + "','" + cleanStr4SQL(datetime[1]) + "');"
+                #print("datetime: ")
+                #print(datetime)
+                #print("date: ")
+                #print(date)
+                # Generate the INSERT statement for the current business
+                checkin = "INSERT INTO checkin (busId, checkYear, checkDate, checkMonth, checkTime) " \
+                    "VALUES ('" + cleanStr4SQL(data["business_id"]) + "','" + str(date[0]) + "'," + str(date[2]) + ",'" \
+                         + cleanStr4SQL(date[1]) + "','" + cleanStr4SQL(datetime[1]) + "');"
 
-            try:
-                cur.execute(checkin)
-            except:
-                print("Insert to checkin failed!")
-                print(checkin)
-            conn.commit()
+                try:
+                    cur.execute(checkin)
+                except:
+                    print("Insert to checkin failed!")
+                    print(checkin)
+                conn.commit()
 
             # optionally you might write the INSERT statement to a file.
             # outfile.write(tip)
@@ -471,10 +475,10 @@ def parseTipData():
     f.close()
 
 
-insert2BusinessTable() #working
-insert2UsersTable() #working but missing some users ~50 (possibly null/malformed)
-insert2TipTable() #working but missing some tips ~10000
-insert2CheckinTable() # working
+#insert2BusinessTable() #working
+#insert2UsersTable() #working
+#insert2TipTable() #working but missing 9 tips?
+#insert2CheckinTable() # working but missing 10
 insert2FriendTable() # working with minimal failures (could be due to missing users)
 
 #parseBusinessData()
