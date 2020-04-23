@@ -100,7 +100,7 @@ class App extends React.Component {
       })
       .then(data => {
         let businessFromApi = data.map(business => {
-          return { id: business.id , busname: business.busname, address: business.address, 
+          return { id: business.busid , busname: business.busname, address: business.address, 
           city: business.city, busstate: business.busstate, stars: business.stars, distance: 0, 
         numtips: business.numtips, numcheckins: business.numcheckins }
         });
@@ -133,15 +133,18 @@ class App extends React.Component {
       });
   }
 
-  updateTips = (e) => {
+  updateTips = (id) => {
+      console.log(id);
     // get the tips for a business id
-    fetch("http://localhost:3030/tip/dHUb949NckE2GqtlSVlWQg" )
+    fetch("http://localhost:3030/tip/" + id )
     .then((response) => {
       return response.json();
     } )
     .then(data => {
       let tips = data.map(tip => {
-        return { tip: tip }
+        return { tiptext: tip.tiptext, likecount: tip.likecount,
+           userid: tip.userid, busid: tip.busid, 
+           tipdate: tip.tipdate, tiptime: tip.tiptime }
       });
       this.setState({ tips: tips });
       console.log("Got tips");
@@ -178,6 +181,11 @@ class App extends React.Component {
     }
 
     this.setState({ activeCategories: activeCategories });
+  }
+
+  showTips = (id) => {
+
+    this.updateTips(id)
   }
 
   render() {
@@ -255,8 +263,8 @@ class App extends React.Component {
                     </tr>
                   </thead>
                   <tbody>
-                    {this.state.businesses.map((business) => <tr key={business.id} value={business.id}>
-                      <td onClick={() => this.updateModal(business.busname)}>{business.busname}</td>
+                    {this.state.businesses.map((business) => <tr onClick={() => this.showTips(business.id)} key={business.id} value={business.id}>
+                      <td >{business.busname}</td>
                       <td>{business.busstate}</td>
                       <td>{business.city}</td>
                       <td>{business.address}</td>
@@ -275,6 +283,30 @@ class App extends React.Component {
                   width: "400px", height: "300px", overflow: "auto",
                   background: "#d6d4d3", margin: "10", borderStyle: "solid", borderColor: "#8c8987", borderWidth: "2px"
                 }}>
+                  <Table striped bordered hover id="tipTable">
+                    <thead>
+                      <tr>
+                        <th>Tip</th>
+                        <th>User</th>
+                        <th>Likes</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {this.state.tips.map((tip) => <tr key={tip.tiptext} value={tip.tiptext}>
+                        <td>{tip.tiptext}</td>
+                        <td>{tip.userid}</td>
+                        <td>{tip.likecount}</td>
+                        <td>{tip.tipdate}</td>
+                        <td>{tip.tiptime}</td>
+                      </tr>)}
+                    </tbody>
+                  </Table>
+
+
+
+
                   { this.state.tips.map((tip) => <tr key={tip.value} value={tip.value}>
                     <td>{tip.value}</td>
                   </tr>)}
