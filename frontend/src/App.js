@@ -112,34 +112,6 @@ class App extends React.Component {
       });
   }
 
-  fetchStateCount = () => {
-    fetch("http://localhost:3030/count/state/" + this.state.selectedState)
-      .then((response) => {
-        return response.json();
-      })
-      .then(data => {
-        this.setState({
-          sCount: data[0].count
-        });
-      }).catch(error => {
-        console.log(error)
-      })
-  }
-
-  fetchCityCount = () => {
-    fetch("http://localhost:3030/tip/" + this.state.selectedBusiness)
-      .then((response) => {
-        return response.json();
-      })
-      .then(data => {
-        this.setState({
-          tCount: data[0].count
-        })
-      }).catch(error => {
-        console.log(error)
-      })
-  }
-
   fetchCategories = (e) => {
     this.updateTable(e.target.value)
     this.setState({ selectedZip: e.target.value })
@@ -157,6 +129,25 @@ class App extends React.Component {
       }).catch(error => {
         console.log(error);
       });
+  }
+
+  updateTips = (e) => {
+    // get the tips for a business id
+    fetch("http://localhost:3030/tip/dHUb949NckE2GqtlSVlWQg" )
+    .then((response) => {
+      return response.json();
+    } )
+    .then(data => {
+      let tips = data.map(tip => {
+        return { tip: tip }
+      });
+      this.setState({ tips: tips });
+      console.log("Got tips");
+      console.log(tips);
+    }).catch( error => {
+      console.log(error)
+    }
+    );
   }
 
   updateModal = (busname) => {
@@ -274,7 +265,7 @@ class App extends React.Component {
                   width: "400px", height: "300px", overflow: "auto",
                   background: "#d6d4d3", margin: "10", borderStyle: "solid", borderColor: "#8c8987", borderWidth: "2px"
                 }}>
-                  {this.state.tips.map((tip) => <tr key={tip.value} value={tip.value}>
+                  { this.state.tips.map((tip) => <tr key={tip.value} value={tip.value}>
                     <td>{tip.value}</td>
                   </tr>)}
                 </div>
