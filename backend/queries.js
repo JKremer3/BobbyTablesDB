@@ -117,6 +117,10 @@ const getTipsforBusiness = (request, response) => {
     });
 }
 
+const getChartForBusiness = (request, response) => {
+    const busid = request.params.busid;
+}
+
 const insertTip = (request, response) => {
     console.log("in insertTip")
     console.log(request.body)
@@ -142,5 +146,6 @@ module.exports = {
     getZipcodes,
     getCatagoriesInZip,
     getTipsforBusiness,
+    getChartForBusiness,
     insertTip,
 }
