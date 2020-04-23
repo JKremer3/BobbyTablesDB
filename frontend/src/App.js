@@ -100,7 +100,9 @@ class App extends React.Component {
       })
       .then(data => {
         let businessFromApi = data.map(business => {
-          return { value: business.busname }
+          return { id: business.id , busname: business.busname, address: business.address, 
+          city: business.city, busstate: business.busstate, stars: business.stars, distance: 0, 
+        numtips: business.numtips, numcheckins: business.numcheckins }
         });
         console.log(data)
         console.log(businessFromApi)
@@ -152,8 +154,6 @@ class App extends React.Component {
 
   updateModal = (busname) => {
     this.setState({ selectedBusiness: busname });
-    this.fetchStateCount();
-    this.fetchCityCount();
     this.showModal();
   }
 
@@ -247,13 +247,23 @@ class App extends React.Component {
                       <th>Business Name</th>
                       <th>State</th>
                       <th>City</th>
+                      <th>Address</th>
+                      <th>Distance</th>
+                      <th>Stars</th>
+                      <th>Tip Count</th>
+                      <th>Checkins</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {this.state.businesses.map((business) => <tr key={business.value} value={business.value}>
-                      <td onClick={() => this.updateModal(business.value)}>{business.value}</td>
-                      <td>{this.state.selectedState}</td>
-                      <td>{this.state.selectedCity}</td>
+                    {this.state.businesses.map((business) => <tr key={business.id} value={business.id}>
+                      <td onClick={() => this.updateModal(business.busname)}>{business.busname}</td>
+                      <td>{business.busstate}</td>
+                      <td>{business.city}</td>
+                      <td>{business.address}</td>
+                      <td>{business.distance}</td>
+                      <td>{business.stars}</td>
+                      <td>{business.numtips}</td>
+                      <td>{business.numcheckins}</td>
                     </tr>)}
                   </tbody>
                 </Table>

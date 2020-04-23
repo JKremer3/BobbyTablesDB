@@ -48,7 +48,7 @@ const getAllBusinesses = (request, response) => {
 
 const getBusinessesInZip = (request, response) => {
     const zip = request.params.zip;
-    pool.query('SELECT DISTINCT busName FROM business WHERE postalcode = $1 ORDER BY busName', [zip], (error, results) => {
+    pool.query('SELECT DISTINCT * FROM business WHERE postalcode = $1 ORDER BY busName', [zip], (error, results) => {
         if (error) {
             throw error
         }
