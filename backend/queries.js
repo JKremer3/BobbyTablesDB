@@ -142,7 +142,6 @@ const insertTip = (request, response) => {
     });
 }
 
-<<<<<<< 7e7d94524921a20c5803399c628cfe3ef020f3be
 const putLikeTip = (request, response) => {
     console.log("In putLikeTip");
     //Params from route
@@ -158,7 +157,9 @@ const putLikeTip = (request, response) => {
         }
 
         response.status(200).send()
-=======
+    });
+}
+
 const getBusinessFilter = (request, response) => {
     const zip = request.params.zip;
     const catagory = request.params.catagory;
@@ -167,7 +168,6 @@ const getBusinessFilter = (request, response) => {
             throw error
         }
         response.status(200).json(results.rows)
->>>>>>> adding queries for filter
     });
 }
 
@@ -185,9 +185,6 @@ module.exports = {
     getTipsforBusiness,
     getChartForBusiness,
     insertTip,
-<<<<<<< 7e7d94524921a20c5803399c628cfe3ef020f3be
-    putLikeTip
-=======
+    putLikeTip,
     getBusinessFilter,
->>>>>>> adding queries for filter
 }
