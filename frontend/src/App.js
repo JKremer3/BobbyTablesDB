@@ -268,13 +268,14 @@ class App extends React.Component {
                       </React.Fragment>
                   )}
                 </div>
+
               </div>
 
             </div>
 
             <div style={{ display: "flex", flexDirection: "row" }}>
               <div style={{ display: "block", minWidth: "400px", maxHeight: "300px", margin: "20px", overflow: "auto" }}>
-                <Table striped bordered hover id="dataTable">
+                <table className="sortable" id="dataTable">
                   <thead>
                     <tr>
                       <th>Business Name</th>
@@ -299,7 +300,7 @@ class App extends React.Component {
                       <td>{business.numcheckins}</td>
                     </tr>)}
                   </tbody>
-                </Table>
+                  </table>
               </div>
 
               <div style={{ display: "block", width: "500px", margin: "20px" }}>
