@@ -1,4 +1,5 @@
 const Pool = require('pg').Pool
+const pSleep = require('pg').sleep
 const pool = new Pool({
     user: 'postgres',
     host: 'localhost',
@@ -154,14 +155,8 @@ const putLikeTip = (request, response) => {
         if (error) {
             throw error
         }
-    });
 
-    //Return list of tips to refresh tips table
-    pool.query('SELECT * FROM Tip WHERE busId = $1', [busid], (error, results) => {
-        if (error) {
-            throw error
-        }
-        response.status(200).json(results.rows)
+        response.status(200).send()
     });
 }
 
