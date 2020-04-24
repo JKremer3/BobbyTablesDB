@@ -275,29 +275,29 @@ class App extends React.Component {
 
             <div style={{ display: "flex", flexDirection: "row" }}>
               <div style={{ display: "block", minWidth: "400px", maxHeight: "300px", margin: "20px", overflow: "auto" }}>
-                <table className="sortable" id="dataTable">
+                <table style={{ border: "1px solid grey" }} className="sortable" id="dataTable">
                   <thead>
                     <tr>
-                      <th>Business Name</th>
-                      <th>State</th>
-                      <th>City</th>
-                      <th>Address</th>
-                      <th>Distance</th>
-                      <th>Stars</th>
-                      <th>Tip Count</th>
-                      <th>Checkins</th>
+                      <th style={{ border: "1px solid grey" }} >Business Name</th>
+                      <th style={{ border: "1px solid grey" }} >State</th>
+                      <th style={{ border: "1px solid grey" }}>City</th>
+                      <th style={{ border: "1px solid grey" }} >Address</th>
+                      <th style={{ border: "1px solid grey" }}>Distance</th>
+                      <th style={{ border: "1px solid grey" }}>Stars</th>
+                      <th style={{ border: "1px solid grey" }}>Tip Count</th>
+                      <th style={{ border: "1px solid grey" }}>Checkins</th>
                     </tr>
                   </thead>
                   <tbody>
                     {this.state.businesses.map((business) => <tr onClick={() => this.showTips(business.id)} key={business.id} value={business.id}>
-                      <td >{business.busname}</td>
-                      <td>{business.busstate}</td>
-                      <td>{business.city}</td>
-                      <td>{business.address}</td>
-                      <td>{business.distance}</td>
-                      <td>{business.stars}</td>
-                      <td>{business.numtips}</td>
-                      <td>{business.numcheckins}</td>
+                      <td style={{ border: "1px solid grey" }}>{business.busname}</td>
+                      <td style={{ border: "1px solid grey" }}>{business.busstate}</td>
+                      <td style={{ border: "1px solid grey" }}>{business.city}</td>
+                      <td style={{ border: "1px solid grey" }}>{business.address}</td>
+                      <td style={{ border: "1px solid grey" }} >{business.distance}</td>
+                      <td style={{ border: "1px solid grey" }} >{business.stars}</td>
+                      <td style={{ border: "1px solid grey" }}>{business.numtips}</td>
+                      <td style={{ border: "1px solid grey" }}>{business.numcheckins}</td>
                     </tr>)}
                   </tbody>
                   </table>
