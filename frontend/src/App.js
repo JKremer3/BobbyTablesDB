@@ -160,7 +160,30 @@ class App extends React.Component {
     this.showModal();
   }
 
-  activateCategory = (cat) => {
+
+  updateTableFilter = (zip, cat) => {
+    console.log("Filter fetch called")
+    fetch("http://localhost:3030/business/" + zip + "/" + cat)
+      .then((response) => {
+        return response.json();
+      })
+      .then(data => {
+        let businessFromApi = data.map(business => {
+          return { id: business.busid , busname: business.busname, address: business.address, 
+          city: business.city, busstate: business.busstate, stars: business.stars, distance: 0, 
+        numtips: business.numtips, numcheckins: business.numcheckins }
+        });
+        console.log(data)
+        console.log(businessFromApi)
+        this.setState({
+          businesses: businessFromApi
+        });
+      }).catch(error => {
+        console.log(error);
+      });
+  }
+
+  activateCategory = async (cat) => {
     console.log("Activate Category called (" + cat + ")");
     console.log("ActiveCatagories: " + this.state.activeCategories)
     var activeCategories = this.state.activeCategories;
@@ -169,6 +192,8 @@ class App extends React.Component {
       activeCategories.push(cat);
     }
     this.setState({ activeCategories: activeCategories });
+    this.updateTableFilter( this.state.selectedZip , this.state.activeCategories[0] )
+
   }
 
   deactivateCategory = (cat) => {
