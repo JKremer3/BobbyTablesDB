@@ -49,4 +49,8 @@ app.get('/zip/cat/:zip', db.getCatagoriesInZip)
 app.get('/tip/:busid', db.getTipsforBusiness)
 app.get('/chart/:busid', db.getChartForBusiness)
 app.post('/tip/insert', db.insertTip)
+<<<<<<< 7e7d94524921a20c5803399c628cfe3ef020f3be
 app.put('/tip/:busid/:userid/:tipdate/:tiptime', db.putLikeTip)
+=======
+app.post('/business/:zip/:catagory', db.insertTip)
+>>>>>>> adding queries for filter

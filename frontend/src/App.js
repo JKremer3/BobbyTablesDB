@@ -13,14 +13,15 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import Form from 'react-bootstrap/Form';
+import Navbar from 'react-bootstrap/Navbar';
 import InputGroup from 'react-bootstrap/InputGroup';
 
 class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-    modalIsOpen: false, modalStateIGuess: "", busstates: [], cities: [], zips: [], businessCategories: [], businesses: [],
-      slectedState: "", selectedCity: "", selectedZip: "", selectedBusiness: "", sCount: "", tCount: "", activeCategories: []
+      modalIsOpen: false, modalStateIGuess: "", busstates: [], cities: [], zips: [], businessCategories: [], businesses: [],
+      slectedState: "", selectedCity: "", selectedZip: "", selectedBusiness: "", sCount: "", cCount: "", activeCategories: [], tips: []
     };
 
     this.bName = React.createRef();
@@ -99,7 +100,9 @@ class App extends React.Component {
       })
       .then(data => {
         let businessFromApi = data.map(business => {
-          return { value: business.busname }
+          return { id: business.busid , busname: business.busname, address: business.address, 
+          city: business.city, busstate: business.busstate, stars: business.stars, distance: 0, 
+        numtips: business.numtips, numcheckins: business.numcheckins }
         });
         console.log(data)
         console.log(businessFromApi)
@@ -111,57 +114,49 @@ class App extends React.Component {
       });
   }
 
-  fetchStateCount = () => {
-    fetch("http://localhost:3030/count/state/" + this.state.selectedState)
-    .then((response) => {
-      return response.json();
-    })
-    .then(data => {
-      this.setState ({
-        sCount: data[0].count
-      });
-    }).catch(error => {
-      console.log(error)
-    })
-  }
-
-  fetchCityCount = () => {
-    fetch("http://localhost:3030/tip/" + this.state.selectedBusiness)
-    .then((response) => {
-      return response.json();
-    })
-    .then(data => {
-      this.setState ({
-        tCount: data[0].count
-      })
-    }).catch(error => {
-      console.log(error)
-    })
-  }
-
-  fetchCategories = (e) => { 
+  fetchCategories = (e) => {
     this.updateTable(e.target.value)
     this.setState({ selectedZip: e.target.value })
-    fetch("http://localhost:3030/zip/cat/" + e.target.value)                          
-    .then((response) => {                         
-      return response.json();                     
-    })                                            
+    fetch("http://localhost:3030/zip/cat/" + e.target.value)
+      .then((response) => {
+        return response.json();
+      })
+      .then(data => {
+        let catFromApi = data.map(cat => {
+          return { value: cat.category, display: cat.categoy }
+        });
+        this.setState({
+          businessCategories: catFromApi,
+        });
+      }).catch(error => {
+        console.log(error);
+      });
+  }
+
+  updateTips = (id) => {
+      console.log(id);
+    // get the tips for a business id
+    fetch("http://localhost:3030/tip/" + id )
+    .then((response) => {
+      return response.json();
+    } )
     .then(data => {
-      let catFromApi = data.map(cat => {
-        return { value: cat.category, display: cat.categoy}
+      let tips = data.map(tip => {
+        return { tiptext: tip.tiptext, likecount: tip.likecount,
+           userid: tip.userid, busid: tip.busid, 
+           tipdate: tip.tipdate, tiptime: tip.tiptime }
       });
-      this.setState({
-        businessCategories: catFromApi,
-      });
-    }).catch(error => {
-      console.log(error);
-    });                                      
-  } 
+      this.setState({ tips: tips });
+      console.log("Got tips");
+      console.log(tips);
+    }).catch( error => {
+      console.log(error)
+    }
+    );
+  }
 
   updateModal = (busname) => {
     this.setState({ selectedBusiness: busname });
-    this.fetchStateCount();
-    this.fetchCityCount();
     this.showModal();
   }
 
@@ -173,7 +168,7 @@ class App extends React.Component {
     if (index == -1) {
       activeCategories.push(cat);
     }
-    this.setState({activeCategories: activeCategories});
+    this.setState({ activeCategories: activeCategories });
   }
 
   deactivateCategory = (cat) => {
@@ -185,69 +180,147 @@ class App extends React.Component {
       activeCategories.splice(index, 1);
     }
 
-    this.setState({activeCategories: activeCategories});
+    this.setState({ activeCategories: activeCategories });
   }
 
-  
+  showTips = (id) => {
+
+    this.updateTips(id)
+  }
+
   render() {
     return (
-      <div className="App" style={{display: "flex", justifyContent: "center" }} >
-        <div style={{width: "500px"}} >
-          
-        <div>
-          <Form>
-            <Form.Group controlId="exampleForm.ControlSelect1">
-              <Form.Label>State</Form.Label>
-                <Form.Control as="select" value={this.state.selectedState} onChange={this.updateCities}>
-                  {this.state.busstates.map((busstate) => <option key={busstate.value} value={busstate.value}>
-                    {busstate.display}
-                  </option>)}
-                </Form.Control>
-            </Form.Group>
-            <Form.Group controlId="exampleForm.ControlSelect2">
-              <Form.Label>City</Form.Label>
-              <Form.Control as="select" value={this.state.selectedCity} onChange={this.updateZips}>
-                {this.state.cities.map((city) => <option key={city.value} value={city.value}>{city.display}</option>)}
-              </Form.Control>
-            </Form.Group>
-            <Form.Group controlId="exampleForm.ControlSelect3">
-              <Form.Label>Zip Code</Form.Label>
-              <Form.Control as="select" value={this.state.selectedZip} onChange={this.fetchCategories}>
-                {this.state.zips.map((zip) => <option key={zip.value} value={zip.value}>{zip.display}</option>)}
-              </Form.Control>
-            </Form.Group>
-          </Form>
-        </div>
-        <div>
-            <Form.Label>Business Catagories</Form.Label> <br></br>
-          {this.state.businessCategories.map((businessCategory) => 
-            this.state.activeCategories.indexOf(businessCategory.value) == -1 ? 
-            <React.Fragment>
-              <Button style={{ margin: "5px"}} variant="primary" onClick={() => this.activateCategory(businessCategory.value)} >{businessCategory.value}</Button>{' '}
-            </React.Fragment>
-            :
-            <React.Fragment>
-              <Button style={{ margin: "5px"}} variant="primary" onClick={() => this.deactivateCategory(businessCategory.value)} active>{businessCategory.value}</Button>{' '}
-            </React.Fragment>
 
-          )}
+      <div className="App" style={{ display: "flex", justifyContent: "center", backgroundColor: "#007bff", minHeight: "100vh" }} >
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <Navbar theme="navbar-default" bg="primary" expand="false" >
+            <Navbar.Brand href="#home" style={{ fontStyle: "italic" }}>YELPER HELPER</Navbar.Brand>
+          </Navbar>
+
+          <div style={{ display: "flex", flexDirection: "column", width: "80%", backgroundColor: "#EEEEEE" }}>
+
+            <div style={{ display: "flex", flexDirection: "row" }}>
+              <div style={{ display: "block", width: "500px", margin: "20px" }}>
+                <Form>
+                  <Form.Group controlId="exampleForm.ControlSelect1">
+                    <Form.Label>State</Form.Label>
+                    <Form.Control as="select" value={this.state.selectedState} onChange={this.updateCities}>
+                      {this.state.busstates.map((busstate) => <option key={busstate.value} value={busstate.value}>
+                        {busstate.display}
+                      </option>)}
+                    </Form.Control>
+                  </Form.Group>
+                  <Form.Group controlId="exampleForm.ControlSelect2">
+                    <Form.Label>City</Form.Label>
+                    <Form.Control as="select" value={this.state.selectedCity} onChange={this.updateZips}>
+                      {this.state.cities.map((city) => <option key={city.value} value={city.value}>{city.display}</option>)}
+                    </Form.Control>
+                  </Form.Group>
+                  <Form.Group controlId="exampleForm.ControlSelect3">
+                    <Form.Label>Zip Code</Form.Label>
+                    <Form.Control as="select" value={this.state.selectedZip} onChange={this.fetchCategories}>
+                      {this.state.zips.map((zip) => <option key={zip.value} value={zip.value}>{zip.display}</option>)}
+                    </Form.Control>
+                  </Form.Group>
+                </Form>
+              </div>
+
+
+              <div style={{ display: "block", width: "500px", margin: "20px" }}>
+                <Form.Label>Business Catagories</Form.Label> <br></br>
+                <div style={{
+                  width: "500px", height: "300px", overflow: "auto", background: "#d6d4d3", margin: "10",
+                  borderStyle: "solid", borderColor: "#8c8987", borderWidth: "2px"
+                }}>
+                  {this.state.businessCategories.map((businessCategory) =>
+                    this.state.activeCategories.indexOf(businessCategory.value) == -1 ?
+                      <React.Fragment>
+                        <Button style={{ margin: "5px", ':hover': { outline: 'none' } }} variant="primary" onClick={() => this.activateCategory(businessCategory.value)} >{businessCategory.value}</Button>{' '}
+                      </React.Fragment>
+                      :
+                      <React.Fragment>
+                        <Button style={{ margin: "5px", ':hover': { outline: 'none' } }} variant="primary" onClick={() => this.deactivateCategory(businessCategory.value)} active>{businessCategory.value}</Button>{' '}
+                      </React.Fragment>
+                  )}
+                </div>
+              </div>
+
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "row" }}>
+              <div style={{ display: "block", minWidth: "400px", maxHeight: "300px", margin: "20px", overflow: "auto" }}>
+                <Table striped bordered hover id="dataTable">
+                  <thead>
+                    <tr>
+                      <th>Business Name</th>
+                      <th>State</th>
+                      <th>City</th>
+                      <th>Address</th>
+                      <th>Distance</th>
+                      <th>Stars</th>
+                      <th>Tip Count</th>
+                      <th>Checkins</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {this.state.businesses.map((business) => <tr onClick={() => this.showTips(business.id)} key={business.id} value={business.id}>
+                      <td >{business.busname}</td>
+                      <td>{business.busstate}</td>
+                      <td>{business.city}</td>
+                      <td>{business.address}</td>
+                      <td>{business.distance}</td>
+                      <td>{business.stars}</td>
+                      <td>{business.numtips}</td>
+                      <td>{business.numcheckins}</td>
+                    </tr>)}
+                  </tbody>
+                </Table>
+              </div>
+
+              <div style={{ display: "block", width: "500px", margin: "20px" }}>
+                <div> Tips</div>
+                <div style={{
+                  width: "400px", height: "300px", overflow: "auto",
+                  background: "#d6d4d3", margin: "10", borderStyle: "solid", borderColor: "#8c8987", borderWidth: "2px"
+                }}>
+                  <Table striped bordered hover id="tipTable">
+                    <thead>
+                      <tr>
+                        <th>Tip</th>
+                        <th>User</th>
+                        <th>Likes</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {this.state.tips.map((tip) => <tr key={tip.tiptext} value={tip.tiptext}>
+                        <td>{tip.tiptext}</td>
+                        <td>{tip.userid}</td>
+                        <td>{tip.likecount}</td>
+                        <td>{tip.tipdate}</td>
+                        <td>{tip.tiptime}</td>
+                      </tr>)}
+                    </tbody>
+                  </Table>
+
+
+
+
+                  { this.state.tips.map((tip) => <tr key={tip.value} value={tip.value}>
+                    <td>{tip.value}</td>
+                  </tr>)}
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+
+
         </div>
-        <Table striped bordered hover id="dataTable">
-          <thead>
-            <tr>
-              <th>Business Name</th>
-              <th>State</th>
-              <th>City</th>
-            </tr>
-          </thead>
-          <tbody>
-            {this.state.businesses.map((business) => <tr key={business.value} value={business.value}>
-              <td onClick={() => this.updateModal(business.value)}>{business.value}</td>
-              <td>{this.state.selectedState}</td>
-              <td>{this.state.selectedCity}</td>
-            </tr>)}
-          </tbody>
-        </Table>
+
+
 
         <Modal show={this.state.modalIsOpen} onHide={this.hideModal}>
           <Modal.Header closeButton>
@@ -271,7 +344,6 @@ class App extends React.Component {
                         </Button>
           </Modal.Footer>
         </Modal>
-      </div>
       </div>
     );
   }

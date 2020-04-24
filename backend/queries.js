@@ -48,7 +48,7 @@ const getAllBusinesses = (request, response) => {
 
 const getBusinessesInZip = (request, response) => {
     const zip = request.params.zip;
-    pool.query('SELECT DISTINCT busName FROM business WHERE postalcode = $1 ORDER BY busName', [zip], (error, results) => {
+    pool.query('SELECT DISTINCT * FROM business WHERE postalcode = $1 ORDER BY busName', [zip], (error, results) => {
         if (error) {
             throw error
         }
@@ -142,6 +142,7 @@ const insertTip = (request, response) => {
     });
 }
 
+<<<<<<< 7e7d94524921a20c5803399c628cfe3ef020f3be
 const putLikeTip = (request, response) => {
     console.log("In putLikeTip");
     //Params from route
@@ -157,6 +158,16 @@ const putLikeTip = (request, response) => {
         }
 
         response.status(200).send()
+=======
+const getBusinessFilter = (request, response) => {
+    const zip = request.params.zip;
+    const catagory = request.params.catagory;
+    pool.query('SELECT DISTINCT business.* FROM business, buscategory WHERE business.postalcode = $1 AND buscategory.category = $2 AND buscategory.busid = business.busid  ORDER BY business.busName;', [zip, catagory], (error, results) => {
+        if (error) {
+            throw error
+        }
+        response.status(200).json(results.rows)
+>>>>>>> adding queries for filter
     });
 }
 
@@ -174,5 +185,9 @@ module.exports = {
     getTipsforBusiness,
     getChartForBusiness,
     insertTip,
+<<<<<<< 7e7d94524921a20c5803399c628cfe3ef020f3be
     putLikeTip
+=======
+    getBusinessFilter,
+>>>>>>> adding queries for filter
 }
