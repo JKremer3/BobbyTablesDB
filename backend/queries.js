@@ -141,6 +141,30 @@ const insertTip = (request, response) => {
     });
 }
 
+const putLikeTip = (request, response) => {
+    console.log("In putLikeTip");
+    //Params from route
+    const busid = request.params.busid;
+    const userid = request.params.userid;
+    const tipdate = request.params.tipdate;
+    const tiptime = request.params.tiptime;
+    
+    //Update the specified tip with an increase in likecount
+    pool.query('Update tip set likecount = likecount + 1 where 	busid = $1 and userid = $2 and tipdate = $3 and tiptime = $4', [busid, userid, tipdate, tiptime], (error, results) => {
+        if (error) {
+            throw error
+        }
+    });
+
+    //Return list of tips to refresh tips table
+    pool.query('SELECT * FROM Tip WHERE busId = $1', [busid], (error, results) => {
+        if (error) {
+            throw error
+        }
+        response.status(200).json(results.rows)
+    });
+}
+
 module.exports = {
     getState,
     getAllStates,
@@ -155,4 +179,5 @@ module.exports = {
     getTipsforBusiness,
     getChartForBusiness,
     insertTip,
+    putLikeTip
 }
