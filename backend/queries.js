@@ -215,7 +215,26 @@ const postBusinessCheckin = (request, response) => {
 }
 
 const getBusinessCategories = (request, response) => {
+    const busid = request.params.busid;
+    const categoryCollection;
+    const ambienceCollection;
 
+    pool.query('SELECT category FROM BusCategory WHERE busId = $1', [busid], (error, results) => {
+        if (error) {
+            throw error
+        }
+        categoryCollection = results.rows
+    });
+
+    pool.query('SELECT category FROM BusCategory WHERE busId = $1', [busid], (error, results) => {
+        if (error) {
+            throw error
+        }
+        ambienceCollection = results.rows
+    });
+
+    categoryCollection = categoryCollection.concat(ambienceCollection);
+    response.status(200).json(categoryCollection);
 }
 
 const getBusinessAttributes = (request, response) => {
