@@ -215,29 +215,16 @@ const postBusinessCheckin = (request, response) => {
 }
 
 const getBusinessCategories = async (request, response) => {
+    console.log('in getBusinessCategories()')
     const busid = request.params.busid;
-    let categoryCollection;
-    let ambienceCollection;
 
-    pool.query('SELECT category FROM BusCategory WHERE busId = $1', [busid], (error, results) => {
+    pool.query('select category as busCat from BusCategory WHERE busId = $1 UNION ALL SELECT ambiencetype as busCat From BusAmbience Where busid = $1 and ambienceval = true', [busid], (error, results) => {
         if (error) {
             throw error
         }
-        categoryCollection = results.rows
-        console.log(categoryCollection)
+        console.log(results.rows)
+        response.status(200).json(results.rows)
     });
-
-    pool.query('SELECT ambiencetype From BusAmbience Where busid = $1 and ambienceval = true ', [busid], (error, results) => {
-        if (error) {
-            throw error
-        }
-        ambienceCollection = results.rows
-        console.log(ambienceCollection)
-    });
-
-    const retCollection = categoryCollection + ambienceCollection;
-    console.log(retCollection)
-    response.status(200).json(retCollection);
 }
 
 const getBusinessAttributes = (request, response) => {
