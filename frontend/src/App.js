@@ -187,12 +187,15 @@ class App extends React.Component {
     console.log("Activate Category called (" + cat + ")");
     console.log("ActiveCatagories: " + this.state.activeCategories)
     var activeCategories = this.state.activeCategories;
+    var freshCats = activeCategories;
     const index = activeCategories.indexOf(cat);
     if (index == -1) {
       activeCategories.push(cat);
     }
     this.setState({ activeCategories: activeCategories });
-    this.updateTableFilter( this.state.selectedZip , this.state.activeCategories[0] )
+    console.log("Fresh Categories: " + freshCats)
+
+    this.updateTableFilter( this.state.selectedZip, freshCats )
 
   }
 
