@@ -228,6 +228,16 @@ const getBusinessCategories = async (request, response) => {
 }
 
 const getBusinessAttributes = (request, response) => {
+    console.log('in getBusinessAttributes()')
+    const busid = request.params.busid;
+
+    pool.query('select (attributeName, attributeVal) as busAtt from busAttributes where busid = $1 and attributeVal <> \'False\' UNION ALL select (mealType, mealVal)  as busAtt from busGoodForMeals where busid = $1 and mealval = true UNION ALL select (parkingType, parkVal) from busParking where busid = $1 and parkval = true', [busid], (error, results) => {
+        if (error) {
+            throw error
+        }
+        console.log(results.rows)
+        response.status(200).json(results.rows)
+    });    
 
 }
 
