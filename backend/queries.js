@@ -214,7 +214,7 @@ const postBusinessCheckin = (request, response) => {
     });
 }
 
-const getAttributeFilter = (request, response) => {
+const getAttributeFilterTF = (request, response) => {
     console.log(request.body)
     const zip = request.params.zip;
     var attribs = request.params.attribs;
@@ -268,5 +268,5 @@ module.exports = {
     insertTip,
     postBusinessCheckin,
     putLikeTip,
-    getAttributeFilter,
+    getAttributeFilterTF,
 }
