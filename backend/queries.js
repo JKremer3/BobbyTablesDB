@@ -171,6 +171,10 @@ const getBusinessFilter = (request, response) => {
     });
 }
 
+const postBusinessCheckin = (request, response) => {
+
+}
+
 module.exports = {
     getState,
     getAllStates,
@@ -184,7 +188,8 @@ module.exports = {
     getCatagoriesInZip,
     getTipsforBusiness,
     getChartForBusiness,
-    insertTip,
-    putLikeTip,
     getBusinessFilter,
+    insertTip,
+    postBusinessCheckin,
+    putLikeTip
 }
