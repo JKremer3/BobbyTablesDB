@@ -160,15 +160,43 @@ class App extends React.Component {
     this.showModal();
   }
 
-  activateCategory = (cat) => {
+
+  updateTableFilter = (zip, cat) => {
+    console.log("Filter fetch called")
+    fetch("http://localhost:3030/business/" + zip + "/" + cat)
+      .then((response) => {
+        return response.json();
+      })
+      .then(data => {
+        let businessFromApi = data.map(business => {
+          return { id: business.busid , busname: business.busname, address: business.address, 
+          city: business.city, busstate: business.busstate, stars: business.stars, distance: 0, 
+        numtips: business.numtips, numcheckins: business.numcheckins }
+        });
+        console.log(data)
+        console.log(businessFromApi)
+        this.setState({
+          businesses: businessFromApi
+        });
+      }).catch(error => {
+        console.log(error);
+      });
+  }
+
+  activateCategory = async (cat) => {
     console.log("Activate Category called (" + cat + ")");
     console.log("ActiveCatagories: " + this.state.activeCategories)
     var activeCategories = this.state.activeCategories;
+    var freshCats = activeCategories;
     const index = activeCategories.indexOf(cat);
     if (index == -1) {
       activeCategories.push(cat);
     }
     this.setState({ activeCategories: activeCategories });
+    console.log("Fresh Categories: " + freshCats)
+
+    this.updateTableFilter( this.state.selectedZip, freshCats )
+
   }
 
   deactivateCategory = (cat) => {
@@ -243,38 +271,39 @@ class App extends React.Component {
                       </React.Fragment>
                   )}
                 </div>
+
               </div>
 
             </div>
 
             <div style={{ display: "flex", flexDirection: "row" }}>
               <div style={{ display: "block", minWidth: "400px", maxHeight: "300px", margin: "20px", overflow: "auto" }}>
-                <Table striped bordered hover id="dataTable">
+                <table style={{ border: "1px solid grey" }} className="sortable" id="dataTable">
                   <thead>
                     <tr>
-                      <th>Business Name</th>
-                      <th>State</th>
-                      <th>City</th>
-                      <th>Address</th>
-                      <th>Distance</th>
-                      <th>Stars</th>
-                      <th>Tip Count</th>
-                      <th>Checkins</th>
+                      <th style={{ border: "1px solid grey" }} >Business Name</th>
+                      <th style={{ border: "1px solid grey" }} >State</th>
+                      <th style={{ border: "1px solid grey" }}>City</th>
+                      <th style={{ border: "1px solid grey" }} >Address</th>
+                      <th style={{ border: "1px solid grey" }}>Distance</th>
+                      <th style={{ border: "1px solid grey" }}>Stars</th>
+                      <th style={{ border: "1px solid grey" }}>Tip Count</th>
+                      <th style={{ border: "1px solid grey" }}>Checkins</th>
                     </tr>
                   </thead>
                   <tbody>
                     {this.state.businesses.map((business) => <tr onClick={() => this.showTips(business.id)} key={business.id} value={business.id}>
-                      <td >{business.busname}</td>
-                      <td>{business.busstate}</td>
-                      <td>{business.city}</td>
-                      <td>{business.address}</td>
-                      <td>{business.distance}</td>
-                      <td>{business.stars}</td>
-                      <td>{business.numtips}</td>
-                      <td>{business.numcheckins}</td>
+                      <td style={{ border: "1px solid grey" }}>{business.busname}</td>
+                      <td style={{ border: "1px solid grey" }}>{business.busstate}</td>
+                      <td style={{ border: "1px solid grey" }}>{business.city}</td>
+                      <td style={{ border: "1px solid grey" }}>{business.address}</td>
+                      <td style={{ border: "1px solid grey" }} >{business.distance}</td>
+                      <td style={{ border: "1px solid grey" }} >{business.stars}</td>
+                      <td style={{ border: "1px solid grey" }}>{business.numtips}</td>
+                      <td style={{ border: "1px solid grey" }}>{business.numcheckins}</td>
                     </tr>)}
                   </tbody>
-                </Table>
+                  </table>
               </div>
 
               <div style={{ display: "block", width: "500px", margin: "20px" }}>

@@ -161,9 +161,37 @@ const putLikeTip = (request, response) => {
 }
 
 const getBusinessFilter = (request, response) => {
+    console.log(request.body)
     const zip = request.params.zip;
-    const category = request.params.category;
-    pool.query('SELECT DISTINCT business.* FROM business, buscategory WHERE business.postalcode = $1 AND buscategory.category = $2 AND buscategory.busid = business.busid  ORDER BY business.busName;', [zip, category], (error, results) => {
+    var category = request.params.category;
+
+    console.log(category)
+
+    var result = category.split(',');
+    console.log( "Result: " + result)
+
+    console.log(category)
+
+    filters = ""
+    tables = ""
+    ids = ""
+    for ( c in result ) {
+        console.log(c)
+        tables = tables + ', buscategory A' + c ;
+        filters =  filters + ' AND A' + c + '.category = ' + "'" + result[c] + "'" ;
+        ids = ids + ' AND a' + c + '.busid = business.busid';
+    }
+
+    console.log("Tables: " + tables)
+    console.log("Filters: " + filters)
+
+    query = 'SELECT DISTINCT business.* FROM business ' + tables + ' WHERE business.postalcode = ' + zip + 
+    filters + ids + ' ORDER BY business.busName;'
+
+    console.log( "query: " + query)
+
+    pool.query('SELECT DISTINCT business.* FROM business ' + tables + ' WHERE business.postalcode = $1 ' + 
+                    filters + ids + '   ORDER BY business.busName;' , [zip], (error, results) => {
         if (error) {
             throw error
         }
