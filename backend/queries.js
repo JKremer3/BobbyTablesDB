@@ -216,8 +216,8 @@ const postBusinessCheckin = (request, response) => {
 
 const getBusinessCategories = (request, response) => {
     const busid = request.params.busid;
-    const categoryCollection;
-    const ambienceCollection;
+    const categoryCollection = {};
+    const ambienceCollection = {};
 
     pool.query('SELECT category FROM BusCategory WHERE busId = $1', [busid], (error, results) => {
         if (error) {
@@ -233,8 +233,8 @@ const getBusinessCategories = (request, response) => {
         ambienceCollection = results.rows
     });
 
-    categoryCollection = categoryCollection.concat(ambienceCollection);
-    response.status(200).json(categoryCollection);
+    const retCollection = categoryCollection + ambienceCollection;
+    response.status(200).json(retCollection);
 }
 
 const getBusinessAttributes = (request, response) => {
