@@ -214,6 +214,14 @@ const postBusinessCheckin = (request, response) => {
     });
 }
 
+const getBusinessCategories = (request, response) => {
+
+}
+
+const getBusinessAttributes = (request, response) => {
+
+}
+
 module.exports = {
     getState,
     getAllStates,
@@ -223,6 +231,8 @@ module.exports = {
     getBusinessInfo,
     getBusinessSC,
     getBusinessCC,
+    getBusinessCategories,
+    getBusinessAttributes,
     getZipcodes,
     getCatagoriesInZip,
     getTipsforBusiness,
