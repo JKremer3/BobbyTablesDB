@@ -162,8 +162,8 @@ const putLikeTip = (request, response) => {
 
 const getBusinessFilter = (request, response) => {
     const zip = request.params.zip;
-    const catagory = request.params.catagory;
-    pool.query('SELECT DISTINCT business.* FROM business, buscategory WHERE business.postalcode = $1 AND buscategory.category = $2 AND buscategory.busid = business.busid  ORDER BY business.busName;', [zip, catagory], (error, results) => {
+    const category = request.params.category;
+    pool.query('SELECT DISTINCT business.* FROM business, buscategory WHERE business.postalcode = $1 AND buscategory.category = $2 AND buscategory.busid = business.busid  ORDER BY business.busName;', [zip, category], (error, results) => {
         if (error) {
             throw error
         }
