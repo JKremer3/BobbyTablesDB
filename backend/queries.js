@@ -171,6 +171,21 @@ const getBusinessFilter = (request, response) => {
     });
 }
 
+const postBusinessCheckin = (request, response) => {
+    console.log("in postBusinessCheckin")
+    console.log(request.body)
+
+    const busid = request.params.busid;
+    const {checkyear, checkdate, checkmonth, checktime} = request.body;
+    pool.query('INSERT INTO Checkin (busId, checkyear, checkdate, checkmonth, checktime)' +
+                ' VALUES ( $1, $2, $3, $4, $5 )', [busid, checkyear, checkdate, checkmonth, checktime], (error, results) => {
+        if (error) {
+            throw error
+        }
+        response.status(200).json(results.rows)
+    });
+}
+
 module.exports = {
     getState,
     getAllStates,
@@ -184,7 +199,8 @@ module.exports = {
     getCatagoriesInZip,
     getTipsforBusiness,
     getChartForBusiness,
-    insertTip,
-    putLikeTip,
     getBusinessFilter,
+    insertTip,
+    postBusinessCheckin,
+    putLikeTip
 }
