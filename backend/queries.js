@@ -277,6 +277,40 @@ const getAttributeFilterTF = (request, response) => {
     });
 }
 
+const getAmbienceFilter = (request, response) => {
+    const zip = request.params.zip;
+    const ambience = request.params.ambience;
+
+    var result = ambience.split(',');
+    console.log( "Result: " + result)
+
+    filters = ""
+    tables = ""
+    ids = ""
+    for ( c in result ) {
+        console.log(c)
+        tables = tables + ', busambience A' + c ;
+        filters =  filters + ' AND A' + c + '.ambiencetype = ' + "'" + result[c] + "'" ;
+        ids = ids + ' AND a' + c + '.busid = business.busid AND (a' + c + '.ambienceval = ' + "'t')";
+    }
+
+    console.log("Tables: " + tables)
+    console.log("Filters: " + filters)
+
+    query = 'SELECT DISTINCT business.* FROM business ' + tables + ' WHERE business.postalcode = ' + zip + 
+    filters + ids + ' ORDER BY business.busName;'
+
+    console.log( "query: " + query)
+
+    pool.query('SELECT DISTINCT business.* FROM business ' + tables + ' WHERE business.postalcode = $1 ' + 
+                    filters + ids + ' ORDER BY business.busName;' , [zip], (error, results) => {
+        if (error) {
+            throw error
+        }
+        response.status(200).json(results.rows)
+    });
+}
+
 // Returns all user info except id
 const getUserInfo = (request, response) => {
     const userid = request.params.userid
@@ -357,8 +391,10 @@ module.exports = {
     postBusinessCheckin,
     putLikeTip,
     getAttributeFilterTF,
+    getAmbienceFilter,
     getUserInfo,
     getUserFriends,
     getUserFriendTips,
     putUserCoords
 }
+
