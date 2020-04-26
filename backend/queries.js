@@ -279,7 +279,14 @@ const getAttributeFilterTF = (request, response) => {
 
 // Returns all user info except id
 const getUserInfo = (request, response) => {
-
+    const name = request.params.name;
+    const zip = request.params.zip;
+    pool.query('SELECT DISTINCT * FROM business WHERE name = $1 AND postalcode = $2 ORDER BY name', [name, zip], (error, results) => {
+        if (error) {
+            throw error
+        }
+        response.status(200).json(results.rows)
+    });
 }
 
 //Return Friend names, total likes, average stars, yelping since
@@ -289,6 +296,10 @@ const getUserFriends = (request, response) => {
 
 //Return Name, City, Business, and full
 const getUserFriendTips = (request, response) => {
+
+}
+
+const putUserCoords = (request, response) => {
 
 }
 
@@ -314,5 +325,6 @@ module.exports = {
     getAttributeFilterTF,
     getUserInfo,
     getUserFriends,
-    getUserFriendTips
+    getUserFriendTips,
+    putUserCoords
 }
