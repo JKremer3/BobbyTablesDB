@@ -238,6 +238,7 @@ const getBusinessAttributes = (request, response) => {
         console.log(results.rows)
         response.status(200).json(results.rows)
     });    
+}
 
 const getAttributeFilterTF = (request, response) => {
     console.log(request.body)
@@ -276,6 +277,21 @@ const getAttributeFilterTF = (request, response) => {
     });
 }
 
+// Returns all user info except id
+const getUserInfo = (request, response) => {
+
+}
+
+//Return Friend names, total likes, average stars, yelping since
+const getUserFriends = (request, response) => {
+
+}
+
+//Return Name, City, Business, and full
+const getUserFriendTips = (request, response) => {
+
+}
+
 module.exports = {
     getState,
     getAllStates,
@@ -296,4 +312,7 @@ module.exports = {
     postBusinessCheckin,
     putLikeTip,
     getAttributeFilterTF,
+    getUserInfo,
+    getUserFriends,
+    getUserFriendTips
 }
