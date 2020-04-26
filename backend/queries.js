@@ -324,6 +324,10 @@ const putUserCoords = (request, response) => {
     });
 }
 
+const getBusFriendTips = (request, response) => {
+
+}
+
 module.exports = {
     getState,
     getAllStates,
@@ -340,6 +344,7 @@ module.exports = {
     getTipsforBusiness,
     getChartForBusiness,
     getBusinessFilter,
+    getBusFriendTips,
     insertTip,
     postBusinessCheckin,
     putLikeTip,
