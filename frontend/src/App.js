@@ -208,7 +208,16 @@ class App extends React.Component {
       activeCategories.splice(index, 1);
     }
 
-    this.setState({ activeCategories: activeCategories });
+    // if there are no active categories just call the regular fetch
+    if (activeCategories.length == 0){
+      this.updateTable(this.state.selectedZip);
+    }
+    else {
+      // if there are active categories we call the filter fetch
+      this.updateTableFilter( this.state.selectedZip, activeCategories )
+    }
+
+    this.setState({ activeCategories: activeCategories })
   }
 
   showTips = (id) => {
