@@ -370,6 +370,19 @@ const getBusFriendTips = (request, response) => {
     });
 }
 
+const getBusOpenClose = (request, response) => {
+    const dayArray = ['Sunday', 'Monday', 'Tuesday', 'Wednesay', 'Thursday', 'Friday', 'Saturday'];
+    const busid = request.params.busid;
+    const day = dayArray[parseInt(request.params.day)];
+    
+    pool.query('select * from users where userid = $1', [userid], (error, results) => {
+        if (error) {
+            throw error
+        }
+        response.status(200).json(results.rows)
+    });
+}
+
 module.exports = {
     getState,
     getAllStates,
@@ -386,6 +399,7 @@ module.exports = {
     getTipsforBusiness,
     getChartForBusiness,
     getBusinessFilter,
+    getBusOpenClose,
     getBusFriendTips,
     insertTip,
     postBusinessCheckin,
