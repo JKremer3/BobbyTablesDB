@@ -299,10 +299,10 @@ const getUserFriends = (request, response) => {
     });
 }
 
-//Returns {username, city, busname, tiptext, likecount, tipdate, tiptime} for each tip
+//Returns one {username, city, busname, tiptext, likecount, tipdate, tiptime} JSON for each friend. Ordered by Friend Name
 const getUserFriendTips = (request, response) => {
     const userid = request.params.userid
-    pool.query('Select u2.userName, b1.City, b1.busName, t1.tiptext, t1.likecount, t1.tipdate, t1.tiptime From users u1, users u2, friends f1, tip t1, business b1 Where u1.userid = $1 And u1.userid = f1.userid And u2.userid = f1.friendid And t1.userid = f1.friendid And b1.busid = t1.busid Order by t1.tipdate Desc, t1.tiptime Desc', [userid], (error, results) => {
+    pool.query('Select distinct on(u2.userName) u2.userName, b1.City, b1.busName, t1.tiptext, t1.likecount, t1.tipdate, t1.tiptime From users u1, users u2, friends f1, tip t1, business b1 Where u1.userid = $1 And u1.userid = f1.userid And u2.userid = f1.friendid And t1.userid = f1.friendid And b1.busid = t1.busid And t1.tipdate = (select max(t2.tipdate) from tip t2 where t2.userid = t1.userid) order by u2.username, t1.tipdate desc, t1.tiptime desc', [userid], (error, results) => {
         if (error) {
             throw error
         }
