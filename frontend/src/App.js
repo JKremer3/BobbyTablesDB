@@ -15,12 +15,14 @@ import ToggleButton from 'react-bootstrap/ToggleButton';
 import Form from 'react-bootstrap/Form';
 import Navbar from 'react-bootstrap/Navbar';
 import InputGroup from 'react-bootstrap/InputGroup';
+import ListGroup from 'react-bootstrap/ListGroup';
 
 class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       modalIsOpen: false, modalStateIGuess: "", busstates: [], cities: [], zips: [], businessCategories: [], businesses: [],
+      businessAttributes1: [], businessAttributes2: [], businessAttributes3: [],
       slectedState: "", selectedCity: "", selectedZip: "", selectedBusiness: "", sCount: "", cCount: "", activeCategories: [], tips: []
     };
 
@@ -226,6 +228,11 @@ class App extends React.Component {
   }
 
   render() {
+    var sortedCategories = this.state.businessCategories.sort();
+    var sortedAttributes1 = this.state.businessAttributes1.sort();
+    var sortedAttributes2 = this.state.businessAttributes2.sort();
+    var sortedAttributes3 = this.state.businessAttributes3.sort();
+
     return (
 
       <div className="App" style={{ display: "flex", justifyContent: "center", backgroundColor: "#007bff", minHeight: "100vh" }} >
@@ -262,25 +269,49 @@ class App extends React.Component {
                 </Form>
               </div>
 
-
-              <div style={{ display: "block", width: "500px", margin: "20px" }}>
+              <div style={{ display: "block", width: "700px", margin: "20px" }}>
                 <Form.Label>Business Catagories</Form.Label> <br></br>
                 <div style={{
-                  width: "500px", height: "300px", overflow: "auto", background: "#d6d4d3", margin: "10",
-                  borderStyle: "solid", borderColor: "#8c8987", borderWidth: "2px"
+                  width: "700px", height: "300px", overflow: "auto", background: "#d6d4d3", margin: "10",
+                  borderStyle: "solid", borderColor: "#8c8987", borderWidth: "2px", display: "flex", flexDirection: "row"
                 }}>
-                  {this.state.businessCategories.map((businessCategory) =>
-                    this.state.activeCategories.indexOf(businessCategory.value) == -1 ?
-                      <React.Fragment>
-                        <Button style={{ margin: "5px", ':hover': { outline: 'none' } }} variant="primary" onClick={() => this.activateCategory(businessCategory.value)} >{businessCategory.value}</Button>{' '}
-                      </React.Fragment>
-                      :
-                      <React.Fragment>
-                        <Button style={{ margin: "5px", ':hover': { outline: 'none' } }} variant="primary" onClick={() => this.deactivateCategory(businessCategory.value)} active>{businessCategory.value}</Button>{' '}
-                      </React.Fragment>
-                  )}
+                  <ListGroup>
+                    {sortedCategories.map((businessCategory) =>
+                      this.state.activeCategories.indexOf(businessCategory.value) == -1 ?
+                          <ListGroup.Item  
+                              onClick={() => this.activateCategory(businessCategory.value)} >{businessCategory.value}
+                              </ListGroup.Item>
+                        :
+                          <ListGroup.Item  
+                              onClick={() => this.deactivateCategory(businessCategory.value)} active>{businessCategory.value}
+                              </ListGroup.Item>
+                    )}
+                  </ListGroup>
+                  <ListGroup>
+                    {sortedCategories.map((businessCategory) =>
+                      this.state.activeCategories.indexOf(businessCategory.value) == -1 ?
+                          <ListGroup.Item  
+                              onClick={() => this.activateCategory(businessCategory.value)} >{businessCategory.value}
+                              </ListGroup.Item>
+                        :
+                          <ListGroup.Item  
+                              onClick={() => this.deactivateCategory(businessCategory.value)} active>{businessCategory.value}
+                              </ListGroup.Item>
+                    )}
+                  </ListGroup>
+                  <ListGroup>
+                    {sortedCategories.map((businessCategory) =>
+                      this.state.activeCategories.indexOf(businessCategory.value) == -1 ?
+                          <ListGroup.Item  
+                              onClick={() => this.activateCategory(businessCategory.value)} >{businessCategory.value}
+                              </ListGroup.Item>
+                        :
+                          <ListGroup.Item  
+                              onClick={() => this.deactivateCategory(businessCategory.value)} active>{businessCategory.value}
+                              </ListGroup.Item>
+                    )}
+                  </ListGroup>
                 </div>
-
               </div>
 
             </div>
@@ -343,8 +374,6 @@ class App extends React.Component {
                   </Table>
 
 
-
-
                   { this.state.tips.map((tip) => <tr key={tip.value} value={tip.value}>
                     <td>{tip.value}</td>
                   </tr>)}
@@ -353,12 +382,7 @@ class App extends React.Component {
             </div>
 
           </div>
-
-
-
         </div>
-
-
 
         <Modal show={this.state.modalIsOpen} onHide={this.hideModal}>
           <Modal.Header closeButton>
