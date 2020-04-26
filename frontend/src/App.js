@@ -15,12 +15,14 @@ import ToggleButton from 'react-bootstrap/ToggleButton';
 import Form from 'react-bootstrap/Form';
 import Navbar from 'react-bootstrap/Navbar';
 import InputGroup from 'react-bootstrap/InputGroup';
+import ListGroup from 'react-bootstrap/ListGroup';
 
 class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       modalIsOpen: false, modalStateIGuess: "", busstates: [], cities: [], zips: [], businessCategories: [], businesses: [],
+      businessAttributes1: [], businessAttributes2: [], businessAttributes3: [],
       slectedState: "", selectedCity: "", selectedZip: "", selectedBusiness: "", sCount: "", cCount: "", activeCategories: [], tips: []
     };
 
@@ -226,18 +228,25 @@ class App extends React.Component {
   }
 
   render() {
+    var sortedCategories = this.state.businessCategories.sort();
+    var sortedAttributes1 = this.state.businessAttributes1.sort();
+    var sortedAttributes2 = this.state.businessAttributes2.sort();
+    var sortedAttributes3 = this.state.businessAttributes3.sort();
+
     return (
 
-      <div className="App" style={{ display: "flex", justifyContent: "center", backgroundColor: "#007bff", minHeight: "100vh" }} >
+      <div className="App" style={{ display: "flex", justifyContent: "center", backgroundColor: "#007bff", minHeight: "100vh", minWidth: "100%" }} >
         <div style={{ display: "flex", flexDirection: "column" }}>
           <Navbar theme="navbar-default" bg="primary" expand="false" >
             <Navbar.Brand href="#home" style={{ fontStyle: "italic" }}>YELPER HELPER</Navbar.Brand>
           </Navbar>
 
-          <div style={{ display: "flex", flexDirection: "column", width: "80%", backgroundColor: "#EEEEEE" }}>
+          { /* This is the flex box that wraps the 4 sections of the UI    */ }
+          <div style={{ display: "flex", flexDirection: "column", minWidth: "100%", backgroundColor: "#EEEEEE" }}>
 
+          { /* Top 2 squares (the state, city and zip selectors and the categories menu ) */ }
             <div style={{ display: "flex", flexDirection: "row" }}>
-              <div style={{ display: "block", width: "500px", margin: "20px" }}>
+              <div style={{ display: "block", width: "100%", margin: "20px" }}>
                 <Form>
                   <Form.Group controlId="exampleForm.ControlSelect1">
                     <Form.Label>State</Form.Label>
@@ -262,31 +271,56 @@ class App extends React.Component {
                 </Form>
               </div>
 
-
-              <div style={{ display: "block", width: "500px", margin: "20px" }}>
+              <div style={{ display: "block", width: "100%", margin: "20px" }}>
                 <Form.Label>Business Catagories</Form.Label> <br></br>
                 <div style={{
-                  width: "500px", height: "300px", overflow: "auto", background: "#d6d4d3", margin: "10",
-                  borderStyle: "solid", borderColor: "#8c8987", borderWidth: "2px"
+                  width: "100%", height: "300px", overflow: "auto", background: "#d6d4d3", margin: "10",
+                  borderStyle: "solid", borderColor: "#8c8987", borderWidth: "2px", display: "flex", flexDirection: "row"
                 }}>
-                  {this.state.businessCategories.map((businessCategory) =>
-                    this.state.activeCategories.indexOf(businessCategory.value) == -1 ?
-                      <React.Fragment>
-                        <Button style={{ margin: "5px", ':hover': { outline: 'none' } }} variant="primary" onClick={() => this.activateCategory(businessCategory.value)} >{businessCategory.value}</Button>{' '}
-                      </React.Fragment>
-                      :
-                      <React.Fragment>
-                        <Button style={{ margin: "5px", ':hover': { outline: 'none' } }} variant="primary" onClick={() => this.deactivateCategory(businessCategory.value)} active>{businessCategory.value}</Button>{' '}
-                      </React.Fragment>
-                  )}
+                  <ListGroup>
+                    {sortedCategories.map((businessCategory) =>
+                      this.state.activeCategories.indexOf(businessCategory.value) == -1 ?
+                          <ListGroup.Item  
+                              onClick={() => this.activateCategory(businessCategory.value)} >{businessCategory.value}
+                              </ListGroup.Item>
+                        :
+                          <ListGroup.Item  
+                              onClick={() => this.deactivateCategory(businessCategory.value)} active>{businessCategory.value}
+                              </ListGroup.Item>
+                    )}
+                  </ListGroup>
+                  <ListGroup>
+                    {sortedCategories.map((businessCategory) =>
+                      this.state.activeCategories.indexOf(businessCategory.value) == -1 ?
+                          <ListGroup.Item  
+                              onClick={() => this.activateCategory(businessCategory.value)} >{businessCategory.value}
+                              </ListGroup.Item>
+                        :
+                          <ListGroup.Item  
+                              onClick={() => this.deactivateCategory(businessCategory.value)} active>{businessCategory.value}
+                              </ListGroup.Item>
+                    )}
+                  </ListGroup>
+                  <ListGroup>
+                    {sortedCategories.map((businessCategory) =>
+                      this.state.activeCategories.indexOf(businessCategory.value) == -1 ?
+                          <ListGroup.Item  
+                              onClick={() => this.activateCategory(businessCategory.value)} >{businessCategory.value}
+                              </ListGroup.Item>
+                        :
+                          <ListGroup.Item  
+                              onClick={() => this.deactivateCategory(businessCategory.value)} active>{businessCategory.value}
+                              </ListGroup.Item>
+                    )}
+                  </ListGroup>
                 </div>
-
               </div>
 
             </div>
 
+          { /* The Business Table and the Tips */ }
             <div style={{ display: "flex", flexDirection: "row" }}>
-              <div style={{ display: "block", minWidth: "400px", maxHeight: "300px", margin: "20px", overflow: "auto" }}>
+              <div style={{ display: "block", width: "100%", maxHeight: "300px", margin: "20px", overflow: "auto" }}>
                 <table style={{ border: "1px solid grey" }} className="sortable" id="dataTable">
                   <thead>
                     <tr>
@@ -315,10 +349,10 @@ class App extends React.Component {
                   </table>
               </div>
 
-              <div style={{ display: "block", width: "500px", margin: "20px" }}>
+              <div style={{ display: "block", width: "100%", margin: "20px" }}>
                 <div> Tips</div>
                 <div style={{
-                  width: "400px", height: "300px", overflow: "auto",
+                  minWidth: "100%", height: "300px", overflow: "auto",
                   background: "#d6d4d3", margin: "10", borderStyle: "solid", borderColor: "#8c8987", borderWidth: "2px"
                 }}>
                   <Table striped bordered hover id="tipTable">
@@ -343,8 +377,6 @@ class App extends React.Component {
                   </Table>
 
 
-
-
                   { this.state.tips.map((tip) => <tr key={tip.value} value={tip.value}>
                     <td>{tip.value}</td>
                   </tr>)}
@@ -353,12 +385,7 @@ class App extends React.Component {
             </div>
 
           </div>
-
-
-
         </div>
-
-
 
         <Modal show={this.state.modalIsOpen} onHide={this.hideModal}>
           <Modal.Header closeButton>
