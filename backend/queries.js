@@ -325,7 +325,14 @@ const putUserCoords = (request, response) => {
 }
 
 const getBusFriendTips = (request, response) => {
-
+    const userid = request.params.userid
+    const busid = request.params.busid
+    pool.query('Select u2.userName, b1.City, b1.busName, t1.tiptext, t1.likecount, t1.tipdate, t1.tiptime From users u1, users u2, friends f1, tip t1, business b1 Where u1.userid = $1 And u1.userid = f1.userid And u2.userid = f1.friendid And t1.userid = f1.friendid And b1.busid = $2 And b1.busid = t1.busid Order by t1.tipdate Desc, t1.tiptime Desc', [userid, busid], (error, results) => {
+        if (error) {
+            throw error
+        }
+        response.status(200).json(results.rows)
+    });
 }
 
 module.exports = {
