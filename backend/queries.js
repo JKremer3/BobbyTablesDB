@@ -279,9 +279,8 @@ const getAttributeFilterTF = (request, response) => {
 
 // Returns all user info except id
 const getUserInfo = (request, response) => {
-    const name = request.params.name;
-    const zip = request.params.zip;
-    pool.query('SELECT DISTINCT * FROM business WHERE name = $1 AND postalcode = $2 ORDER BY name', [name, zip], (error, results) => {
+    const userid = request.params.userid
+    pool.query('select * from users where userid = $1', [userid], (error, results) => {
         if (error) {
             throw error
         }
