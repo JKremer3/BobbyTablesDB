@@ -17,6 +17,9 @@ import Navbar from 'react-bootstrap/Navbar';
 import InputGroup from 'react-bootstrap/InputGroup';
 import ListGroup from 'react-bootstrap/ListGroup';
 
+
+import ReactModal from 'react-modal';
+
 class App extends React.Component {
   constructor(props) {
     super(props)
@@ -36,7 +39,6 @@ class App extends React.Component {
 
   showModal = () => this.setState({ modalIsOpen: true });
   hideModal = () => this.setState({ modalIsOpen: false });
-
 
   componentDidMount() {
     fetch("http://localhost:3030/state")
@@ -223,8 +225,8 @@ class App extends React.Component {
   }
 
   showTips = (id) => {
-
-    this.updateTips(id)
+    this.showModal();
+    this.updateTips(id);
   }
 
   render() {
@@ -349,12 +351,20 @@ class App extends React.Component {
                   </table>
               </div>
 
-              <div style={{ display: "block", width: "100%", margin: "20px" }}>
-                <div> Tips</div>
-                <div style={{
-                  minWidth: "100%", height: "300px", overflow: "auto",
-                  background: "#d6d4d3", margin: "10", borderStyle: "solid", borderColor: "#8c8987", borderWidth: "2px"
-                }}>
+            </div>
+
+          </div>
+        </div>
+
+        <ReactModal 
+           isOpen={this.state.modalIsOpen}
+           contentLabel="Minimal Modal Example"
+        >
+            <div className="modalBody" >
+              <div id="bName">Name: {this.state.selectedBusiness}</div>
+              <div id="cName">City: {this.state.selectedCity}</div>
+              <div id="sName">State: {this.state.selectedState}</div>
+
                   <Table striped bordered hover id="tipTable">
                     <thead>
                       <tr>
@@ -376,39 +386,11 @@ class App extends React.Component {
                     </tbody>
                   </Table>
 
-
-                  { this.state.tips.map((tip) => <tr key={tip.value} value={tip.value}>
-                    <td>{tip.value}</td>
-                  </tr>)}
-                </div>
-              </div>
             </div>
+          <button onClick={this.hideModal}>Close Modal</button>
+        </ReactModal>
 
-          </div>
-        </div>
 
-        <Modal show={this.state.modalIsOpen} onHide={this.hideModal}>
-          <Modal.Header closeButton>
-            <Modal.Title>{this.state.selectedBusiness}</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <div className="modalBody">
-              <div id="bName">Name: {this.state.selectedBusiness}</div>
-              <div id="cName">City: {this.state.selectedCity}</div>
-              <div id="sName">State: {this.state.selectedState}</div>
-              <div id="tCount">Tips: {this.state.tCount}</div>
-
-            </div>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={this.hideModal}>
-              Close
-                        </Button>
-            <Button variant="primary" onClick={this.hideModal}>
-              Save Changes
-                        </Button>
-          </Modal.Footer>
-        </Modal>
       </div>
     );
   }
