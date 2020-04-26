@@ -239,6 +239,41 @@ const getBusinessAttributes = (request, response) => {
         response.status(200).json(results.rows)
     });    
 
+const getAttributeFilterTF = (request, response) => {
+    console.log(request.body)
+    const zip = request.params.zip;
+    var attribs = request.params.attribs;
+
+    console.log(attribs)
+
+    var result = attribs.split(',');
+    console.log( "Result: " + result)
+
+    filters = ""
+    tables = ""
+    ids = ""
+    for ( c in result ) {
+        console.log(c)
+        tables = tables + ', busattributes A' + c ;
+        filters =  filters + ' AND A' + c + '.attributename = ' + "'" + result[c] + "'" ;
+        ids = ids + ' AND a' + c + '.busid = business.busid AND (a' + c + '.attributeval = ' + "'True' OR 'yes')";
+    }
+
+    console.log("Tables: " + tables)
+    console.log("Filters: " + filters)
+
+    query = 'SELECT DISTINCT business.* FROM business ' + tables + ' WHERE business.postalcode = ' + zip + 
+    filters + ids + ' ORDER BY business.busName;'
+
+    console.log( "query: " + query)
+
+    pool.query('SELECT DISTINCT business.* FROM business ' + tables + ' WHERE business.postalcode = $1 ' + 
+                    filters + ids + ' ORDER BY business.busName;' , [zip], (error, results) => {
+        if (error) {
+            throw error
+        }
+        response.status(200).json(results.rows)
+    });
 }
 
 module.exports = {
@@ -259,5 +294,6 @@ module.exports = {
     getBusinessFilter,
     insertTip,
     postBusinessCheckin,
-    putLikeTip
+    putLikeTip,
+    getAttributeFilterTF,
 }
