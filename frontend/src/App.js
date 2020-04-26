@@ -17,6 +17,9 @@ import Navbar from 'react-bootstrap/Navbar';
 import InputGroup from 'react-bootstrap/InputGroup';
 import ListGroup from 'react-bootstrap/ListGroup';
 
+
+import ReactModal from 'react-modal';
+
 class App extends React.Component {
   constructor(props) {
     super(props)
@@ -36,7 +39,6 @@ class App extends React.Component {
 
   showModal = () => this.setState({ modalIsOpen: true });
   hideModal = () => this.setState({ modalIsOpen: false });
-
 
   componentDidMount() {
     fetch("http://localhost:3030/state")
@@ -223,8 +225,8 @@ class App extends React.Component {
   }
 
   showTips = (id) => {
-
-    this.updateTips(id)
+    this.showModal();
+    this.updateTips(id);
   }
 
   render() {
@@ -246,7 +248,7 @@ class App extends React.Component {
 
           { /* Top 2 squares (the state, city and zip selectors and the categories menu ) */ }
             <div style={{ display: "flex", flexDirection: "row" }}>
-              <div style={{ display: "block", width: "100%", margin: "20px" }}>
+              <div style={{ display: "block", width: "50%", margin: "20px" }}>
                 <Form>
                   <Form.Group controlId="exampleForm.ControlSelect1">
                     <Form.Label>State</Form.Label>
@@ -320,8 +322,8 @@ class App extends React.Component {
 
           { /* The Business Table and the Tips */ }
             <div style={{ display: "flex", flexDirection: "row" }}>
-              <div style={{ display: "block", width: "100%", maxHeight: "300px", margin: "20px", overflow: "auto" }}>
-                <table style={{ border: "1px solid grey" }} className="sortable" id="dataTable">
+              <div style={{ display: "block", minWidth: "80vw", maxHeight: "500px", margin: "20px", overflow: "auto" }}>
+                <table style={{ border: "1px solid grey", width: "100%" }} className="sortable" id="dataTable">
                   <thead>
                     <tr>
                       <th style={{ border: "1px solid grey" }} >Business Name</th>
@@ -335,7 +337,9 @@ class App extends React.Component {
                     </tr>
                   </thead>
                   <tbody>
-                    {this.state.businesses.map((business) => <tr onClick={() => this.showTips(business.id)} key={business.id} value={business.id}>
+                    { this.state.businesses.length != 0 ? 
+
+                    this.state.businesses.map((business) => <tr onClick={() => this.showTips(business.id)} key={business.id} value={business.id}>
                       <td style={{ border: "1px solid grey" }}>{business.busname}</td>
                       <td style={{ border: "1px solid grey" }}>{business.busstate}</td>
                       <td style={{ border: "1px solid grey" }}>{business.city}</td>
@@ -344,17 +348,37 @@ class App extends React.Component {
                       <td style={{ border: "1px solid grey" }} >{business.stars}</td>
                       <td style={{ border: "1px solid grey" }}>{business.numtips}</td>
                       <td style={{ border: "1px solid grey" }}>{business.numcheckins}</td>
-                    </tr>)}
+                    </tr>) 
+                    :
+                      <React.Fragment/>
+                    }
                   </tbody>
                   </table>
               </div>
 
-              <div style={{ display: "block", width: "100%", margin: "20px" }}>
-                <div> Tips</div>
-                <div style={{
-                  minWidth: "100%", height: "300px", overflow: "auto",
-                  background: "#d6d4d3", margin: "10", borderStyle: "solid", borderColor: "#8c8987", borderWidth: "2px"
-                }}>
+            </div>
+                    { this.state.businesses.length == 0 ? 
+                      <div style={{display: "flex" , height: "200px", justifyContent: "center", alignItems: "center" }}>
+                      NO DATA
+                      </div>
+
+                    :  
+                    <React.Fragment/>
+                      
+                    }
+
+          </div>
+        </div>
+
+        <ReactModal 
+           isOpen={this.state.modalIsOpen}
+           contentLabel="Minimal Modal Example"
+        >
+            <div className="modalBody" >
+              <div id="bName">Name: {this.state.selectedBusiness}</div>
+              <div id="cName">City: {this.state.selectedCity}</div>
+              <div id="sName">State: {this.state.selectedState}</div>
+
                   <Table striped bordered hover id="tipTable">
                     <thead>
                       <tr>
@@ -376,39 +400,11 @@ class App extends React.Component {
                     </tbody>
                   </Table>
 
-
-                  { this.state.tips.map((tip) => <tr key={tip.value} value={tip.value}>
-                    <td>{tip.value}</td>
-                  </tr>)}
-                </div>
-              </div>
             </div>
+          <button onClick={this.hideModal}>Close Modal</button>
+        </ReactModal>
 
-          </div>
-        </div>
 
-        <Modal show={this.state.modalIsOpen} onHide={this.hideModal}>
-          <Modal.Header closeButton>
-            <Modal.Title>{this.state.selectedBusiness}</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <div className="modalBody">
-              <div id="bName">Name: {this.state.selectedBusiness}</div>
-              <div id="cName">City: {this.state.selectedCity}</div>
-              <div id="sName">State: {this.state.selectedState}</div>
-              <div id="tCount">Tips: {this.state.tCount}</div>
-
-            </div>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={this.hideModal}>
-              Close
-                        </Button>
-            <Button variant="primary" onClick={this.hideModal}>
-              Save Changes
-                        </Button>
-          </Modal.Footer>
-        </Modal>
       </div>
     );
   }
