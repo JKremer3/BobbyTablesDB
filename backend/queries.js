@@ -214,6 +214,31 @@ const postBusinessCheckin = (request, response) => {
     });
 }
 
+const getBusinessCategories = async (request, response) => {
+    console.log('in getBusinessCategories()')
+    const busid = request.params.busid;
+
+    pool.query('select category as busCat from BusCategory WHERE busId = $1 UNION ALL SELECT ambiencetype as busCat From BusAmbience Where busid = $1 and ambienceval = true', [busid], (error, results) => {
+        if (error) {
+            throw error
+        }
+        console.log(results.rows)
+        response.status(200).json(results.rows)
+    });
+}
+
+const getBusinessAttributes = (request, response) => {
+    console.log('in getBusinessAttributes()')
+    const busid = request.params.busid;
+
+    pool.query('select (attributeName, attributeVal) as busAtt from busAttributes where busid = $1 and attributeVal <> \'False\' UNION ALL select (mealType, mealVal)  as busAtt from busGoodForMeals where busid = $1 and mealval = true UNION ALL select (parkingType, parkVal) from busParking where busid = $1 and parkval = true', [busid], (error, results) => {
+        if (error) {
+            throw error
+        }
+        console.log(results.rows)
+        response.status(200).json(results.rows)
+    });    
+
 const getAttributeFilterTF = (request, response) => {
     console.log(request.body)
     const zip = request.params.zip;
@@ -260,6 +285,8 @@ module.exports = {
     getBusinessInfo,
     getBusinessSC,
     getBusinessCC,
+    getBusinessCategories,
+    getBusinessAttributes,
     getZipcodes,
     getCatagoriesInZip,
     getTipsforBusiness,
