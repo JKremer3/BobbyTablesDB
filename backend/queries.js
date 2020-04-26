@@ -397,4 +397,3 @@ module.exports = {
     getUserFriendTips,
     putUserCoords
 }
-
