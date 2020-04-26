@@ -288,9 +288,15 @@ const getUserInfo = (request, response) => {
     });
 }
 
-//Return Friend names, total likes, average stars, yelping since
+//Returns  {friendid, username, totallikes, avgstars, yelpstartdate} for each friend of a user
 const getUserFriends = (request, response) => {
-
+    const userid = request.params.userid
+    pool.query('select f1.friendId, u2.userName, u2.totalLikes, u2.avgStars, u2.yelpStartDate from users u1, users u2, friends f1 Where u1.userid = $1 and u1.userid = f1.userid and u2.userid = f1.friendid', [userid], (error, results) => {
+        if (error) {
+            throw error
+        }
+        response.status(200).json(results.rows)
+    });
 }
 
 //Return Name, City, Business, and full
