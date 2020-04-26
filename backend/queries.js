@@ -238,6 +238,7 @@ const getBusinessAttributes = (request, response) => {
         console.log(results.rows)
         response.status(200).json(results.rows)
     });    
+}
 
 const getAttributeFilterTF = (request, response) => {
     console.log(request.body)
@@ -295,5 +296,5 @@ module.exports = {
     insertTip,
     postBusinessCheckin,
     putLikeTip,
-    getAttributeFilterTF,
+    getAttributeFilterTF
 }
