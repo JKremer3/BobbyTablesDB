@@ -248,7 +248,7 @@ class App extends React.Component {
 
           { /* Top 2 squares (the state, city and zip selectors and the categories menu ) */ }
             <div style={{ display: "flex", flexDirection: "row" }}>
-              <div style={{ display: "block", width: "100%", margin: "20px" }}>
+              <div style={{ display: "block", width: "50%", margin: "20px" }}>
                 <Form>
                   <Form.Group controlId="exampleForm.ControlSelect1">
                     <Form.Label>State</Form.Label>
@@ -322,8 +322,8 @@ class App extends React.Component {
 
           { /* The Business Table and the Tips */ }
             <div style={{ display: "flex", flexDirection: "row" }}>
-              <div style={{ display: "block", width: "100%", maxHeight: "300px", margin: "20px", overflow: "auto" }}>
-                <table style={{ border: "1px solid grey" }} className="sortable" id="dataTable">
+              <div style={{ display: "block", minWidth: "80vw", maxHeight: "500px", margin: "20px", overflow: "auto" }}>
+                <table style={{ border: "1px solid grey", width: "100%" }} className="sortable" id="dataTable">
                   <thead>
                     <tr>
                       <th style={{ border: "1px solid grey" }} >Business Name</th>
@@ -337,7 +337,9 @@ class App extends React.Component {
                     </tr>
                   </thead>
                   <tbody>
-                    {this.state.businesses.map((business) => <tr onClick={() => this.showTips(business.id)} key={business.id} value={business.id}>
+                    { this.state.businesses.length != 0 ? 
+
+                    this.state.businesses.map((business) => <tr onClick={() => this.showTips(business.id)} key={business.id} value={business.id}>
                       <td style={{ border: "1px solid grey" }}>{business.busname}</td>
                       <td style={{ border: "1px solid grey" }}>{business.busstate}</td>
                       <td style={{ border: "1px solid grey" }}>{business.city}</td>
@@ -346,12 +348,24 @@ class App extends React.Component {
                       <td style={{ border: "1px solid grey" }} >{business.stars}</td>
                       <td style={{ border: "1px solid grey" }}>{business.numtips}</td>
                       <td style={{ border: "1px solid grey" }}>{business.numcheckins}</td>
-                    </tr>)}
+                    </tr>) 
+                    :
+                      <React.Fragment/>
+                    }
                   </tbody>
                   </table>
               </div>
 
             </div>
+                    { this.state.businesses.length == 0 ? 
+                      <div style={{display: "flex" , height: "200px", justifyContent: "center", alignItems: "center" }}>
+                      NO DATA
+                      </div>
+
+                    :  
+                    <React.Fragment/>
+                      
+                    }
 
           </div>
         </div>
