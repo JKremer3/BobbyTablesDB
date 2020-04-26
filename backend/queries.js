@@ -311,7 +311,17 @@ const getUserFriendTips = (request, response) => {
 }
 
 const putUserCoords = (request, response) => {
-
+    const userid = request.params.userid;
+    var lat = request.params.lat;
+    var long = request.params.long;
+    lat = parseFloat(lat);
+    long = parseFloat(long);
+    pool.query('UPDATE users SET lat = $1, long = $2 WHERE userid = $3', [lat, long, userid], (error, results) => {
+        if (error) {
+            throw error
+        }
+        response.status(200).send("Coordinates updated Succesfully")
+    });
 }
 
 module.exports = {
