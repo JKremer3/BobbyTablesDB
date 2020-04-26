@@ -235,16 +235,18 @@ class App extends React.Component {
 
     return (
 
-      <div className="App" style={{ display: "flex", justifyContent: "center", backgroundColor: "#007bff", minHeight: "100vh" }} >
+      <div className="App" style={{ display: "flex", justifyContent: "center", backgroundColor: "#007bff", minHeight: "100vh", minWidth: "100%" }} >
         <div style={{ display: "flex", flexDirection: "column" }}>
           <Navbar theme="navbar-default" bg="primary" expand="false" >
             <Navbar.Brand href="#home" style={{ fontStyle: "italic" }}>YELPER HELPER</Navbar.Brand>
           </Navbar>
 
-          <div style={{ display: "flex", flexDirection: "column", width: "80%", backgroundColor: "#EEEEEE" }}>
+          { /* This is the flex box that wraps the 4 sections of the UI    */ }
+          <div style={{ display: "flex", flexDirection: "column", minWidth: "100%", backgroundColor: "#EEEEEE" }}>
 
+          { /* Top 2 squares (the state, city and zip selectors and the categories menu ) */ }
             <div style={{ display: "flex", flexDirection: "row" }}>
-              <div style={{ display: "block", width: "500px", margin: "20px" }}>
+              <div style={{ display: "block", width: "100%", margin: "20px" }}>
                 <Form>
                   <Form.Group controlId="exampleForm.ControlSelect1">
                     <Form.Label>State</Form.Label>
@@ -269,10 +271,10 @@ class App extends React.Component {
                 </Form>
               </div>
 
-              <div style={{ display: "block", width: "700px", margin: "20px" }}>
+              <div style={{ display: "block", width: "100%", margin: "20px" }}>
                 <Form.Label>Business Catagories</Form.Label> <br></br>
                 <div style={{
-                  width: "700px", height: "300px", overflow: "auto", background: "#d6d4d3", margin: "10",
+                  width: "100%", height: "300px", overflow: "auto", background: "#d6d4d3", margin: "10",
                   borderStyle: "solid", borderColor: "#8c8987", borderWidth: "2px", display: "flex", flexDirection: "row"
                 }}>
                   <ListGroup>
@@ -316,8 +318,9 @@ class App extends React.Component {
 
             </div>
 
+          { /* The Business Table and the Tips */ }
             <div style={{ display: "flex", flexDirection: "row" }}>
-              <div style={{ display: "block", minWidth: "400px", maxHeight: "300px", margin: "20px", overflow: "auto" }}>
+              <div style={{ display: "block", width: "100%", maxHeight: "300px", margin: "20px", overflow: "auto" }}>
                 <table style={{ border: "1px solid grey" }} className="sortable" id="dataTable">
                   <thead>
                     <tr>
@@ -346,10 +349,10 @@ class App extends React.Component {
                   </table>
               </div>
 
-              <div style={{ display: "block", width: "500px", margin: "20px" }}>
+              <div style={{ display: "block", width: "100%", margin: "20px" }}>
                 <div> Tips</div>
                 <div style={{
-                  width: "400px", height: "300px", overflow: "auto",
+                  minWidth: "100%", height: "300px", overflow: "auto",
                   background: "#d6d4d3", margin: "10", borderStyle: "solid", borderColor: "#8c8987", borderWidth: "2px"
                 }}>
                   <Table striped bordered hover id="tipTable">
