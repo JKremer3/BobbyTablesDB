@@ -324,6 +324,7 @@ const putUserCoords = (request, response) => {
     });
 }
 
+//Returns {username, city, busname, tiptext, likecount, tipdate, tiptime}
 const getBusFriendTips = (request, response) => {
     const userid = request.params.userid
     const busid = request.params.busid
