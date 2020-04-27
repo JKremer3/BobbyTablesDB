@@ -338,7 +338,9 @@ sendNewTip = (busID, userid) => {
     console.log(error)
   }
 
-  this.viewBusiness(this.state.curBusiness);
+
+  this.updateTips(busID)
+  this.forceUpdate()
 
 }
 
@@ -557,7 +559,7 @@ handleOnChange(event) {
                    value={this.state.tipText} as="textarea" rows="3" maxLength="500" />
                 </Form.Group>
 
-                <Button variant="primary" type="submit" onClick={() => this.sendNewTip( this.state.selectedBusiness, this.state.currentUser )}>
+                <Button variant="primary" type="submit" onClick={() => this.sendNewTip( this.state.selectedBusinessId, this.state.currentUser )}>
                   Submit
                 </Button>
 
