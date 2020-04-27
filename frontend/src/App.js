@@ -28,7 +28,7 @@ class App extends React.Component {
     this.state = {
       modalIsOpen: false, modalStateIGuess: "", busstates: [], cities: [], zips: [], businessCategories: [], businesses: [],
       selectedState: "", selectedCity: "", selectedZip: "", selectedBusiness: "", selectedBusinessAttributes: [],
-      selectedBusinessHours: [],
+      selectedBusinessHours: [], currentUser: "",
       selectedBusinessAddress: "", sCount: "", cCount: "", activeCategories: [], tips: [], selectedBusinessCategories: [],
       businessAttributes: ["BusinessAcceptsCreditCards", "RestaurantsReservations", "WheelchairAccessible",
                            "OutdoorSeating", "GoodForKids", "RestaurantsGoodForGroups", "RestaurantsDelivery",
@@ -304,6 +304,31 @@ fetchBusinessHours = (id) => {
   });
 }
 
+sendNewTip = (busID, userid) => {
+  // userid, tipTime, tip date, tip text, busID
+  // get the tip text and then clear the text box
+   var text = ReactDOM.getElementById("tipText").value()
+  ReactDOM.getElementById("tipText").value = "";
+  
+  var d = new Date(); 
+  // pull the date and time out of this
+
+
+  
+  try {
+    const response = await fetch('http://localhost:3030/tip/insert/', {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      method: 'post',
+      body: JSON.stringify(newBook),
+    })
+  } catch (error) {
+    console.log(error)
+  }
+
+}
 
   render() {
     var sortedCategories = this.state.businessCategories.sort();
@@ -457,14 +482,14 @@ fetchBusinessHours = (id) => {
           </div>
         </div>
 
-        <ReactModal
+        <ReactModal style={{ overflow: "visible"}}
            isOpen={this.state.modalIsOpen}
            contentLabel="Minimal Modal Example"
            ariaHideApp={false}
         >
             <div style={{ backgroundColor: "#EEEEEE" }} className="modalBody" >
             <Tabs defaultActiveKey="BusinessInfo" id="uncontrolled-tab-example">
-              <Tab eventKey="BusinessInfo" title="Business Info">
+              <Tab eventKey="BusinessInfo" title="Business Info" style={{width: "90vw"}}>
                 <div>
                   <h2 id="bName">{this.state.selectedBusiness}</h2>
                   <div id="cName">City: {this.state.selectedCity}</div>
@@ -476,7 +501,7 @@ fetchBusinessHours = (id) => {
                   <div style={{ display: "flex", flexDirection: "row"}}>
                     <div id="sName">Attributes: &nbsp;</div>{this.state.selectedBusinessAttributes.map((at) => <div> {at.attrib}, &nbsp;</div>)}
                   </div>
-                  <div style={{ display: "flex", flexDirection: "row"}}>
+                  <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
                     <div id="sName">Hours: &nbsp;</div>{this.state.selectedBusinessHours.map((openclose) => <div> {openclose.date}: {openclose.open}0 AM - {openclose.close}0 PM </div>)}
                   </div>
                 </div>
@@ -510,10 +535,10 @@ fetchBusinessHours = (id) => {
               <Tab eventKey="NewTip" title="Write a New Tip">
                 <Form.Group controlId="exampleForm.ControlTextarea1">
                   <Form.Label>Write a New Tip</Form.Label>
-                  <Form.Control as="textarea" rows="3" />
+                  <Form.Control id="tipText" as="textarea" rows="3" maxLength="500" />
                 </Form.Group>
 
-                <Button variant="primary" type="submit">
+                <Button variant="primary" type="submit" onClick={() => this.sendNewTip( this.state.selectedBusiness.id, this.state.currentUser )}>
                   Submit
                 </Button>
 
@@ -521,7 +546,7 @@ fetchBusinessHours = (id) => {
             </Tabs>
 
             </div>
-          <Button onClick={this.hideModal} style={{ marginRight: "10px"}} variant="dark">Close Modal</Button>
+          <Button onClick={this.hideModal} style={{ marginRight: "10px"}} variant="secondary">Close Modal</Button>
         </ReactModal>
 
       </div>
