@@ -28,7 +28,7 @@ class App extends React.Component {
     this.state = {
       modalIsOpen: false, modalStateIGuess: "", busstates: [], cities: [], zips: [], businessCategories: [], businesses: [],
       selectedState: "", selectedCity: "", selectedZip: "", selectedBusiness: "", selectedBusinessAttributes: [], selectedBusinessId: "",
-      selectedBusinessHours: [], currentUser: "i_EASSNcEqc1JrfdBjBeVw", tipText: "",
+      selectedBusinessHours: [], currentUser: "i_EASSNcEqc1JrfdBjBeVw", tipText: "", curBusiness: [],
       selectedBusinessAddress: "", sCount: "", cCount: "", activeCategories: [], tips: [], selectedBusinessCategories: [],
       businessAttributes: ["BusinessAcceptsCreditCards", "RestaurantsReservations", "WheelchairAccessible",
                            "OutdoorSeating", "GoodForKids", "RestaurantsGoodForGroups", "RestaurantsDelivery",
@@ -243,7 +243,7 @@ class App extends React.Component {
     this.fetchBusinessAttributes(b.id);
     this.fetchBusinessHours(b.id);
 
-    this.setState({ selectedBusiness: b.busname, selectedBusinessAddress: b.address, selectedBusinessId: b.id });
+    this.setState({curBusiness: b, selectedBusiness: b.busname, selectedBusinessAddress: b.address, selectedBusinessId: b.id });
     this.showModal();
     this.updateTips(b.id);
   }
@@ -337,6 +337,8 @@ sendNewTip = (busID, userid) => {
   } catch (error) {
     console.log(error)
   }
+
+  this.viewBusiness(this.state.curBusiness);
 
 }
 
