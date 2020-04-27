@@ -30,6 +30,7 @@ class App extends React.Component {
       businessAttributes1: [], businessAttributes2: [], businessAttributes3: [],
       slectedState: "", selectedCity: "", selectedZip: "", selectedBusiness: "", 
       selectedBusinessAddress: "", sCount: "", cCount: "", activeCategories: [], tips: [], selectedBusinessCategories: [],
+      selectedBusinessAttributes: [], selectedBusinessHours: [],
     };
 
     this.bName = React.createRef();
@@ -229,6 +230,8 @@ class App extends React.Component {
   viewBusiness = (b) => {
     console.log("Selected Business: " + this.state.selectedBusiness )
     this.fetchBusinessCategories(b.id);
+    this.fetchBusinessAttributes(b.id);
+    this.fetchBusinessHours(b.id);
 
     this.setState({ selectedBusiness: b.busname, selectedBusinessAddress: b.address});
     this.showModal();
@@ -250,6 +253,46 @@ class App extends React.Component {
     }).catch(error => {
       console.log(error);
     });
+}
+
+fetchBusinessAttributes = (id) => {
+  fetch("http://localhost:3030/business/attributes/" + id)
+  .then((response) => {
+    return response.json();
+  })
+  .then(data => {
+    //console.log("data: " + data);
+    let atFromApi = data.map(at => {
+      return { attrib: at.busatt }
+    });
+    //console.log("attribs: " + atFromApi)
+    this.setState({
+      selectedBusinessAttributes: atFromApi,
+    });
+  }).catch(error => {
+    console.log(error);
+  });
+}
+
+fetchBusinessHours = (id) => {
+  var d = new Date();
+  var n = d.getDay();
+  fetch("http://localhost:3030/business/openClose/" + id + "/" + n)
+  .then((response) => {
+    return response.json();
+  })
+  .then(data => {
+    console.log("data: " + data);
+    let hoursFromApi = data.map(openclose => {
+      return { date: openclose.dayofweek, open: openclose.hropen, close: openclose.hrclosed }
+    });
+    console.log("hours: " + hoursFromApi)
+    this.setState({
+      selectedBusinessHours: hoursFromApi,
+    });
+  }).catch(error => {
+    console.log(error);
+  });
 }
 
 
@@ -406,8 +449,15 @@ class App extends React.Component {
                   <div id="cName">City: {this.state.selectedCity}</div>
                   <div id="sName">State: {this.state.selectedState}</div>
                   <div id="sName">Address: {this.state.selectedBusinessAddress}</div>
-                  <div id="sName">Categories & Attributes: {this.state.selectedBusinessCategories.map((cat) => <div> {cat.value} </div>)}</div>
-                  <div id="sName">Hours Today: </div>
+                  <div style={{ display: "flex", flexDirection: "row"}}>
+                    <div id="sName">Categories: &nbsp;</div>{this.state.selectedBusinessCategories.map((cat) => <div> {cat.value}, &nbsp;</div>)}
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "row"}}>
+                    <div id="sName">Attributes: &nbsp;</div>{this.state.selectedBusinessAttributes.map((at) => <div> {at.attrib}, &nbsp;</div>)}
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "row"}}>
+                    <div id="sName">Hours: &nbsp;</div>{this.state.selectedBusinessHours.map((openclose) => <div> {openclose.date}: {openclose.open}0 - {openclose.close}0 </div>)}
+                  </div>
                 </div>
               </Tab>
               <Tab eventKey="Tips" title="Tips">
