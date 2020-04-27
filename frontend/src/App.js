@@ -27,8 +27,8 @@ class App extends React.Component {
     super(props)
     this.state = {
       modalIsOpen: false, modalStateIGuess: "", busstates: [], cities: [], zips: [], businessCategories: [], businesses: [],
-      selectedState: "", selectedCity: "", selectedZip: "", selectedBusiness: "", selectedBusinessAttributes: [],
-      selectedBusinessHours: [], currentUser: "",
+      selectedState: "", selectedCity: "", selectedZip: "", selectedBusiness: "", selectedBusinessAttributes: [], selectedBusinessId: "",
+      selectedBusinessHours: [], currentUser: "i_EASSNcEqc1JrfdBjBeVw", tipText: "",
       selectedBusinessAddress: "", sCount: "", cCount: "", activeCategories: [], tips: [], selectedBusinessCategories: [],
       businessAttributes: ["BusinessAcceptsCreditCards", "RestaurantsReservations", "WheelchairAccessible",
                            "OutdoorSeating", "GoodForKids", "RestaurantsGoodForGroups", "RestaurantsDelivery",
@@ -42,6 +42,7 @@ class App extends React.Component {
     this.sName = React.createRef();
     this.sCount = React.createRef();
     this.tCount = React.createRef();
+    this.tipTextArea = React.createRef();
 
   }
 
@@ -242,7 +243,7 @@ class App extends React.Component {
     this.fetchBusinessAttributes(b.id);
     this.fetchBusinessHours(b.id);
 
-    this.setState({ selectedBusiness: b.busname, selectedBusinessAddress: b.address});
+    this.setState({ selectedBusiness: b.busname, selectedBusinessAddress: b.address, selectedBusinessId: b.id });
     this.showModal();
     this.updateTips(b.id);
   }
@@ -307,27 +308,42 @@ fetchBusinessHours = (id) => {
 sendNewTip = (busID, userid) => {
   // userid, tipTime, tip date, tip text, busID
   // get the tip text and then clear the text box
-   var text = ReactDOM.getElementById("tipText").value()
-  ReactDOM.getElementById("tipText").value = "";
+  var text = this.state.tipText
+  this.setState({tipText: "" })
   
   var d = new Date(); 
   // pull the date and time out of this
-
-
+  var date = d.getFullYear() + "-" + d.getMonth() + "-" + d.getDay()
+  var time = d.getHours() + ":" +  d.getMinutes() + ":" + d.getSeconds();
   
+  var newTip = {
+    busid: this.state.selectedBusinessId,
+    userid: userid,
+    likecount: 0,
+    tiptext: text,
+    tipdate: date,
+    tiptime: time
+  };
+
   try {
-    const response = await fetch('http://localhost:3030/tip/insert/', {
+    const response = fetch('http://localhost:3030/tip/insert/', {
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
       method: 'post',
-      body: JSON.stringify(newBook),
+      body: JSON.stringify(newTip),
     })
   } catch (error) {
     console.log(error)
   }
 
+}
+
+handleOnChange(event) {
+  this.setState({
+    tipText: event.target.value
+  })
 }
 
   render() {
@@ -535,10 +551,11 @@ sendNewTip = (busID, userid) => {
               <Tab eventKey="NewTip" title="Write a New Tip">
                 <Form.Group controlId="exampleForm.ControlTextarea1">
                   <Form.Label>Write a New Tip</Form.Label>
-                  <Form.Control id="tipText" as="textarea" rows="3" maxLength="500" />
+                  <Form.Control onChange={(event) => this.handleOnChange(event)}
+                   value={this.state.tipText} as="textarea" rows="3" maxLength="500" />
                 </Form.Group>
 
-                <Button variant="primary" type="submit" onClick={() => this.sendNewTip( this.state.selectedBusiness.id, this.state.currentUser )}>
+                <Button variant="primary" type="submit" onClick={() => this.sendNewTip( this.state.selectedBusiness, this.state.currentUser )}>
                   Submit
                 </Button>
 
