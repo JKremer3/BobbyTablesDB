@@ -323,6 +323,10 @@ sendNewTip = (busID, userid) => {
   // pull the date and time out of this
   var date = d.getFullYear() + "-" + d.getMonth() + "-" + d.getDay()
   var time = d.getHours() + ":" +  d.getMinutes() + ":" + d.getSeconds();
+
+  console.log("Date and time:  ");
+  console.log(date);
+  console.log(time);
   
   var newTip = {
     busid: this.state.selectedBusinessId,
