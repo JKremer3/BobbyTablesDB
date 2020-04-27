@@ -31,10 +31,10 @@ class App extends React.Component {
       selectedBusinessHours: [], currentUser: "i_EASSNcEqc1JrfdBjBeVw", tipText: "", curBusiness: [],
       selectedBusinessAddress: "", sCount: "", cCount: "", activeCategories: [], tips: [], selectedBusinessCategories: [],
       businessAttributes: ["BusinessAcceptsCreditCards", "RestaurantsReservations", "WheelchairAccessible",
-                           "OutdoorSeating", "GoodForKids", "RestaurantsGoodForGroups", "RestaurantsDelivery",
-                           "RestaurantsTakeOut", "WiFi", "BikeParking"],
+        "OutdoorSeating", "GoodForKids", "RestaurantsGoodForGroups", "RestaurantsDelivery",
+        "RestaurantsTakeOut", "WiFi", "BikeParking"],
       businessMeals: ["breakfast", "brunch", "lunch", "dinner", "dessert", "latenight"],
-      businessPrices: ["1", "2", "3", "4"],
+      businessPrices: ["1", "2", "3", "4"], userpage: true,
     };
 
     this.bName = React.createRef();
@@ -113,9 +113,11 @@ class App extends React.Component {
       })
       .then(data => {
         let businessFromApi = data.map(business => {
-          return { id: business.busid , busname: business.busname, address: business.address, 
-          city: business.city, busstate: business.busstate, stars: business.stars, distance: 0, 
-        numtips: business.numtips, numcheckins: business.numcheckins }
+          return {
+            id: business.busid, busname: business.busname, address: business.address,
+            city: business.city, busstate: business.busstate, stars: business.stars, distance: 0,
+            numtips: business.numtips, numcheckins: business.numcheckins
+          }
         });
         console.log(data)
         console.log(businessFromApi)
@@ -152,25 +154,27 @@ class App extends React.Component {
   }
 
   updateTips = (id) => {
-      console.log(id);
+    console.log(id);
     // get the tips for a business id
-    fetch("http://localhost:3030/tip/" + id )
-    .then((response) => {
-      return response.json();
-    } )
-    .then(data => {
-      let tips = data.map(tip => {
-        return { tiptext: tip.tiptext, likecount: tip.likecount,
-           userid: tip.userid, busid: tip.busid, 
-           tipdate: tip.tipdate, tiptime: tip.tiptime }
-      });
-      this.setState({ tips: tips });
-      console.log("Got tips");
-      console.log(tips);
-    }).catch( error => {
-      console.log(error)
-    }
-    );
+    fetch("http://localhost:3030/tip/" + id)
+      .then((response) => {
+        return response.json();
+      })
+      .then(data => {
+        let tips = data.map(tip => {
+          return {
+            tiptext: tip.tiptext, likecount: tip.likecount,
+            userid: tip.userid, busid: tip.busid,
+            tipdate: tip.tipdate, tiptime: tip.tiptime
+          }
+        });
+        this.setState({ tips: tips });
+        console.log("Got tips");
+        console.log(tips);
+      }).catch(error => {
+        console.log(error)
+      }
+      );
   }
 
   updateModal = (busname) => {
@@ -186,9 +190,11 @@ class App extends React.Component {
       })
       .then(data => {
         let businessFromApi = data.map(business => {
-          return { id: business.busid , busname: business.busname, address: business.address, 
-          city: business.city, busstate: business.busstate, stars: business.stars, distance: 0, 
-        numtips: business.numtips, numcheckins: business.numcheckins }
+          return {
+            id: business.busid, busname: business.busname, address: business.address,
+            city: business.city, busstate: business.busstate, stars: business.stars, distance: 0,
+            numtips: business.numtips, numcheckins: business.numcheckins
+          }
         });
         console.log(data)
         console.log(businessFromApi)
@@ -212,7 +218,7 @@ class App extends React.Component {
     this.setState({ activeCategories: activeCategories });
     console.log("Fresh Categories: " + freshCats)
 
-    this.updateTableFilter( this.state.selectedZip, freshCats )
+    this.updateTableFilter(this.state.selectedZip, freshCats)
 
   }
 
@@ -226,19 +232,19 @@ class App extends React.Component {
     }
 
     // if there are no active categories just call the regular fetch
-    if (activeCategories.length == 0){
+    if (activeCategories.length == 0) {
       this.updateTable(this.state.selectedZip);
     }
     else {
       // if there are active categories we call the filter fetch
-      this.updateTableFilter( this.state.selectedZip, activeCategories )
+      this.updateTableFilter(this.state.selectedZip, activeCategories)
     }
 
     this.setState({ activeCategories: activeCategories })
   }
 
   viewBusiness = (b) => {
-    console.log("Selected Business: " + this.state.selectedBusiness )
+    console.log("Selected Business: " + this.state.selectedBusiness)
     this.fetchBusinessCategories(b.id);
     this.fetchBusinessAttributes(b.id);
     this.fetchBusinessHours(b.id);
@@ -250,60 +256,61 @@ class App extends React.Component {
 
   fetchBusinessCategories = (id) => {
     fetch("http://localhost:3030/business/categories/" + id)
-    .then((response) => {
-      return response.json();
-    })
-    .then(data => {
-      let catFromApi = data.map(cat => {
-        return { value: cat.buscat }
+      .then((response) => {
+        return response.json();
+      })
+      .then(data => {
+        let catFromApi = data.map(cat => {
+          return { value: cat.buscat }
+        });
+        this.setState({
+          selectedBusinessCategories: catFromApi,
+        });
+      }).catch(error => {
+        console.log(error);
       });
-      this.setState({
-        selectedBusinessCategories: catFromApi,
+  }
+
+  fetchBusinessAttributes = (id) => {
+    fetch("http://localhost:3030/business/attributes/" + id)
+      .then((response) => {
+        return response.json();
+      })
+      .then(data => {
+        //console.log("data: " + data);
+        let atFromApi = data.map(at => {
+          return { attrib: at.busatt }
+        });
+        //console.log("attribs: " + atFromApi)
+        this.setState({
+          selectedBusinessAttributes: atFromApi,
+        });
+      }).catch(error => {
+        console.log(error);
       });
-    }).catch(error => {
-      console.log(error);
-    });
-}
+  }
 
-fetchBusinessAttributes = (id) => {
-  fetch("http://localhost:3030/business/attributes/" + id)
-  .then((response) => {
-    return response.json();
-  })
-  .then(data => {
-    //console.log("data: " + data);
-    let atFromApi = data.map(at => {
-      return { attrib: at.busatt }
-    });
-    //console.log("attribs: " + atFromApi)
-    this.setState({
-      selectedBusinessAttributes: atFromApi,
-    });
-  }).catch(error => {
-    console.log(error);
-  });
-}
+  fetchBusinessHours = (id) => {
+    var d = new Date();
+    var n = d.getDay();
+    fetch("http://localhost:3030/business/openClose/" + id + "/" + n)
+      .then((response) => {
+        return response.json();
+      })
+      .then(data => {
+        console.log("data: " + data);
+        let hoursFromApi = data.map(openclose => {
+          return { date: openclose.dayofweek, open: openclose.hropen, close: openclose.hrclosed }
+        });
+        console.log("hours: " + hoursFromApi)
+        this.setState({
+          selectedBusinessHours: hoursFromApi,
+        });
+      }).catch(error => {
+        console.log(error);
+      });
+  }
 
-fetchBusinessHours = (id) => {
-  var d = new Date();
-  var n = d.getDay();
-  fetch("http://localhost:3030/business/openClose/" + id + "/" + n)
-  .then((response) => {
-    return response.json();
-  })
-  .then(data => {
-    console.log("data: " + data);
-    let hoursFromApi = data.map(openclose => {
-      return { date: openclose.dayofweek, open: openclose.hropen, close: openclose.hrclosed }
-    });
-    console.log("hours: " + hoursFromApi)
-    this.setState({
-      selectedBusinessHours: hoursFromApi,
-    });
-  }).catch(error => {
-    console.log(error);
-  });
-}
 
 sendNewTip = (busID, userid) => {
   // userid, tipTime, tip date, tip text, busID
@@ -349,8 +356,13 @@ handleOnChange(event) {
     tipText: event.target.value
   })
 }
+  togglepage = () => {
+    this.setState({ userpage: !this.state.userpage })
+    console.log("togglepane")
+  }
 
   render() {
+    // Render Business Page ****************************************
     var sortedCategories = this.state.businessCategories.sort();
     var sortedAttributes = this.state.businessAttributes.sort();
     var sortedMeals = this.state.businessMeals.sort();
@@ -359,147 +371,156 @@ handleOnChange(event) {
     return (
 
       <div className="App" style={{ display: "flex", justifyContent: "center", backgroundColor: "#007bff", minHeight: "100vh", minWidth: "100%" }} >
+
+
         <div style={{ display: "flex", flexDirection: "column" }}>
           <Navbar theme="navbar-default" bg="primary" expand="false" >
             <Navbar.Brand href="#home" style={{ fontStyle: "italic" }}>YELPER HELPER</Navbar.Brand>
+            <button type="switchmode" onClick={this.togglepage}>Switch Mode</button>
           </Navbar>
+          {this.state.userpage ?
+            <React.Fragment>
+              { /* This is the flex box that wraps the 4 sections of the UI    */}
+              < div style={{ display: "flex", flexDirection: "column", minWidth: "100%", backgroundColor: "#EEEEEE" }}>
 
-          { /* This is the flex box that wraps the 4 sections of the UI    */ }
-          <div style={{ display: "flex", flexDirection: "column", minWidth: "100%", backgroundColor: "#EEEEEE" }}>
+                { /* Top 2 squares (the state, city and zip selectors and the categories menu ) */}
+                <div style={{ display: "flex", flexDirection: "row" }}>
+                  <div style={{ display: "block", width: "50%", margin: "20px" }}>
+                    <Form>
+                      <Form.Group controlId="exampleForm.ControlSelect1">
+                        <Form.Label>State</Form.Label>
+                        <Form.Control as="select" value={this.state.selectedState} onChange={this.updateCities}>
+                          {this.state.busstates.map((busstate) => <option key={busstate.value} value={busstate.value}>
+                            {busstate.display}
+                          </option>)}
+                        </Form.Control>
+                      </Form.Group>
+                      <Form.Group controlId="exampleForm.ControlSelect2">
+                        <Form.Label>City</Form.Label>
+                        <Form.Control as="select" value={this.state.selectedCity} onChange={this.updateZips}>
+                          {this.state.cities.map((city) => <option key={city.value} value={city.value}>{city.display}</option>)}
+                        </Form.Control>
+                      </Form.Group>
+                      <Form.Group controlId="exampleForm.ControlSelect3">
+                        <Form.Label>Zip Code</Form.Label>
+                        <Form.Control as="select" value={this.state.selectedZip} onChange={this.fetchSort}>
+                          {this.state.zips.map((zip) => <option key={zip.value} value={zip.value}>{zip.display}</option>)}
+                        </Form.Control>
+                      </Form.Group>
+                    </Form>
+                  </div>
 
-          { /* Top 2 squares (the state, city and zip selectors and the categories menu ) */ }
-            <div style={{ display: "flex", flexDirection: "row" }}>
-              <div style={{ display: "block", width: "50%", margin: "20px" }}>
-                <Form>
-                  <Form.Group controlId="exampleForm.ControlSelect1">
-                    <Form.Label>State</Form.Label>
-                    <Form.Control as="select" value={this.state.selectedState} onChange={this.updateCities}>
-                      {this.state.busstates.map((busstate) => <option key={busstate.value} value={busstate.value}>
-                        {busstate.display}
-                      </option>)}
-                    </Form.Control>
-                  </Form.Group>
-                  <Form.Group controlId="exampleForm.ControlSelect2">
-                    <Form.Label>City</Form.Label>
-                    <Form.Control as="select" value={this.state.selectedCity} onChange={this.updateZips}>
-                      {this.state.cities.map((city) => <option key={city.value} value={city.value}>{city.display}</option>)}
-                    </Form.Control>
-                  </Form.Group>
-                  <Form.Group controlId="exampleForm.ControlSelect3">
-                    <Form.Label>Zip Code</Form.Label>
-                    <Form.Control as="select" value={this.state.selectedZip} onChange={this.fetchSort}>
-                      {this.state.zips.map((zip) => <option key={zip.value} value={zip.value}>{zip.display}</option>)}
-                    </Form.Control>
-                  </Form.Group>
-                </Form>
-              </div>
+                  <div style={{ display: "block", width: "100%", margin: "20px" }}>
+                    <Form.Label>Business Filter</Form.Label> <br></br>
+                    <div style={{
+                      width: "100%", height: "300px", overflow: "auto", background: "#d6d4d3", margin: "10",
+                      borderStyle: "solid", borderColor: "#8c8987", borderWidth: "2px", display: "flex", flexDirection: "row"
+                    }}>
+                      <ListGroup> Categories
+                      {sortedCategories.map((businessCategory) =>
+                        this.state.activeCategories.indexOf(businessCategory.value) == -1 ?
+                          <ListGroup.Item
+                            onClick={() => this.activateCategory(businessCategory.value)} >{businessCategory.value}
+                          </ListGroup.Item>
+                          :
+                          <ListGroup.Item
+                            onClick={() => this.deactivateCategory(businessCategory.value)} active>{businessCategory.value}
+                          </ListGroup.Item>
+                      )}
+                      </ListGroup>
+                      <ListGroup> Attributes
+                      {sortedAttributes.map((businessAttributes) =>
+                        this.state.activeCategories.indexOf(businessAttributes.value) == -1 ?
+                          <ListGroup.Item
+                            onClick={() => this.activateCategory(businessAttributes)} >{businessAttributes}
+                          </ListGroup.Item>
+                          :
+                          <ListGroup.Item
+                            onClick={() => this.deactivateCategory(businessAttributes)} active>{businessAttributes}
+                          </ListGroup.Item>
+                      )}
+                      </ListGroup>
+                      <ListGroup> Meals
+                      {sortedMeals.map((meals) =>
+                        this.state.activeCategories.indexOf(meals.value) == -1 ?
+                          <ListGroup.Item
+                            onClick={() => this.activateCategory(meals)} >{meals}
+                          </ListGroup.Item>
+                          :
+                          <ListGroup.Item
+                            onClick={() => this.deactivateCategory(meals)} active>{meals}
+                          </ListGroup.Item>
+                      )}
+                      </ListGroup>
+                      <ListGroup> Price
+                      {sortedPrices.map((prices) =>
+                        this.state.activeCategories.indexOf(prices) == -1 ?
+                          <ListGroup.Item
+                            onClick={() => this.activateCategory(prices)} >{prices}
+                          </ListGroup.Item>
+                          :
+                          <ListGroup.Item
+                            onClick={() => this.deactivateCategory(prices)} active>{prices}
+                          </ListGroup.Item>
+                      )}
+                      </ListGroup>
+                    </div>
+                  </div>
 
-              <div style={{ display: "block", width: "100%", margin: "20px" }}>
-                <Form.Label>Business Filter</Form.Label> <br></br>
-                <div style={{
-                  width: "100%", height: "300px", overflow: "auto", background: "#d6d4d3", margin: "10",
-                  borderStyle: "solid", borderColor: "#8c8987", borderWidth: "2px", display: "flex", flexDirection: "row"
-                }}>
-                  <ListGroup> Categories
-                    {sortedCategories.map((businessCategory) =>
-                      this.state.activeCategories.indexOf(businessCategory.value) == -1 ?
-                          <ListGroup.Item  
-                              onClick={() => this.activateCategory(businessCategory.value)} >{businessCategory.value}
-                              </ListGroup.Item>
-                        :
-                          <ListGroup.Item  
-                              onClick={() => this.deactivateCategory(businessCategory.value)} active>{businessCategory.value}
-                              </ListGroup.Item>
-                    )}
-                  </ListGroup>
-                  <ListGroup> Attributes
-                    {sortedAttributes.map((businessAttributes) =>
-                      this.state.activeCategories.indexOf(businessAttributes.value) == -1 ?
-                          <ListGroup.Item  
-                              onClick={() => this.activateCategory(businessAttributes)} >{businessAttributes}
-                              </ListGroup.Item>
-                        :
-                          <ListGroup.Item  
-                              onClick={() => this.deactivateCategory(businessAttributes)} active>{businessAttributes}
-                              </ListGroup.Item>
-                    )}
-                  </ListGroup>
-                  <ListGroup> Meals
-                    {sortedMeals.map((meals) =>
-                      this.state.activeCategories.indexOf(meals.value) == -1 ?
-                          <ListGroup.Item  
-                              onClick={() => this.activateCategory(meals)} >{meals}
-                              </ListGroup.Item>
-                        :
-                          <ListGroup.Item  
-                              onClick={() => this.deactivateCategory(meals)} active>{meals}
-                              </ListGroup.Item>
-                    )}
-                  </ListGroup>
-                  <ListGroup> Price
-                    {sortedPrices.map((prices) =>
-                      this.state.activeCategories.indexOf(prices) == -1 ?
-                          <ListGroup.Item  
-                              onClick={() => this.activateCategory(prices)} >{prices}
-                              </ListGroup.Item>
-                        :
-                          <ListGroup.Item  
-                              onClick={() => this.deactivateCategory(prices)} active>{prices}
-                              </ListGroup.Item>
-                    )}
-                  </ListGroup>
                 </div>
-              </div>
 
+                { /* The Business Table and the Tips */}
+                <div style={{ display: "flex", flexDirection: "row" }}>
+                  <div style={{ display: "block", minWidth: "80vw", maxHeight: "500px", margin: "20px", overflow: "auto" }}>
+                    <table style={{ border: "1px solid grey", width: "100%" }} className="sortable" id="dataTable">
+                      <thead>
+                        <tr>
+                          <th style={{ border: "1px solid grey" }} >Business Name</th>
+                          <th style={{ border: "1px solid grey" }} >State</th>
+                          <th style={{ border: "1px solid grey" }}>City</th>
+                          <th style={{ border: "1px solid grey" }} >Address</th>
+                          <th style={{ border: "1px solid grey" }}>Distance</th>
+                          <th style={{ border: "1px solid grey" }}>Stars</th>
+                          <th style={{ border: "1px solid grey" }}>Tip Count</th>
+                          <th style={{ border: "1px solid grey" }}>Checkins</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {this.state.businesses.length != 0 ?
+
+                          this.state.businesses.map((business) => <tr onClick={() => this.viewBusiness(business)} key={business.id} value={business.id}>
+                            <td style={{ border: "1px solid grey" }}>{business.busname}</td>
+                            <td style={{ border: "1px solid grey" }}>{business.busstate}</td>
+                            <td style={{ border: "1px solid grey" }}>{business.city}</td>
+                            <td style={{ border: "1px solid grey" }}>{business.address}</td>
+                            <td style={{ border: "1px solid grey" }} >{business.distance}</td>
+                            <td style={{ border: "1px solid grey" }} >{business.stars}</td>
+                            <td style={{ border: "1px solid grey" }}>{business.numtips}</td>
+                            <td style={{ border: "1px solid grey" }}>{business.numcheckins}</td>
+                          </tr>)
+                          :
+                          <React.Fragment />
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+
+                </div>
+
+                {this.state.businesses.length == 0 ?
+                  <div style={{ display: "flex", height: "200px", justifyContent: "center", alignItems: "center" }}>
+                    NO DATA
+                </div>
+                  :
+                  <React.Fragment />
+                }
+
+              </div>
+            </React.Fragment> :
+            <div>
             </div>
+          }
 
-          { /* The Business Table and the Tips */ }
-            <div style={{ display: "flex", flexDirection: "row" }}>
-              <div style={{ display: "block", minWidth: "80vw", maxHeight: "500px", margin: "20px", overflow: "auto" }}>
-                <table style={{ border: "1px solid grey", width: "100%" }} className="sortable" id="dataTable">
-                  <thead>
-                    <tr>
-                      <th style={{ border: "1px solid grey" }} >Business Name</th>
-                      <th style={{ border: "1px solid grey" }} >State</th>
-                      <th style={{ border: "1px solid grey" }}>City</th>
-                      <th style={{ border: "1px solid grey" }} >Address</th>
-                      <th style={{ border: "1px solid grey" }}>Distance</th>
-                      <th style={{ border: "1px solid grey" }}>Stars</th>
-                      <th style={{ border: "1px solid grey" }}>Tip Count</th>
-                      <th style={{ border: "1px solid grey" }}>Checkins</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    { this.state.businesses.length != 0 ? 
-
-                    this.state.businesses.map((business) => <tr onClick={() => this.viewBusiness( business )} key={business.id} value={business.id}>
-                      <td style={{ border: "1px solid grey" }}>{business.busname}</td>
-                      <td style={{ border: "1px solid grey" }}>{business.busstate}</td>
-                      <td style={{ border: "1px solid grey" }}>{business.city}</td>
-                      <td style={{ border: "1px solid grey" }}>{business.address}</td>
-                      <td style={{ border: "1px solid grey" }} >{business.distance}</td>
-                      <td style={{ border: "1px solid grey" }} >{business.stars}</td>
-                      <td style={{ border: "1px solid grey" }}>{business.numtips}</td>
-                      <td style={{ border: "1px solid grey" }}>{business.numcheckins}</td>
-                    </tr>) 
-                    :
-                      <React.Fragment/>
-                    }
-                  </tbody>
-                  </table>
-              </div>
-
-            </div>
-
-            {this.state.businesses.length == 0 ?
-              <div style={{ display: "flex", height: "200px", justifyContent: "center", alignItems: "center" }}>
-                NO DATA
-              </div>
-              :
-              <React.Fragment />
-            }
-
-          </div>
         </div>
 
         <ReactModal style={{ overflow: "visible"}}
@@ -507,7 +528,7 @@ handleOnChange(event) {
            contentLabel="Minimal Modal Example"
            ariaHideApp={false}
         >
-            <div style={{ backgroundColor: "#EEEEEE" }} className="modalBody" >
+          <div style={{ backgroundColor: "#EEEEEE" }} className="modalBody" >
             <Tabs defaultActiveKey="BusinessInfo" id="uncontrolled-tab-example">
               <Tab eventKey="BusinessInfo" title="Business Info" style={{width: "90vw"}}>
                 <div>
@@ -515,10 +536,10 @@ handleOnChange(event) {
                   <div id="cName">City: {this.state.selectedCity}</div>
                   <div id="sName">State: {this.state.selectedState}</div>
                   <div id="sName">Address: {this.state.selectedBusinessAddress}</div>
-                  <div style={{ display: "flex", flexDirection: "row"}}>
+                  <div style={{ display: "flex", flexDirection: "row" }}>
                     <div id="sName">Categories: &nbsp;</div>{this.state.selectedBusinessCategories.map((cat) => <div> {cat.value}, &nbsp;</div>)}
                   </div>
-                  <div style={{ display: "flex", flexDirection: "row"}}>
+                  <div style={{ display: "flex", flexDirection: "row" }}>
                     <div id="sName">Attributes: &nbsp;</div>{this.state.selectedBusinessAttributes.map((at) => <div> {at.attrib}, &nbsp;</div>)}
                   </div>
                   <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
@@ -569,7 +590,6 @@ handleOnChange(event) {
             </div>
           <Button onClick={this.hideModal} style={{ marginRight: "10px"}} variant="secondary">Close Modal</Button>
         </ReactModal>
-
       </div>
     );
   }
