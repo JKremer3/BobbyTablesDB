@@ -234,6 +234,25 @@ class App extends React.Component {
     this.updateTips(b.id);
   }
 
+  fetchBusinessCategories = (id) => {
+    fetch("http://localhost:3030/zip/cat/" + e.target.value)
+      .then((response) => {
+        return response.json();
+      })
+      .then(data => {
+        let catFromApi = data.map(cat => {
+          return { cat }
+        });
+        this.setState({
+          businessCategories: catFromApi,
+        });
+      }).catch(error => {
+        console.log(error);
+      });
+    
+  }
+
+
   render() {
     var sortedCategories = this.state.businessCategories.sort();
     var sortedAttributes1 = this.state.businessAttributes1.sort();
