@@ -370,6 +370,20 @@ const getBusFriendTips = (request, response) => {
     });
 }
 
+// Returns {dayofweek, hropen, hrclosed}, expects parameter 'day' as an integer
+const getBusOpenClose = (request, response) => {
+    const dayArray = ['Sunday', 'Monday', 'Tuesday', 'Wednesay', 'Thursday', 'Friday', 'Saturday'];
+    const busid = request.params.busid;
+    const day = dayArray[parseInt(request.params.day)];
+    
+    pool.query('select dayofweek, hropen, hrclosed from BusHours where busid = $1 and dayofweek = $2', [busid, day], (error, results) => {
+        if (error) {
+            throw error
+        }
+        response.status(200).json(results.rows)
+    });
+}
+
 module.exports = {
     getState,
     getAllStates,
@@ -386,6 +400,7 @@ module.exports = {
     getTipsforBusiness,
     getChartForBusiness,
     getBusinessFilter,
+    getBusOpenClose,
     getBusFriendTips,
     insertTip,
     postBusinessCheckin,
