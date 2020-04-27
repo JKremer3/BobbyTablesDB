@@ -29,7 +29,7 @@ class App extends React.Component {
       modalIsOpen: false, modalStateIGuess: "", busstates: [], cities: [], zips: [], businessCategories: [], businesses: [],
       businessAttributes1: [], businessAttributes2: [], businessAttributes3: [],
       slectedState: "", selectedCity: "", selectedZip: "", selectedBusiness: "", 
-      selectedBusinessAddress: "", sCount: "", cCount: "", activeCategories: [], tips: []
+      selectedBusinessAddress: "", sCount: "", cCount: "", activeCategories: [], tips: [], selectedBusinessCategories: [],
     };
 
     this.bName = React.createRef();
@@ -228,6 +228,7 @@ class App extends React.Component {
 
   viewBusiness = (b) => {
     console.log("Selected Business: " + this.state.selectedBusiness )
+    this.fetchBusinessCategories(b.id);
 
     this.setState({ selectedBusiness: b.busname, selectedBusinessAddress: b.address});
     this.showModal();
@@ -235,22 +236,21 @@ class App extends React.Component {
   }
 
   fetchBusinessCategories = (id) => {
-    fetch("http://localhost:3030/zip/cat/" + e.target.value)
-      .then((response) => {
-        return response.json();
-      })
-      .then(data => {
-        let catFromApi = data.map(cat => {
-          return { cat }
-        });
-        this.setState({
-          businessCategories: catFromApi,
-        });
-      }).catch(error => {
-        console.log(error);
+    fetch("http://localhost:3030/business/categories/" + id)
+    .then((response) => {
+      return response.json();
+    })
+    .then(data => {
+      let catFromApi = data.map(cat => {
+        return { value: cat.buscat }
       });
-    
-  }
+      this.setState({
+        selectedBusinessCategories: catFromApi,
+      });
+    }).catch(error => {
+      console.log(error);
+    });
+}
 
 
   render() {
@@ -406,7 +406,7 @@ class App extends React.Component {
                   <div id="cName">City: {this.state.selectedCity}</div>
                   <div id="sName">State: {this.state.selectedState}</div>
                   <div id="sName">Address: {this.state.selectedBusinessAddress}</div>
-                  <div id="sName">Categories & Attributes: </div>
+                  <div id="sName">Categories & Attributes: {this.state.selectedBusinessCategories.map((cat) => <div> {cat.value} </div>)}</div>
                   <div id="sName">Hours Today: </div>
                 </div>
               </Tab>
