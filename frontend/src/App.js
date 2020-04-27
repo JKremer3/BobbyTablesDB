@@ -19,7 +19,6 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 
-
 import ReactModal from 'react-modal';
 
 class App extends React.Component {
@@ -351,6 +350,26 @@ sendNewTip = (busID, userid) => {
 
 }
 
+checkinToBusiness(busID){
+
+  try {
+    const response = fetch('http://localhost:3030/business/checkin/' + busID, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      method: 'post'
+    })
+  } catch (error) {
+    console.log(error)
+  }
+
+  var newBusiness = this.state.curBusiness
+  newBusiness.numcheckins += 1
+  this.setState({ curBusiness: newBusiness });
+  
+}
+
 handleOnChange(event) {
   this.setState({
     tipText: event.target.value
@@ -545,6 +564,9 @@ handleOnChange(event) {
                   <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
                     <div id="sName">Hours: &nbsp;</div>{this.state.selectedBusinessHours.map((openclose) => <div> {openclose.date}: {openclose.open}0 AM - {openclose.close}0 PM </div>)}
                   </div>
+                  <Button variant="primary" type="submit" onClick={() => this.checkinToBusiness(this.state.curBusiness.busid) }>
+                    Checkin
+                  </Button>
                 </div>
               </Tab>
               <Tab eventKey="Tips" title="Tips">
