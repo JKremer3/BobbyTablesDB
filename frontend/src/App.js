@@ -507,11 +507,21 @@ fetchBusinessHours = (id) => {
                 </Table>
 
               </Tab>
+              <Tab eventKey="NewTip" title="Write a New Tip">
+                <Form.Group controlId="exampleForm.ControlTextarea1">
+                  <Form.Label>Write a New Tip</Form.Label>
+                  <Form.Control as="textarea" rows="3" />
+                </Form.Group>
+
+                <Button variant="primary" type="submit">
+                  Submit
+                </Button>
+
+              </Tab>
             </Tabs>
 
-
             </div>
-          <button type = "closemodal" onClick={this.hideModal}>Close Modal</button>
+          <Button onClick={this.hideModal} style={{ marginRight: "10px"}} variant="dark">Close Modal</Button>
         </ReactModal>
 
       </div>
