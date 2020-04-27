@@ -27,10 +27,14 @@ class App extends React.Component {
     super(props)
     this.state = {
       modalIsOpen: false, modalStateIGuess: "", busstates: [], cities: [], zips: [], businessCategories: [], businesses: [],
-      businessAttributes1: [], businessAttributes2: [], businessAttributes3: [],
-      slectedState: "", selectedCity: "", selectedZip: "", selectedBusiness: "", 
+      selectedState: "", selectedCity: "", selectedZip: "", selectedBusiness: "", selectedBusinessAttributes: [],
+      selectedBusinessHours: [],
       selectedBusinessAddress: "", sCount: "", cCount: "", activeCategories: [], tips: [], selectedBusinessCategories: [],
-      selectedBusinessAttributes: [], selectedBusinessHours: [],
+      businessAttributes: ["BusinessAcceptsCreditCards", "RestaurantsReservations", "WheelchairAccessible",
+                           "OutdoorSeating", "GoodForKids", "RestaurantsGoodForGroups", "RestaurantsDelivery",
+                           "RestaurantsTakeOut", "WiFi", "BikeParking"],
+      businessMeals: ["breakfast", "brunch", "lunch", "dinner", "dessert", "latenight"],
+      businessPrices: ["1", "2", "3", "4"],
     };
 
     this.bName = React.createRef();
@@ -122,10 +126,14 @@ class App extends React.Component {
       });
   }
 
-  fetchCategories = (e) => {
+  fetchSort = (e) => {
     this.updateTable(e.target.value)
     this.setState({ selectedZip: e.target.value })
-    fetch("http://localhost:3030/zip/cat/" + e.target.value)
+    this.fetchCategories(e.target.value)
+  }
+
+  fetchCategories = (zip) => {
+    fetch("http://localhost:3030/zip/cat/" + zip)
       .then((response) => {
         return response.json();
       })
@@ -136,6 +144,7 @@ class App extends React.Component {
         this.setState({
           businessCategories: catFromApi,
         });
+        console.log(catFromApi)
       }).catch(error => {
         console.log(error);
       });
@@ -298,9 +307,9 @@ fetchBusinessHours = (id) => {
 
   render() {
     var sortedCategories = this.state.businessCategories.sort();
-    var sortedAttributes1 = this.state.businessAttributes1.sort();
-    var sortedAttributes2 = this.state.businessAttributes2.sort();
-    var sortedAttributes3 = this.state.businessAttributes3.sort();
+    var sortedAttributes = this.state.businessAttributes.sort();
+    var sortedMeals = this.state.businessMeals.sort();
+    var sortedPrices = this.state.businessPrices.sort();
 
     return (
 
@@ -333,7 +342,7 @@ fetchBusinessHours = (id) => {
                   </Form.Group>
                   <Form.Group controlId="exampleForm.ControlSelect3">
                     <Form.Label>Zip Code</Form.Label>
-                    <Form.Control as="select" value={this.state.selectedZip} onChange={this.fetchCategories}>
+                    <Form.Control as="select" value={this.state.selectedZip} onChange={this.fetchSort}>
                       {this.state.zips.map((zip) => <option key={zip.value} value={zip.value}>{zip.display}</option>)}
                     </Form.Control>
                   </Form.Group>
@@ -341,12 +350,12 @@ fetchBusinessHours = (id) => {
               </div>
 
               <div style={{ display: "block", width: "100%", margin: "20px" }}>
-                <Form.Label>Business Catagories</Form.Label> <br></br>
+                <Form.Label>Business Filter</Form.Label> <br></br>
                 <div style={{
                   width: "100%", height: "300px", overflow: "auto", background: "#d6d4d3", margin: "10",
                   borderStyle: "solid", borderColor: "#8c8987", borderWidth: "2px", display: "flex", flexDirection: "row"
                 }}>
-                  <ListGroup>
+                  <ListGroup> Categories
                     {sortedCategories.map((businessCategory) =>
                       this.state.activeCategories.indexOf(businessCategory.value) == -1 ?
                           <ListGroup.Item  
@@ -358,27 +367,39 @@ fetchBusinessHours = (id) => {
                               </ListGroup.Item>
                     )}
                   </ListGroup>
-                  <ListGroup>
-                    {sortedCategories.map((businessCategory) =>
-                      this.state.activeCategories.indexOf(businessCategory.value) == -1 ?
+                  <ListGroup> Attributes
+                    {sortedAttributes.map((businessAttributes) =>
+                      this.state.activeCategories.indexOf(businessAttributes.value) == -1 ?
                           <ListGroup.Item  
-                              onClick={() => this.activateCategory(businessCategory.value)} >{businessCategory.value}
+                              onClick={() => this.activateCategory(businessAttributes)} >{businessAttributes}
                               </ListGroup.Item>
                         :
                           <ListGroup.Item  
-                              onClick={() => this.deactivateCategory(businessCategory.value)} active>{businessCategory.value}
+                              onClick={() => this.deactivateCategory(businessAttributes)} active>{businessAttributes}
                               </ListGroup.Item>
                     )}
                   </ListGroup>
-                  <ListGroup>
-                    {sortedCategories.map((businessCategory) =>
-                      this.state.activeCategories.indexOf(businessCategory.value) == -1 ?
+                  <ListGroup> Meals
+                    {sortedMeals.map((meals) =>
+                      this.state.activeCategories.indexOf(meals.value) == -1 ?
                           <ListGroup.Item  
-                              onClick={() => this.activateCategory(businessCategory.value)} >{businessCategory.value}
+                              onClick={() => this.activateCategory(meals)} >{meals}
                               </ListGroup.Item>
                         :
                           <ListGroup.Item  
-                              onClick={() => this.deactivateCategory(businessCategory.value)} active>{businessCategory.value}
+                              onClick={() => this.deactivateCategory(meals)} active>{meals}
+                              </ListGroup.Item>
+                    )}
+                  </ListGroup>
+                  <ListGroup> Price
+                    {sortedPrices.map((prices) =>
+                      this.state.activeCategories.indexOf(prices) == -1 ?
+                          <ListGroup.Item  
+                              onClick={() => this.activateCategory(prices)} >{prices}
+                              </ListGroup.Item>
+                        :
+                          <ListGroup.Item  
+                              onClick={() => this.deactivateCategory(prices)} active>{prices}
                               </ListGroup.Item>
                     )}
                   </ListGroup>
@@ -436,12 +457,12 @@ fetchBusinessHours = (id) => {
           </div>
         </div>
 
-        <ReactModal 
+        <ReactModal
            isOpen={this.state.modalIsOpen}
            contentLabel="Minimal Modal Example"
            ariaHideApp={false}
         >
-            <div className="modalBody" >
+            <div style={{ backgroundColor: "#EEEEEE" }} className="modalBody" >
             <Tabs defaultActiveKey="BusinessInfo" id="uncontrolled-tab-example">
               <Tab eventKey="BusinessInfo" title="Business Info">
                 <div>
@@ -456,7 +477,7 @@ fetchBusinessHours = (id) => {
                     <div id="sName">Attributes: &nbsp;</div>{this.state.selectedBusinessAttributes.map((at) => <div> {at.attrib}, &nbsp;</div>)}
                   </div>
                   <div style={{ display: "flex", flexDirection: "row"}}>
-                    <div id="sName">Hours: &nbsp;</div>{this.state.selectedBusinessHours.map((openclose) => <div> {openclose.date}: {openclose.open}0 - {openclose.close}0 </div>)}
+                    <div id="sName">Hours: &nbsp;</div>{this.state.selectedBusinessHours.map((openclose) => <div> {openclose.date}: {openclose.open}0 AM - {openclose.close}0 PM </div>)}
                   </div>
                 </div>
               </Tab>
@@ -490,7 +511,7 @@ fetchBusinessHours = (id) => {
 
 
             </div>
-          <button onClick={this.hideModal}>Close Modal</button>
+          <button type = "closemodal" onClick={this.hideModal}>Close Modal</button>
         </ReactModal>
 
       </div>
