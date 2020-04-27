@@ -321,10 +321,10 @@ sendNewTip = (busID, userid) => {
   
   var d = new Date(); 
   // pull the date and time out of this
-  var date = d.getFullYear() + "-" + d.getMonth() + "-" + d.getDay()
+  var date = d.getFullYear() + "-" + (d.getUTCMonth() + 1) + "-" + (d.getUTCDate())
   var time = d.getHours() + ":" +  d.getMinutes() + ":" + d.getSeconds();
 
-  console.log("Date and time:  ");
+  console.log(date);
   console.log(date);
   console.log(time);
   
