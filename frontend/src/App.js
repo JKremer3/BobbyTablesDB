@@ -16,6 +16,8 @@ import Form from 'react-bootstrap/Form';
 import Navbar from 'react-bootstrap/Navbar';
 import InputGroup from 'react-bootstrap/InputGroup';
 import ListGroup from 'react-bootstrap/ListGroup';
+import Tab from 'react-bootstrap/Tab';
+import Tabs from 'react-bootstrap/Tabs';
 
 
 import ReactModal from 'react-modal';
@@ -26,7 +28,9 @@ class App extends React.Component {
     this.state = {
       modalIsOpen: false, modalStateIGuess: "", busstates: [], cities: [], zips: [], businessCategories: [], businesses: [],
       businessAttributes1: [], businessAttributes2: [], businessAttributes3: [],
-      slectedState: "", selectedCity: "", selectedZip: "", selectedBusiness: "", sCount: "", cCount: "", activeCategories: [], tips: []
+      slectedState: "", selectedCity: "", selectedZip: "", selectedBusiness: "", 
+      selectedBusinessAddress: "", sCount: "", cCount: "", activeCategories: [], tips: [], selectedBusinessCategories: [],
+      selectedBusinessAttributes: [], selectedBusinessHours: [],
     };
 
     this.bName = React.createRef();
@@ -164,7 +168,6 @@ class App extends React.Component {
     this.showModal();
   }
 
-
   updateTableFilter = (zip, cat) => {
     console.log("Filter fetch called")
     fetch("http://localhost:3030/business/" + zip + "/" + cat)
@@ -224,10 +227,74 @@ class App extends React.Component {
     this.setState({ activeCategories: activeCategories })
   }
 
-  showTips = (id) => {
+  viewBusiness = (b) => {
+    console.log("Selected Business: " + this.state.selectedBusiness )
+    this.fetchBusinessCategories(b.id);
+    this.fetchBusinessAttributes(b.id);
+    this.fetchBusinessHours(b.id);
+
+    this.setState({ selectedBusiness: b.busname, selectedBusinessAddress: b.address});
     this.showModal();
-    this.updateTips(id);
+    this.updateTips(b.id);
   }
+
+  fetchBusinessCategories = (id) => {
+    fetch("http://localhost:3030/business/categories/" + id)
+    .then((response) => {
+      return response.json();
+    })
+    .then(data => {
+      let catFromApi = data.map(cat => {
+        return { value: cat.buscat }
+      });
+      this.setState({
+        selectedBusinessCategories: catFromApi,
+      });
+    }).catch(error => {
+      console.log(error);
+    });
+}
+
+fetchBusinessAttributes = (id) => {
+  fetch("http://localhost:3030/business/attributes/" + id)
+  .then((response) => {
+    return response.json();
+  })
+  .then(data => {
+    //console.log("data: " + data);
+    let atFromApi = data.map(at => {
+      return { attrib: at.busatt }
+    });
+    //console.log("attribs: " + atFromApi)
+    this.setState({
+      selectedBusinessAttributes: atFromApi,
+    });
+  }).catch(error => {
+    console.log(error);
+  });
+}
+
+fetchBusinessHours = (id) => {
+  var d = new Date();
+  var n = d.getDay();
+  fetch("http://localhost:3030/business/openClose/" + id + "/" + n)
+  .then((response) => {
+    return response.json();
+  })
+  .then(data => {
+    console.log("data: " + data);
+    let hoursFromApi = data.map(openclose => {
+      return { date: openclose.dayofweek, open: openclose.hropen, close: openclose.hrclosed }
+    });
+    console.log("hours: " + hoursFromApi)
+    this.setState({
+      selectedBusinessHours: hoursFromApi,
+    });
+  }).catch(error => {
+    console.log(error);
+  });
+}
+
 
   render() {
     var sortedCategories = this.state.businessCategories.sort();
@@ -339,7 +406,7 @@ class App extends React.Component {
                   <tbody>
                     { this.state.businesses.length != 0 ? 
 
-                    this.state.businesses.map((business) => <tr onClick={() => this.showTips(business.id)} key={business.id} value={business.id}>
+                    this.state.businesses.map((business) => <tr onClick={() => this.viewBusiness( business )} key={business.id} value={business.id}>
                       <td style={{ border: "1px solid grey" }}>{business.busname}</td>
                       <td style={{ border: "1px solid grey" }}>{business.busstate}</td>
                       <td style={{ border: "1px solid grey" }}>{business.city}</td>
@@ -357,15 +424,14 @@ class App extends React.Component {
               </div>
 
             </div>
-                    { this.state.businesses.length == 0 ? 
-                      <div style={{display: "flex" , height: "200px", justifyContent: "center", alignItems: "center" }}>
-                      NO DATA
-                      </div>
 
-                    :  
-                    <React.Fragment/>
-                      
-                    }
+            {this.state.businesses.length == 0 ?
+              <div style={{ display: "flex", height: "200px", justifyContent: "center", alignItems: "center" }}>
+                NO DATA
+              </div>
+              :
+              <React.Fragment />
+            }
 
           </div>
         </div>
@@ -373,37 +439,59 @@ class App extends React.Component {
         <ReactModal 
            isOpen={this.state.modalIsOpen}
            contentLabel="Minimal Modal Example"
+           ariaHideApp={false}
         >
             <div className="modalBody" >
-              <div id="bName">Name: {this.state.selectedBusiness}</div>
-              <div id="cName">City: {this.state.selectedCity}</div>
-              <div id="sName">State: {this.state.selectedState}</div>
+            <Tabs defaultActiveKey="BusinessInfo" id="uncontrolled-tab-example">
+              <Tab eventKey="BusinessInfo" title="Business Info">
+                <div>
+                  <h2 id="bName">{this.state.selectedBusiness}</h2>
+                  <div id="cName">City: {this.state.selectedCity}</div>
+                  <div id="sName">State: {this.state.selectedState}</div>
+                  <div id="sName">Address: {this.state.selectedBusinessAddress}</div>
+                  <div style={{ display: "flex", flexDirection: "row"}}>
+                    <div id="sName">Categories: &nbsp;</div>{this.state.selectedBusinessCategories.map((cat) => <div> {cat.value}, &nbsp;</div>)}
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "row"}}>
+                    <div id="sName">Attributes: &nbsp;</div>{this.state.selectedBusinessAttributes.map((at) => <div> {at.attrib}, &nbsp;</div>)}
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "row"}}>
+                    <div id="sName">Hours: &nbsp;</div>{this.state.selectedBusinessHours.map((openclose) => <div> {openclose.date}: {openclose.open}0 - {openclose.close}0 </div>)}
+                  </div>
+                </div>
+              </Tab>
+              <Tab eventKey="Tips" title="Tips">
+                <Table striped bordered hover id="tipTable">
+                  <thead>
+                    <tr>
+                      <th>Tip</th>
+                      <th>User</th>
+                      <th>Likes</th>
+                      <th>Date</th>
+                      <th>Time</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {this.state.tips.map((tip) => <tr key={tip.tiptext} value={tip.tiptext}>
+                      <td>{tip.tiptext}</td>
+                      <td>{tip.userid}</td>
+                      <td>{tip.likecount}
+                        <div onClick={() => console.log("Liked a tip")} >
+                        </div>
+                      </td>
+                      <td>{tip.tipdate}</td>
+                      <td>{tip.tiptime}</td>
+                    </tr>)}
+                  </tbody>
+                </Table>
 
-                  <Table striped bordered hover id="tipTable">
-                    <thead>
-                      <tr>
-                        <th>Tip</th>
-                        <th>User</th>
-                        <th>Likes</th>
-                        <th>Date</th>
-                        <th>Time</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {this.state.tips.map((tip) => <tr key={tip.tiptext} value={tip.tiptext}>
-                        <td>{tip.tiptext}</td>
-                        <td>{tip.userid}</td>
-                        <td>{tip.likecount}</td>
-                        <td>{tip.tipdate}</td>
-                        <td>{tip.tiptime}</td>
-                      </tr>)}
-                    </tbody>
-                  </Table>
+              </Tab>
+            </Tabs>
+
 
             </div>
           <button onClick={this.hideModal}>Close Modal</button>
         </ReactModal>
-
 
       </div>
     );
