@@ -357,15 +357,14 @@ class App extends React.Component {
               </div>
 
             </div>
-                    { this.state.businesses.length == 0 ? 
-                      <div style={{display: "flex" , height: "200px", justifyContent: "center", alignItems: "center" }}>
-                      NO DATA
-                      </div>
 
-                    :  
-                    <React.Fragment/>
-                      
-                    }
+            {this.state.businesses.length == 0 ?
+              <div style={{ display: "flex", height: "200px", justifyContent: "center", alignItems: "center" }}>
+                NO DATA
+              </div>
+              :
+              <React.Fragment />
+            }
 
           </div>
         </div>
