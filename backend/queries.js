@@ -384,6 +384,17 @@ const getBusOpenClose = (request, response) => {
     });
 }
 
+const getUsersByName = (request, response) => {
+
+    const username = request.params.username
+    pool.query('select * from users where username = $1', [username], (error, results) => {
+        if (error) {
+            throw error
+        }
+        response.status(200).json(results.rows)
+    });
+} 
+
 module.exports = {
     getState,
     getAllStates,
@@ -410,5 +421,6 @@ module.exports = {
     getUserInfo,
     getUserFriends,
     getUserFriendTips,
-    putUserCoords
+    putUserCoords,
+    getUsersByName
 }
