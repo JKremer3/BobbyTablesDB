@@ -510,45 +510,6 @@ handleOnChange(event) {
 
                 </div>
 
-                { /* The Business Table and the Tips */}
-                <div style={{ display: "flex", flexDirection: "row" }}>
-                  <div style={{ display: "block", minWidth: "80vw", maxHeight: "500px", margin: "20px", overflow: "auto" }}>
-                    <table style={{ border: "1px solid grey", width: "100%" }} className="sortable" id="dataTable">
-                      <thead>
-                        <tr>
-                          <th style={{ border: "1px solid grey" }} >Business Name</th>
-                          <th style={{ border: "1px solid grey" }} >State</th>
-                          <th style={{ border: "1px solid grey" }}>City</th>
-                          <th style={{ border: "1px solid grey" }} >Address</th>
-                          <th style={{ border: "1px solid grey" }}>Distance</th>
-                          <th style={{ border: "1px solid grey" }}>Stars</th>
-                          <th style={{ border: "1px solid grey" }}>Tip Count</th>
-                          <th style={{ border: "1px solid grey" }}>Checkins</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {this.state.businesses.length != 0 ?
-
-                          this.state.businesses.map((business) => <tr onClick={() => this.viewBusiness(business)} key={business.id} value={business.id}>
-                            <td style={{ border: "1px solid grey" }}>{business.busname}</td>
-                            <td style={{ border: "1px solid grey" }}>{business.busstate}</td>
-                            <td style={{ border: "1px solid grey" }}>{business.city}</td>
-                            <td style={{ border: "1px solid grey" }}>{business.address}</td>
-                            <td style={{ border: "1px solid grey" }} >{business.distance}</td>
-                            <td style={{ border: "1px solid grey" }} >{business.stars}</td>
-                            <td style={{ border: "1px solid grey" }}>{business.numtips}</td>
-                            <td style={{ border: "1px solid grey" }}>{business.numcheckins}</td>
-                          </tr>)
-                          :
-                          <React.Fragment />
-                        }
-                      </tbody>
-                    </table>
-                  </div>
-
-<<<<<<< HEAD
-                </div>
-=======
           { /* The Business Table and the Tips */ }
             <div style={{ display: "flex", flexDirection: "row" }}>
               <div style={{ display: "block", minWidth: "80vw", maxHeight: "500px", margin: "20px", overflow: "auto" }}>
@@ -582,10 +543,10 @@ handleOnChange(event) {
                       <React.Fragment/>
                     }
                   </tbody>
-                  </table>
-              </div>
->>>>>>> Liking a tip works but frontend is updating weird
 
+
+
+                  </table>
                 {this.state.businesses.length == 0 ?
                   <div style={{ display: "flex", height: "200px", justifyContent: "center", alignItems: "center" }}>
                     NO DATA
@@ -593,7 +554,10 @@ handleOnChange(event) {
                   :
                   <React.Fragment />
                 }
+              </div>
 
+
+              </div>
               </div>
             </React.Fragment> :
             <div>
@@ -614,21 +578,12 @@ handleOnChange(event) {
                   <h2 id="bName">{this.state.selectedBusiness}</h2>
                   <div id="cName">City: {this.state.selectedCity}</div>
                   <div id="sName">State: {this.state.selectedState}</div>
-<<<<<<< HEAD
-                  <div id="sName">Address: {this.state.selectedBusinessAddress}</div>
-                  <div style={{ display: "flex", flexDirection: "row" }}>
-                    <div id="sName">Categories: &nbsp;</div>{this.state.selectedBusinessCategories.map((cat) => <div> {cat.value}, &nbsp;</div>)}
-                  </div>
-                  <div style={{ display: "flex", flexDirection: "row" }}>
-                    <div id="sName">Attributes: &nbsp;</div>{this.state.selectedBusinessAttributes.map((at) => <div> {at.attrib}, &nbsp;</div>)}
-=======
                   <div >Address: {this.state.selectedBusinessAddress}</div>
                   <div style={{ display: "flex", flexDirection: "row"}}>
                     <div >Categories: &nbsp;</div>{this.state.selectedBusinessCategories.map((cat) => <div> {cat.value}, &nbsp;</div>)}
                   </div>
                   <div style={{ display: "flex", flexDirection: "row"}}>
                     <div >Attributes: &nbsp;</div>{this.state.selectedBusinessAttributes.map((at) => <div> {at.attrib}, &nbsp;</div>)}
->>>>>>> Liking a tip works but frontend is updating weird
                   </div>
                   <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
                     <div >Hours: &nbsp;</div>{this.state.selectedBusinessHours.map((openclose) => <div> {openclose.date}: {openclose.open}0 AM - {openclose.close}0 PM </div>)}
