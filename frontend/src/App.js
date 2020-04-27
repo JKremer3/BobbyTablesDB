@@ -176,6 +176,8 @@ class App extends React.Component {
       );
   }
 
+
+
   updateModal = (busname) => {
     this.setState({ selectedBusiness: busname });
     this.showModal();
@@ -370,6 +372,26 @@ checkinToBusiness(busID){
   
 }
 
+likeATip(tip){
+  // busID, userid, tipdate, tiptime 
+
+  try {
+    const response = fetch('http://localhost:3030/tip/' + 
+                  tip.busid + '/' + tip.userid + '/' + tip.tipdate + '/' + tip.tiptime , {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      method: 'post'
+    })
+  } catch (error) {
+    console.log(error)
+  }
+
+  // update the tip locally
+  this.updateTips(tip.busid);
+}
+
 handleOnChange(event) {
   this.setState({
     tipText: event.target.value
@@ -524,7 +546,45 @@ handleOnChange(event) {
                     </table>
                   </div>
 
+<<<<<<< HEAD
                 </div>
+=======
+          { /* The Business Table and the Tips */ }
+            <div style={{ display: "flex", flexDirection: "row" }}>
+              <div style={{ display: "block", minWidth: "80vw", maxHeight: "500px", margin: "20px", overflow: "auto" }}>
+                <table style={{ border: "1px solid grey", width: "100%" }} className="sortable" id="dataTable">
+                  <thead>
+                    <tr>
+                      <th style={{ border: "1px solid grey" }} >Business Name</th>
+                      <th style={{ border: "1px solid grey" }} >State</th>
+                      <th style={{ border: "1px solid grey" }}>City</th>
+                      <th style={{ border: "1px solid grey" }} >Address</th>
+                      <th style={{ border: "1px solid grey" }}>Distance</th>
+                      <th style={{ border: "1px solid grey" }}>Stars</th>
+                      <th style={{ border: "1px solid grey" }}>Tip Count</th>
+                      <th style={{ border: "1px solid grey" }}>Checkins</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    { this.state.businesses.length != 0 ? 
+
+                    this.state.businesses.map((business) => <tr onClick={() => this.viewBusiness( business )} key={business.id} value={business.id}>
+                      <td style={{ border: "1px solid grey" }}>{business.busname}</td>
+                      <td style={{ border: "1px solid grey" }}>{business.busstate}</td>
+                      <td style={{ border: "1px solid grey" }}>{business.city}</td>
+                      <td style={{ border: "1px solid grey" }}>{business.address}</td>
+                      <td style={{ border: "1px solid grey" }}>{business.distance}</td>
+                      <td style={{ border: "1px solid grey" }}>{business.stars}</td>
+                      <td style={{ border: "1px solid grey" }}>{business.numtips}</td>
+                      <td style={{ border: "1px solid grey" }}>{business.numcheckins}</td>
+                    </tr>) 
+                    :
+                      <React.Fragment/>
+                    }
+                  </tbody>
+                  </table>
+              </div>
+>>>>>>> Liking a tip works but frontend is updating weird
 
                 {this.state.businesses.length == 0 ?
                   <div style={{ display: "flex", height: "200px", justifyContent: "center", alignItems: "center" }}>
@@ -554,15 +614,24 @@ handleOnChange(event) {
                   <h2 id="bName">{this.state.selectedBusiness}</h2>
                   <div id="cName">City: {this.state.selectedCity}</div>
                   <div id="sName">State: {this.state.selectedState}</div>
+<<<<<<< HEAD
                   <div id="sName">Address: {this.state.selectedBusinessAddress}</div>
                   <div style={{ display: "flex", flexDirection: "row" }}>
                     <div id="sName">Categories: &nbsp;</div>{this.state.selectedBusinessCategories.map((cat) => <div> {cat.value}, &nbsp;</div>)}
                   </div>
                   <div style={{ display: "flex", flexDirection: "row" }}>
                     <div id="sName">Attributes: &nbsp;</div>{this.state.selectedBusinessAttributes.map((at) => <div> {at.attrib}, &nbsp;</div>)}
+=======
+                  <div >Address: {this.state.selectedBusinessAddress}</div>
+                  <div style={{ display: "flex", flexDirection: "row"}}>
+                    <div >Categories: &nbsp;</div>{this.state.selectedBusinessCategories.map((cat) => <div> {cat.value}, &nbsp;</div>)}
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "row"}}>
+                    <div >Attributes: &nbsp;</div>{this.state.selectedBusinessAttributes.map((at) => <div> {at.attrib}, &nbsp;</div>)}
+>>>>>>> Liking a tip works but frontend is updating weird
                   </div>
                   <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
-                    <div id="sName">Hours: &nbsp;</div>{this.state.selectedBusinessHours.map((openclose) => <div> {openclose.date}: {openclose.open}0 AM - {openclose.close}0 PM </div>)}
+                    <div >Hours: &nbsp;</div>{this.state.selectedBusinessHours.map((openclose) => <div> {openclose.date}: {openclose.open}0 AM - {openclose.close}0 PM </div>)}
                   </div>
                   <Button variant="primary" type="submit" onClick={() => this.checkinToBusiness(this.state.curBusiness.busid) }>
                     Checkin
@@ -584,9 +653,7 @@ handleOnChange(event) {
                     {this.state.tips.map((tip) => <tr key={tip.tiptext} value={tip.tiptext}>
                       <td>{tip.tiptext}</td>
                       <td>{tip.userid}</td>
-                      <td>{tip.likecount}
-                        <div onClick={() => console.log("Liked a tip")} >
-                        </div>
+                      <td onClick={() => this.likeATip(tip)} >{tip.likecount}
                       </td>
                       <td>{tip.tipdate}</td>
                       <td>{tip.tiptime}</td>
