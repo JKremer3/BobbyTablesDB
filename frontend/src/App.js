@@ -18,7 +18,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
-import Chart from 'chart.js';
+import Dygraph from 'dygraphs';
 
 import ReactModal from 'react-modal';
 
@@ -45,6 +45,7 @@ class App extends React.Component {
     this.tCount = React.createRef();
     this.tipTextArea = React.createRef();
     this.chartRef = React.createRef();
+    this.context = [];
 
   }
 
@@ -277,7 +278,11 @@ class App extends React.Component {
     this.setState({ curBusiness: b, selectedBusiness: b.busname, selectedBusinessAddress: b.address, selectedBusinessId: b.id });
     this.showModal();
     this.updateTips(b.id);
+<<<<<<< HEAD
     this.updateFriendTips(this.state.currentUser[0].userId, b.id)
+=======
+    this.generateChart();
+>>>>>>> Anotha tutorial
   }
 
   fetchBusinessCategories = (id) => {
@@ -562,18 +567,17 @@ class App extends React.Component {
   }
 
   generateChart() {
-    var ctx = this.chartRef;    
-
-    var myChart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-        datasets: [{
-          label: '# of Votes',
-          data: [12, 19, 3, 5, 2, 3]
-        }]
-      }
+    console.log("Generating chart");
+    var graph = this.chartRef.current;
+    const g = new Dygraph(graph,
+      `Date,A,B
+      2016/01/01,10,20
+      2016/07/01,20,10
+      2016/12/31,40,30
+      `, {
+      fillGraph: true
     });
+
   }
 
   render() {
@@ -887,7 +891,7 @@ class App extends React.Component {
               <Tab eventKey="BusinessInfo" title="Business Info" style={{ width: "90vw" }}>
                 <div style={{display: "flex", flexDirection: "row", maxHieght: "90vw"}}>
 
-                <div>
+                <div style={{ maxWidth: "50%"}}>
                   <h2 id="bName">{this.state.selectedBusiness}</h2>
                   <div id="cName">City: {this.state.selectedCity}</div>
                   <div id="sName">State: {this.state.selectedState}</div>
@@ -903,9 +907,8 @@ class App extends React.Component {
                   </div>
                 </div>
 
-                <div class="container">
-                  <div ref={this.chartRef}></div>
-                  Chart
+                <div className="container">
+                  <canvas ref={this.chartRef}></canvas>
                 </div>
 
 
