@@ -626,7 +626,7 @@ handleOnChange(event) {
                     </tr>
                   </thead>
                   <tbody>
-                    {this.state.tips.map((tip) => <tr key={tip.tiptext} value={tip.tiptext} onChange={this.updateTips(this.state.selectedBusinessId)}>
+                    {this.state.tips.map((tip) => <tr key={tip.tiptext} value={tip.tiptext} onChange={() => this.updateTips(this.state.selectedBusinessId)}>
                       <td>{tip.tiptext}</td>
                       <td>{tip.userid}</td>
                       <td onClick={() => this.likeATip(tip)} >{tip.likecount}
