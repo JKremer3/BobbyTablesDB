@@ -941,7 +941,7 @@ class App extends React.Component {
                     <div >Attributes:&nbsp;&nbsp;</div>
                     {this.state.selectedBusinessAttributes.map((at) => 
                             <div> { 
-                              at.attrib.replace("(", "").replace(")", "")
+                              at.attrib.replace("(", "").replace(")", "").replace(",", " ")
                             }, &nbsp;</div>)}
                   </div>
                   <div style={{ display: "flex", flexDirection: "row" }}>
