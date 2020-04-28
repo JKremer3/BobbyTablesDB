@@ -19,6 +19,7 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import Dygraph from 'dygraphs';
+import { Bar } from 'react-chartjs-2';
 
 import ReactModal from 'react-modal';
 
@@ -34,8 +35,16 @@ class App extends React.Component {
         "OutdoorSeating", "GoodForKids", "RestaurantsGoodForGroups", "RestaurantsDelivery",
         "RestaurantsTakeOut", "WiFi", "BikeParking"],
       businessMeals: ["breakfast", "brunch", "lunch", "dinner", "dessert", "latenight"],
-      businessPrices: ["1", "2", "3", "4"], userpage: false, userSearch: "", userSearchRes: [], friendTips: [],
       busFriendTips: [],
+      businessPrices: ["1", "2", "3", "4"], userpage: false, userSearch: "", userSearchRes: [], friendTips: [], 
+      chartData: {
+        labels: ["empty"],
+        datasets: [{
+          label: 'Months',
+          data: [0],
+        }]
+      }
+      
     };
 
     this.bName = React.createRef();
@@ -46,6 +55,7 @@ class App extends React.Component {
     this.tipTextArea = React.createRef();
     this.chartRef = React.createRef();
     this.context = [];
+
 
   }
 
@@ -278,11 +288,8 @@ class App extends React.Component {
     this.setState({ curBusiness: b, selectedBusiness: b.busname, selectedBusinessAddress: b.address, selectedBusinessId: b.id });
     this.showModal();
     this.updateTips(b.id);
-<<<<<<< HEAD
     this.updateFriendTips(this.state.currentUser[0].userId, b.id)
-=======
-    this.generateChart();
->>>>>>> Anotha tutorial
+    this.generateChart(b.id);
   }
 
   fetchBusinessCategories = (id) => {
@@ -566,17 +573,42 @@ class App extends React.Component {
     console.log("togglepane")
   }
 
-  generateChart() {
-    console.log("Generating chart");
-    var graph = this.chartRef.current;
-    const g = new Dygraph(graph,
-      `Date,A,B
-      2016/01/01,10,20
-      2016/07/01,20,10
-      2016/12/31,40,30
-      `, {
-      fillGraph: true
-    });
+  generateChart(id) {
+    console.log("generating chart");
+
+    var months = null;
+    var counts = null;
+    fetch("http://localhost:3030/chart/" + id)
+      .then((response) => {
+        return response.json();
+      })
+      .then(data => {
+        let fromApi = data.map(user => {
+          return {
+            month: user.checkmonth, count: user.monthcount
+          }
+        });
+            console.log(fromApi);
+        for ( var x in fromApi){
+            months.push(fromApi[x].month);
+            counts.push(fromApi[x].count);
+        }
+          console.log("The good good:")
+            console.log(months)
+            console.log(counts)
+
+        this.setState({
+          chartData: {
+            labels: months,
+            datasets: [{
+              label: 'Months',
+              data: counts,
+            }]
+          }
+        })
+      }).catch(error => {
+        console.log(error);
+      });
 
   }
 
@@ -908,7 +940,7 @@ class App extends React.Component {
                 </div>
 
                 <div className="container">
-                  <canvas ref={this.chartRef}></canvas>
+                  <Bar data={this.state.chartData}/>
                 </div>
 
 
