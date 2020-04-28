@@ -576,27 +576,30 @@ class App extends React.Component {
   generateChart(id) {
     console.log("generating chart");
 
-    var months = null;
-    var counts = null;
+    var months = [];
+    var counts = [];
+    
     fetch("http://localhost:3030/chart/" + id)
       .then((response) => {
         return response.json();
       })
       .then(data => {
-        let fromApi = data.map(user => {
+        let fromApi = data.map(d => {
           return {
-            month: user.checkmonth, count: user.monthcount
+            month: d.checkmonth, count: d.monthcount
           }
         });
-            console.log(fromApi);
-        for ( var x in fromApi){
-            months.push(fromApi[x].month);
-            counts.push(fromApi[x].count);
-        }
-          console.log("The good good:")
-            console.log(months)
-            console.log(counts)
+        console.log("FromAPI: ")
+        console.log(fromApi)
 
+        for (var x in fromApi){
+          months.push(fromApi[x].month) 
+          counts.push(fromApi[x].count) 
+        }
+
+        console.log("PLSSSSSSSSS")
+        console.log(months)
+        console.log(counts)
         this.setState({
           chartData: {
             labels: months,
@@ -606,9 +609,12 @@ class App extends React.Component {
             }]
           }
         })
+
       }).catch(error => {
         console.log(error);
       });
+
+
 
   }
 
