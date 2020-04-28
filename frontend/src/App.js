@@ -19,7 +19,6 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 
-
 import ReactModal from 'react-modal';
 
 class App extends React.Component {
@@ -28,7 +27,7 @@ class App extends React.Component {
     this.state = {
       modalIsOpen: false, modalStateIGuess: "", busstates: [], cities: [], zips: [], businessCategories: [], businesses: [],
       selectedState: "", selectedCity: "", selectedZip: "", selectedBusiness: "", selectedBusinessAttributes: [], selectedBusinessId: "",
-      selectedBusinessHours: [], currentUser: "i_EASSNcEqc1JrfdBjBeVw", tipText: "", curBusiness: [],
+      selectedBusinessHours: [], currentUser: "i_EASSNcEqc1JrfdBjBeVw", currentFriends: [], tipText: "", curBusiness: [],
       selectedBusinessAddress: "", sCount: "", cCount: "", activeCategories: [], tips: [], selectedBusinessCategories: [],
       businessAttributes: ["BusinessAcceptsCreditCards", "RestaurantsReservations", "WheelchairAccessible",
         "OutdoorSeating", "GoodForKids", "RestaurantsGoodForGroups", "RestaurantsDelivery",
@@ -177,6 +176,8 @@ class App extends React.Component {
       );
   }
 
+
+
   updateModal = (busname) => {
     this.setState({ selectedBusiness: busname });
     this.showModal();
@@ -320,8 +321,12 @@ sendNewTip = (busID, userid) => {
   
   var d = new Date(); 
   // pull the date and time out of this
-  var date = d.getFullYear() + "-" + d.getMonth() + "-" + d.getDay()
+  var date = d.getFullYear() + "-" + (d.getUTCMonth() + 1) + "-" + (d.getUTCDate())
   var time = d.getHours() + ":" +  d.getMinutes() + ":" + d.getSeconds();
+
+  console.log(date);
+  console.log(date);
+  console.log(time);
   
   var newTip = {
     busid: this.state.selectedBusinessId,
@@ -349,6 +354,46 @@ sendNewTip = (busID, userid) => {
   this.updateTips(busID)
   this.forceUpdate()
 
+}
+
+checkinToBusiness(busID){
+
+  try {
+    const response = fetch('http://localhost:3030/business/checkin/' + busID, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      method: 'post'
+    })
+  } catch (error) {
+    console.log(error)
+  }
+
+  var newBusiness = this.state.curBusiness
+  newBusiness.numcheckins += 1
+  this.setState({ curBusiness: newBusiness });
+  
+}
+
+likeATip(tip){
+  // busID, userid, tipdate, tiptime 
+
+  try {
+    const response = fetch('http://localhost:3030/tip/' + 
+                  tip.busid + '/' + tip.userid + '/' + tip.tipdate + '/' + tip.tiptime , {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      method: 'post'
+    })
+  } catch (error) {
+    console.log(error)
+  }
+
+  // update the tip locally
+  this.updateTips(tip.busid);
 }
 
 handleOnChange(event) {
@@ -469,44 +514,43 @@ handleOnChange(event) {
 
                 </div>
 
-                { /* The Business Table and the Tips */}
-                <div style={{ display: "flex", flexDirection: "row" }}>
-                  <div style={{ display: "block", minWidth: "80vw", maxHeight: "500px", margin: "20px", overflow: "auto" }}>
-                    <table style={{ border: "1px solid grey", width: "100%" }} className="sortable" id="dataTable">
-                      <thead>
-                        <tr>
-                          <th style={{ border: "1px solid grey" }} >Business Name</th>
-                          <th style={{ border: "1px solid grey" }} >State</th>
-                          <th style={{ border: "1px solid grey" }}>City</th>
-                          <th style={{ border: "1px solid grey" }} >Address</th>
-                          <th style={{ border: "1px solid grey" }}>Distance</th>
-                          <th style={{ border: "1px solid grey" }}>Stars</th>
-                          <th style={{ border: "1px solid grey" }}>Tip Count</th>
-                          <th style={{ border: "1px solid grey" }}>Checkins</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {this.state.businesses.length != 0 ?
+          { /* The Business Table and the Tips */ }
+            <div style={{ display: "flex", flexDirection: "row" }}>
+              <div style={{ display: "block", minWidth: "80vw", maxHeight: "500px", margin: "20px", overflow: "auto" }}>
+                <table style={{ border: "1px solid grey", width: "100%" }} className="sortable" id="dataTable">
+                  <thead>
+                    <tr>
+                      <th style={{ border: "1px solid grey" }} >Business Name</th>
+                      <th style={{ border: "1px solid grey" }} >State</th>
+                      <th style={{ border: "1px solid grey" }}>City</th>
+                      <th style={{ border: "1px solid grey" }} >Address</th>
+                      <th style={{ border: "1px solid grey" }}>Distance</th>
+                      <th style={{ border: "1px solid grey" }}>Stars</th>
+                      <th style={{ border: "1px solid grey" }}>Tip Count</th>
+                      <th style={{ border: "1px solid grey" }}>Checkins</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    { this.state.businesses.length != 0 ? 
 
-                          this.state.businesses.map((business) => <tr onClick={() => this.viewBusiness(business)} key={business.id} value={business.id}>
-                            <td style={{ border: "1px solid grey" }}>{business.busname}</td>
-                            <td style={{ border: "1px solid grey" }}>{business.busstate}</td>
-                            <td style={{ border: "1px solid grey" }}>{business.city}</td>
-                            <td style={{ border: "1px solid grey" }}>{business.address}</td>
-                            <td style={{ border: "1px solid grey" }} >{business.distance}</td>
-                            <td style={{ border: "1px solid grey" }} >{business.stars}</td>
-                            <td style={{ border: "1px solid grey" }}>{business.numtips}</td>
-                            <td style={{ border: "1px solid grey" }}>{business.numcheckins}</td>
-                          </tr>)
-                          :
-                          <React.Fragment />
-                        }
-                      </tbody>
-                    </table>
-                  </div>
+                    this.state.businesses.map((business) => <tr onClick={() => this.viewBusiness( business )} key={business.id} value={business.id}>
+                      <td style={{ border: "1px solid grey" }}>{business.busname}</td>
+                      <td style={{ border: "1px solid grey" }}>{business.busstate}</td>
+                      <td style={{ border: "1px solid grey" }}>{business.city}</td>
+                      <td style={{ border: "1px solid grey" }}>{business.address}</td>
+                      <td style={{ border: "1px solid grey" }}>{business.distance}</td>
+                      <td style={{ border: "1px solid grey" }}>{business.stars}</td>
+                      <td style={{ border: "1px solid grey" }}>{business.numtips}</td>
+                      <td style={{ border: "1px solid grey" }}>{business.numcheckins}</td>
+                    </tr>) 
+                    :
+                      <React.Fragment/>
+                    }
+                  </tbody>
 
-                </div>
 
+
+                  </table>
                 {this.state.businesses.length == 0 ?
                   <div style={{ display: "flex", height: "200px", justifyContent: "center", alignItems: "center" }}>
                     NO DATA
@@ -514,10 +558,30 @@ handleOnChange(event) {
                   :
                   <React.Fragment />
                 }
+              </div>
 
+
+              </div>
               </div>
             </React.Fragment> :
             <div>
+              <div style={{ display: "flex", flexDirection: "column", minWidth: "80vw", minHeight: "80vh", backgroundColor: "#EEEEEE" }}>
+                <h2>User Page</h2>
+                <div>Search for a User</div>
+                
+                <div>User Information:</div>
+                <div>Friends</div>
+                {this.state.currentFriends.map((friend) => <li>{friend}</li>)}
+                <div>Friends Tips</div>
+                <React.Fragment>
+                  {this.state.currentFriends.map((friend) =>
+                    <React.Fragment>
+                      <div>{friend.name} {friend.tip} </div> 
+                    </React.Fragment>)
+                  }
+                </React.Fragment>
+              </div>
+
             </div>
           }
 
@@ -535,16 +599,19 @@ handleOnChange(event) {
                   <h2 id="bName">{this.state.selectedBusiness}</h2>
                   <div id="cName">City: {this.state.selectedCity}</div>
                   <div id="sName">State: {this.state.selectedState}</div>
-                  <div id="sName">Address: {this.state.selectedBusinessAddress}</div>
-                  <div style={{ display: "flex", flexDirection: "row" }}>
-                    <div id="sName">Categories: &nbsp;</div>{this.state.selectedBusinessCategories.map((cat) => <div> {cat.value}, &nbsp;</div>)}
+                  <div >Address: {this.state.selectedBusinessAddress}</div>
+                  <div style={{ display: "flex", flexDirection: "row"}}>
+                    <div >Categories: &nbsp;</div>{this.state.selectedBusinessCategories.map((cat) => <div> {cat.value}, &nbsp;</div>)}
                   </div>
-                  <div style={{ display: "flex", flexDirection: "row" }}>
-                    <div id="sName">Attributes: &nbsp;</div>{this.state.selectedBusinessAttributes.map((at) => <div> {at.attrib}, &nbsp;</div>)}
+                  <div style={{ display: "flex", flexDirection: "row"}}>
+                    <div >Attributes: &nbsp;</div>{this.state.selectedBusinessAttributes.map((at) => <div> {at.attrib}, &nbsp;</div>)}
                   </div>
                   <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
-                    <div id="sName">Hours: &nbsp;</div>{this.state.selectedBusinessHours.map((openclose) => <div> {openclose.date}: {openclose.open}0 AM - {openclose.close}0 PM </div>)}
+                    <div >Hours: &nbsp;</div>{this.state.selectedBusinessHours.map((openclose) => <div> {openclose.date}: {openclose.open}0 AM - {openclose.close}0 PM </div>)}
                   </div>
+                  <Button variant="primary" type="submit" onClick={() => this.checkinToBusiness(this.state.curBusiness.busid) }>
+                    Checkin
+                  </Button>
                 </div>
               </Tab>
               <Tab eventKey="Tips" title="Tips">
@@ -559,12 +626,10 @@ handleOnChange(event) {
                     </tr>
                   </thead>
                   <tbody>
-                    {this.state.tips.map((tip) => <tr key={tip.tiptext} value={tip.tiptext}>
+                    {this.state.tips.map((tip) => <tr key={tip.tiptext} value={tip.tiptext} onChange={this.updateTips(this.state.selectedBusinessId)}>
                       <td>{tip.tiptext}</td>
                       <td>{tip.userid}</td>
-                      <td>{tip.likecount}
-                        <div onClick={() => console.log("Liked a tip")} >
-                        </div>
+                      <td onClick={() => this.likeATip(tip)} >{tip.likecount}
                       </td>
                       <td>{tip.tipdate}</td>
                       <td>{tip.tiptime}</td>
