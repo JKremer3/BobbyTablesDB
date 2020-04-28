@@ -423,7 +423,7 @@ class App extends React.Component {
           userSearchRes: fromApi,
           userSearch: ""
         });
-        }).catch(error => {
+      }).catch(error => {
         console.log(error);
       });
   }
@@ -435,11 +435,12 @@ class App extends React.Component {
       })
       .then(data => {
         let fromApi = data.map(user => {
-          return { userName: user.username, userId: user.userid, avgStars: user.avgStars,
-                   cool: user.cool, funny: user.funny, totalLikes: user.totallikes, fans: user.fans,
-                   userLat: user.userlat, userLong: user.userlong, tipCount: user.tipcount,
-                   useful: user.useful, yelpStartDate: user.yelpstartdate, yelpStartTime: user.yelpstarttime
-                 }
+          return {
+            userName: user.username, userId: user.userid, avgStars: user.avgStars,
+            cool: user.cool, funny: user.funny, totalLikes: user.totallikes, fans: user.fans,
+            userLat: user.userlat, userLong: user.userlong, tipCount: user.tipcount,
+            useful: user.useful, yelpStartDate: user.yelpstartdate, yelpStartTime: user.yelpstarttime
+          }
         });
         this.setState({
           currentUser: fromApi,
@@ -456,11 +457,12 @@ class App extends React.Component {
       })
       .then(data => {
         let fromApi = data.map(user => {
-          return { userName: user.username, avgStars: user.avgstars,
-                   totalLikes: user.totallikes,
-                   tipCount: user.tipcount,
-                   yelpStartDate: user.yelpstartdate
-                 }
+          return {
+            userName: user.username, avgStars: user.avgstars,
+            totalLikes: user.totallikes,
+            tipCount: user.tipcount,
+            yelpStartDate: user.yelpstartdate
+          }
         });
         this.setState({
           currentFriends: fromApi,
@@ -651,55 +653,58 @@ class App extends React.Component {
                   <Button variant="primary" type="submit" onClick={() => this.fetchUsers(this.state.userSearch)}>
                     Search
                 </Button>
-                <table style={{ border: "1px solid grey", width: "100%" }} className="sortable" id="dataTable">
-                      <thead>
-                        <tr>
-                          <th style={{ border: "1px solid grey" }} >User Id</th>
-                        </tr>
-                      </thead>
-                      <tbody style = {{display: "block", height: "200px", overflowY: "scroll"}}>
-                          {this.state.userSearchRes.map((user) => <tr onClick={() => this.getCurrentUser(user.userId)} key={user.userId} value={user.userId}>
-                            <td style={{ textAlign: "center", alignItems: "center" }}>{user.userId}</td>
-                          </tr>)
-                          }
-                      </tbody>
-                    </table>
+                  <table style={{ border: "1px solid grey", width: "100%" }} className="sortable" id="dataTable">
+                    <thead>
+                      <tr>
+                        <th style={{ border: "1px solid grey" }} >User Id</th>
+                      </tr>
+                    </thead>
+                    <tbody style={{ display: "block", height: "200px", overflowY: "scroll" }}>
+                      {this.state.userSearchRes.map((user) => <tr onClick={() => this.getCurrentUser(user.userId)} key={user.userId} value={user.userId}>
+                        <td style={{ textAlign: "center", alignItems: "center" }}>{user.userId}</td>
+                      </tr>)
+                      }
+                    </tbody>
+                  </table>
                 </div>
                 {/* ********** END USER SEARCH ************ */}
 
                 <div style={{ display: "block", textAlign: "start", width: "350px", padding: "4px", minHeight: "10px", backgroundColor: "#EEEEEE" }}>User Information:
                   <div>
-                      Name: {this.state.currentUser[0].userName}
+                    Name: {this.state.currentUser[0].userName}
                   </div>
                   <div>
-                      Stars: {this.state.currentUser[0].avgStars}
+                    Stars: {this.state.currentUser[0].avgStars}
                   </div>
                   <div>
-                      Fans: {this.state.currentUser[0].fans}
+                    Fans: {this.state.currentUser[0].fans}
                   </div>
                   <div>
-                      Yelping Since: {this.state.currentUser[0].yelpStartDate}
+                    Yelping Since: {this.state.currentUser[0].yelpStartDate}
                   </div>
                   <div>
-                      Votes: {this.state.currentUser[0].votes}
+                    Votes: {this.state.currentUser[0].votes}
                   </div>
                   <div>
-                      Funny: {this.state.currentUser[0].funny}
+                    Funny: {this.state.currentUser[0].funny}
                   </div>
                   <div>
-                      Cool: {this.state.currentUser[0].cool}
+                    Cool: {this.state.currentUser[0].cool}
                   </div>
                   <div>
-                      Tip Count: {this.state.currentUser[0].tipCount}
+                    Tip Count: {this.state.currentUser[0].tipCount}
                   </div>
                   <div>
-                      Tip Likes: {this.state.currentUser[0].totalLikes}
+                    Tip Likes: {this.state.currentUser[0].totalLikes}
                   </div>
                   <div>
-                      Lat: {this.state.currentUser[0].userLat}
+                    Lat: {this.state.currentUser[0].userLat}
                   </div>
                   <div>
-                      Long: {this.state.currentUser[0].userLong}
+                    Long: {this.state.currentUser[0].userLong}
+                  </div>
+                  <div>
+                    Long: {this.state.currentUser[0].userLong}
                   </div>
                 </div>
                 <div>Friends Tips</div>
@@ -710,11 +715,11 @@ class App extends React.Component {
                     </React.Fragment>)
                   }
                 </React.Fragment>
-                </div>
-                <div style={{ display: "flex", flexDirection: "row", minWidth: "80vw", minHeight: "20vh", backgroundColor: "#EEEEEE" }}>
+              </div>
+              <div style={{ display: "flex", flexDirection: "row", minWidth: "80vw", minHeight: "20vh", backgroundColor: "#EEEEEE" }}>
                 <div style={{ display: "flex", flexDirection: "column", width: "700px", padding: "10px", minHeight: "20vh", backgroundColor: "#EEEEEE" }}> Friends
-                <div style={{ maxHeight: "350px", overflow: "auto"}}>
-                <table style={{ border: "1px solid grey", width: "100%" }} className="sortable" id="dataTable">
+                <div style={{ maxHeight: "350px", overflow: "auto" }}>
+                    <table style={{ border: "1px solid grey", width: "100%" }} className="sortable" id="dataTable">
                       <thead>
                         <tr>
                           <th style={{ border: "1px solid grey" }} >Name</th>
@@ -723,19 +728,19 @@ class App extends React.Component {
                           <th style={{ border: "1px solid grey" }} >Yelping Since</th>
                         </tr>
                       </thead>
-                      <tbody style = {{height: "350px"}}>
-                          {this.state.currentFriends.map((friend) => <tr key={friend.userName} value={friend.userName}>
-                            <td style={{ border: "1px solid grey"}}>{friend.userName}</td>
-                            <td style={{ border: "1px solid grey"}}>{friend.totalLikes}</td>
-                            <td style={{ border: "1px solid grey"}}>{friend.avgStars}</td>
-                            <td style={{ border: "1px solid grey"}}>{friend.yelpStartDate}</td>
-                          </tr>)
-                          }
+                      <tbody style={{ height: "350px" }}>
+                        {this.state.currentFriends.map((friend) => <tr key={friend.userName} value={friend.userName}>
+                          <td style={{ border: "1px solid grey" }}>{friend.userName}</td>
+                          <td style={{ border: "1px solid grey" }}>{friend.totalLikes}</td>
+                          <td style={{ border: "1px solid grey" }}>{friend.avgStars}</td>
+                          <td style={{ border: "1px solid grey" }}>{friend.yelpStartDate}</td>
+                        </tr>)
+                        }
                       </tbody>
                     </table>
-                    </div>
+                  </div>
                 </div>
-                </div>
+              </div>
             </div>
           }
 
