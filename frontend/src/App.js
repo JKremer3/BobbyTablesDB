@@ -33,7 +33,7 @@ class App extends React.Component {
         "OutdoorSeating", "GoodForKids", "RestaurantsGoodForGroups", "RestaurantsDelivery",
         "RestaurantsTakeOut", "WiFi", "BikeParking"],
       businessMeals: ["breakfast", "brunch", "lunch", "dinner", "dessert", "latenight"],
-      businessPrices: ["1", "2", "3", "4"], userpage: true,
+      businessPrices: ["1", "2", "3", "4"], userpage: false, userSearch: "", userSearchRes: [],
     };
 
     this.bName = React.createRef();
@@ -250,7 +250,7 @@ class App extends React.Component {
     this.fetchBusinessAttributes(b.id);
     this.fetchBusinessHours(b.id);
 
-    this.setState({curBusiness: b, selectedBusiness: b.busname, selectedBusinessAddress: b.address, selectedBusinessId: b.id });
+    this.setState({ curBusiness: b, selectedBusiness: b.busname, selectedBusinessAddress: b.address, selectedBusinessId: b.id });
     this.showModal();
     this.updateTips(b.id);
   }
@@ -313,94 +313,201 @@ class App extends React.Component {
   }
 
 
-sendNewTip = (busID, userid) => {
-  // userid, tipTime, tip date, tip text, busID
-  // get the tip text and then clear the text box
-  var text = this.state.tipText
-  this.setState({tipText: "" })
-  
-  var d = new Date(); 
-  // pull the date and time out of this
-  var date = d.getFullYear() + "-" + (d.getUTCMonth() + 1) + "-" + (d.getUTCDate())
-  var time = d.getHours() + ":" +  d.getMinutes() + ":" + d.getSeconds();
+  sendNewTip = (busID, userid) => {
+    // userid, tipTime, tip date, tip text, busID
+    // get the tip text and then clear the text box
+    var text = this.state.tipText
+    this.setState({ tipText: "" })
 
-  console.log(date);
-  console.log(date);
-  console.log(time);
-  
-  var newTip = {
-    busid: this.state.selectedBusinessId,
-    userid: userid,
-    likecount: 0,
-    tiptext: text,
-    tipdate: date,
-    tiptime: time
-  };
+    var d = new Date();
+    // pull the date and time out of this
+    var date = d.getFullYear() + "-" + (d.getUTCMonth() + 1) + "-" + (d.getUTCDate())
+    var time = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
 
-  try {
-    const response = fetch('http://localhost:3030/tip/insert/', {
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      method: 'post',
-      body: JSON.stringify(newTip),
-    })
-  } catch (error) {
-    console.log(error)
+    console.log(date);
+    console.log(date);
+    console.log(time);
+
+    var newTip = {
+      busid: this.state.selectedBusinessId,
+      userid: userid,
+      likecount: 0,
+      tiptext: text,
+      tipdate: date,
+      tiptime: time
+    };
+
+    try {
+      const response = fetch('http://localhost:3030/tip/insert/', {
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        method: 'post',
+        body: JSON.stringify(newTip),
+      })
+    } catch (error) {
+      console.log(error)
+    }
+
+
+    this.updateTips(busID)
+    this.forceUpdate()
+
   }
 
+  checkinToBusiness(busID) {
 
-  this.updateTips(busID)
-  this.forceUpdate()
+    try {
+      const response = fetch('http://localhost:3030/business/checkin/' + busID, {
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        method: 'post'
+      })
+    } catch (error) {
+      console.log(error)
+    }
 
-}
+    var newBusiness = this.state.curBusiness
+    newBusiness.numcheckins += 1
+    this.setState({ curBusiness: newBusiness });
 
-checkinToBusiness(busID){
-
-  try {
-    const response = fetch('http://localhost:3030/business/checkin/' + busID, {
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      method: 'post'
-    })
-  } catch (error) {
-    console.log(error)
   }
 
-  var newBusiness = this.state.curBusiness
-  newBusiness.numcheckins += 1
-  this.setState({ curBusiness: newBusiness });
-  
-}
+  likeATip(tip) {
+    // busID, userid, tipdate, tiptime 
 
-likeATip(tip){
-  // busID, userid, tipdate, tiptime 
+    try {
+      const response = fetch('http://localhost:3030/tip/' +
+        tip.busid + '/' + tip.userid + '/' + tip.tipdate + '/' + tip.tiptime, {
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        method: 'post'
+      })
+    } catch (error) {
+      console.log(error)
+    }
 
-  try {
-    const response = fetch('http://localhost:3030/tip/' + 
-                  tip.busid + '/' + tip.userid + '/' + tip.tipdate + '/' + tip.tiptime , {
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      method: 'post'
-    })
-  } catch (error) {
-    console.log(error)
+    // update the tip locally
+    this.updateTips(tip.busid);
   }
 
-  // update the tip locally
-  this.updateTips(tip.busid);
-}
+  handleOnChange(event) {
+    this.setState({
+      tipText: event.target.value
+    })
+  }
 
-handleOnChange(event) {
-  this.setState({
-    tipText: event.target.value
-  })
-}
+  // USER FUNCTIONS START HERE
+
+  handleOnChangeUser(event) {
+    this.setState({
+      userSearch: event.target.value
+    })
+  }
+
+  handleOnChangeUserLat(event) {
+    var user = this.state.currentUser
+    user[0].userLat = event.target.value
+    this.setState({
+      currentUser: user
+    })
+  }
+
+  handleOnChangeUserLong(event) {
+    var user = this.state.currentUser
+    user[0].userLong = event.target.value
+    this.setState({
+      currentUser: user
+    })
+  }
+
+  fetchUsers = (name) => {
+    fetch("http://localhost:3030/user/namelist/" + name)
+      .then((response) => {
+        return response.json();
+      })
+      .then(data => {
+        let fromApi = data.map(user => {
+          return { userName: user.username, userId: user.userid }
+        });
+        this.setState({
+          userSearchRes: fromApi,
+          userSearch: ""
+        });
+      }).catch(error => {
+        console.log(error);
+      });
+  }
+
+  selectUser = (userid) => {
+    fetch("http://localhost:3030/user/" + userid)
+      .then((response) => {
+        return response.json();
+      })
+      .then(data => {
+        let fromApi = data.map(user => {
+          return {
+            userName: user.username, userId: user.userid, avgStars: user.avgStars,
+            cool: user.cool, funny: user.funny, totalLikes: user.totallikes, fans: user.fans,
+            userLat: user.lat, userLong: user.long, tipCount: user.tipcount,
+            useful: user.useful, yelpStartDate: user.yelpstartdate, yelpStartTime: user.yelpstarttime
+          }
+        });
+        this.setState({
+          currentUser: fromApi,
+        });
+      }).catch(error => {
+        console.log(error);
+      });
+  }
+
+  fetchFriends = (userid) => {
+    fetch("http://localhost:3030/user/friends/" + userid)
+      .then((response) => {
+        return response.json();
+      })
+      .then(data => {
+        let fromApi = data.map(user => {
+          return {
+            userName: user.username, avgStars: user.avgstars,
+            totalLikes: user.totallikes,
+            tipCount: user.tipcount,
+            yelpStartDate: user.yelpstartdate
+          }
+        });
+        this.setState({
+          currentFriends: fromApi,
+        });
+      }).catch(error => {
+        console.log(error);
+      });
+  }
+
+  putCoords = (id, lat, long) => {
+    try {
+      const response = fetch('http://localhost:3030/user/location/' +
+        id + '/' + lat + '/' + long , {
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        method: 'post'
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  getCurrentUser = (userid) => {
+    this.selectUser(userid)
+    this.fetchFriends(userid)
+  }
+
   togglepage = () => {
     this.setState({ userpage: !this.state.userpage })
     console.log("togglepane")
@@ -514,102 +621,197 @@ handleOnChange(event) {
 
                 </div>
 
-          { /* The Business Table and the Tips */ }
-            <div style={{ display: "flex", flexDirection: "row" }}>
-              <div style={{ display: "block", minWidth: "80vw", maxHeight: "500px", margin: "20px", overflow: "auto" }}>
-                <table style={{ border: "1px solid grey", width: "100%" }} className="sortable" id="dataTable">
-                  <thead>
-                    <tr>
-                      <th style={{ border: "1px solid grey" }} >Business Name</th>
-                      <th style={{ border: "1px solid grey" }} >State</th>
-                      <th style={{ border: "1px solid grey" }}>City</th>
-                      <th style={{ border: "1px solid grey" }} >Address</th>
-                      <th style={{ border: "1px solid grey" }}>Distance</th>
-                      <th style={{ border: "1px solid grey" }}>Stars</th>
-                      <th style={{ border: "1px solid grey" }}>Tip Count</th>
-                      <th style={{ border: "1px solid grey" }}>Checkins</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    { this.state.businesses.length != 0 ? 
+                { /* The Business Table and the Tips */}
+                <div style={{ display: "flex", flexDirection: "row" }}>
+                  <div style={{ display: "block", minWidth: "80vw", maxHeight: "500px", margin: "20px", overflow: "auto" }}>
+                    <table style={{ border: "1px solid grey", width: "100%" }} className="sortable" id="dataTable">
+                      <thead>
+                        <tr>
+                          <th style={{ border: "1px solid grey" }} >Business Name</th>
+                          <th style={{ border: "1px solid grey" }} >State</th>
+                          <th style={{ border: "1px solid grey" }}>City</th>
+                          <th style={{ border: "1px solid grey" }} >Address</th>
+                          <th style={{ border: "1px solid grey" }}>Distance</th>
+                          <th style={{ border: "1px solid grey" }}>Stars</th>
+                          <th style={{ border: "1px solid grey" }}>Tip Count</th>
+                          <th style={{ border: "1px solid grey" }}>Checkins</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {this.state.businesses.length != 0 ?
 
-                    this.state.businesses.map((business) => <tr onClick={() => this.viewBusiness( business )} key={business.id} value={business.id}>
-                      <td style={{ border: "1px solid grey" }}>{business.busname}</td>
-                      <td style={{ border: "1px solid grey" }}>{business.busstate}</td>
-                      <td style={{ border: "1px solid grey" }}>{business.city}</td>
-                      <td style={{ border: "1px solid grey" }}>{business.address}</td>
-                      <td style={{ border: "1px solid grey" }}>{business.distance}</td>
-                      <td style={{ border: "1px solid grey" }}>{business.stars}</td>
-                      <td style={{ border: "1px solid grey" }}>{business.numtips}</td>
-                      <td style={{ border: "1px solid grey" }}>{business.numcheckins}</td>
-                    </tr>) 
-                    :
-                      <React.Fragment/>
-                    }
-                  </tbody>
+                          this.state.businesses.map((business) => <tr onClick={() => this.viewBusiness(business)} key={business.id} value={business.id}>
+                            <td style={{ border: "1px solid grey" }}>{business.busname}</td>
+                            <td style={{ border: "1px solid grey" }}>{business.busstate}</td>
+                            <td style={{ border: "1px solid grey" }}>{business.city}</td>
+                            <td style={{ border: "1px solid grey" }}>{business.address}</td>
+                            <td style={{ border: "1px solid grey" }}>{business.distance}</td>
+                            <td style={{ border: "1px solid grey" }}>{business.stars}</td>
+                            <td style={{ border: "1px solid grey" }}>{business.numtips}</td>
+                            <td style={{ border: "1px solid grey" }}>{business.numcheckins}</td>
+                          </tr>)
+                          :
+                          <React.Fragment />
+                        }
+                      </tbody>
 
 
 
-                  </table>
-                {this.state.businesses.length == 0 ?
-                  <div style={{ display: "flex", height: "200px", justifyContent: "center", alignItems: "center" }}>
-                    NO DATA
+                    </table>
+                    {this.state.businesses.length == 0 ?
+                      <div style={{ display: "flex", height: "200px", justifyContent: "center", alignItems: "center" }}>
+                        NO DATA
                 </div>
-                  :
-                  <React.Fragment />
-                }
-              </div>
+                      :
+                      <React.Fragment />
+                    }
+                  </div>
 
 
-              </div>
+                </div>
               </div>
             </React.Fragment> :
-            <div>
-              <div style={{ display: "flex", flexDirection: "column", minWidth: "80vw", minHeight: "80vh", backgroundColor: "#EEEEEE" }}>
-                <h2>User Page</h2>
-                <div>Search for a User</div>
-                
-                <div>User Information:</div>
-                <div>Friends</div>
-                {this.state.currentFriends.map((friend) => <li>{friend}</li>)}
+            <div>             { /* **************************User Page*********************** */}
+              <div style={{ display: "flex", flexDirection: "row", minWidth: "80vw", minHeight: "40vh", backgroundColor: "#EEEEEE" }}>
+                <div style={{ display: "flex", flexDirection: "column", width: "350px", padding: "10px", minHeight: "20vh", backgroundColor: "#EEEEEE" }}>
+
+                  {/* *********** USER SEARCH *************** */}
+                  <Form.Group controlId="exampleForm.ControlTextarea1">
+                    <Form.Label>Search For User</Form.Label>
+                    <Form.Control onChange={(event) => this.handleOnChangeUser(event)}
+                      value={this.state.userSearch} as="textarea" maxLength="50" />
+                  </Form.Group>
+                  <Button variant="primary" type="submit" onClick={() => this.fetchUsers(this.state.userSearch)}>
+                    Search
+                </Button>
+                  <table style={{ border: "1px solid grey", width: "100%" }} className="sortable" id="dataTable">
+                    <thead>
+                      <tr>
+                        <th style={{ border: "1px solid grey" }} >User Id</th>
+                      </tr>
+                    </thead>
+                    <tbody style={{ display: "block", height: "200px", overflowY: "scroll" }}>
+                      {this.state.userSearchRes.map((user) => <tr onClick={() => this.getCurrentUser(user.userId)} key={user.userId} value={user.userId}>
+                        <td style={{ textAlign: "center", alignItems: "center" }}>{user.userId}</td>
+                      </tr>)
+                      }
+                    </tbody>
+                  </table>
+                </div>
+                {/* ********** END USER SEARCH ************ */}
+
+                <div style={{ display: "block", textAlign: "start", width: "350px", padding: "4px", minHeight: "10px", backgroundColor: "#EEEEEE" }}>User Information:
+                  <div>
+                    Name: {this.state.currentUser[0].userName}
+                  </div>
+                  <div>
+                    Stars: {this.state.currentUser[0].avgStars}
+                  </div>
+                  <div>
+                    Fans: {this.state.currentUser[0].fans}
+                  </div>
+                  <div>
+                    Yelping Since: {this.state.currentUser[0].yelpStartDate}
+                  </div>
+                  <div>
+                    Votes: {this.state.currentUser[0].votes}
+                  </div>
+                  <div>
+                    Funny: {this.state.currentUser[0].funny}
+                  </div>
+                  <div>
+                    Cool: {this.state.currentUser[0].cool}
+                  </div>
+                  <div>
+                    Tip Count: {this.state.currentUser[0].tipCount}
+                  </div>
+                  <div>
+                    Tip Likes: {this.state.currentUser[0].totalLikes}
+                  </div>
+                  <div>
+                  <Form.Group controlId="exampleForm.ControlTextarea1" >
+                    <Form.Label>Lat</Form.Label>
+                    <Form.Control onChange={(event) => this.handleOnChangeUserLat(event)}
+                      value={this.state.currentUser[0].userLat} as="textarea" maxLength="9" style= {{height:"35px"}}/>
+                  </Form.Group>
+                  </div>
+                  <div>
+                  <Form.Group controlId="exampleForm.ControlTextarea1">
+                    <Form.Label>Long</Form.Label>
+                    <Form.Control onChange={(event) => this.handleOnChangeUserLong(event)}
+                      value={this.state.currentUser[0].userLong} as="textarea" maxLength="9" style= {{height:"35px"}}/>
+                  </Form.Group>
+                  </div>
+                  <div>
+                  <Button variant="primary" type="submit" onClick={() => this.putCoords(this.state.currentUser[0].userId,
+                                                                                        this.state.currentUser[0].userLat,
+                                                                                        this.state.currentUser[0].userLong)}>
+                    Update
+                </Button>
+                  </div>
+                </div>
                 <div>Friends Tips</div>
                 <React.Fragment>
                   {this.state.currentFriends.map((friend) =>
                     <React.Fragment>
-                      <div>{friend.name} {friend.tip} </div> 
+                      <div>{friend.name} {friend.tip} </div>
                     </React.Fragment>)
                   }
                 </React.Fragment>
               </div>
-
+              <div style={{ display: "flex", flexDirection: "row", minWidth: "80vw", minHeight: "20vh", backgroundColor: "#EEEEEE" }}>
+                <div style={{ display: "flex", flexDirection: "column", width: "700px", padding: "10px", minHeight: "20vh", backgroundColor: "#EEEEEE" }}> Friends
+                <div style={{ maxHeight: "350px", overflow: "auto" }}>
+                    <table style={{ border: "1px solid grey", width: "100%" }} className="sortable" id="dataTable">
+                      <thead>
+                        <tr>
+                          <th style={{ border: "1px solid grey" }} >Name</th>
+                          <th style={{ border: "1px solid grey" }} >Total Likes</th>
+                          <th style={{ border: "1px solid grey" }} >Average Stars</th>
+                          <th style={{ border: "1px solid grey" }} >Yelping Since</th>
+                        </tr>
+                      </thead>
+                      <tbody style={{ height: "350px" }}>
+                        {this.state.currentFriends.map((friend) => <tr key={friend.userName} value={friend.userName}>
+                          <td style={{ border: "1px solid grey" }}>{friend.userName}</td>
+                          <td style={{ border: "1px solid grey" }}>{friend.totalLikes}</td>
+                          <td style={{ border: "1px solid grey" }}>{friend.avgStars}</td>
+                          <td style={{ border: "1px solid grey" }}>{friend.yelpStartDate}</td>
+                        </tr>)
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
             </div>
           }
 
         </div>
 
-        <ReactModal style={{ overflow: "visible"}}
-           isOpen={this.state.modalIsOpen}
-           contentLabel="Minimal Modal Example"
-           ariaHideApp={false}
+        <ReactModal style={{ overflow: "visible" }}
+          isOpen={this.state.modalIsOpen}
+          contentLabel="Minimal Modal Example"
+          ariaHideApp={false}
         >
           <div style={{ backgroundColor: "#EEEEEE" }} className="modalBody" >
             <Tabs defaultActiveKey="BusinessInfo" id="uncontrolled-tab-example">
-              <Tab eventKey="BusinessInfo" title="Business Info" style={{width: "90vw"}}>
+              <Tab eventKey="BusinessInfo" title="Business Info" style={{ width: "90vw" }}>
                 <div>
                   <h2 id="bName">{this.state.selectedBusiness}</h2>
                   <div id="cName">City: {this.state.selectedCity}</div>
                   <div id="sName">State: {this.state.selectedState}</div>
                   <div >Address: {this.state.selectedBusinessAddress}</div>
-                  <div style={{ display: "flex", flexDirection: "row"}}>
+                  <div style={{ display: "flex", flexDirection: "row" }}>
                     <div >Categories: &nbsp;</div>{this.state.selectedBusinessCategories.map((cat) => <div> {cat.value}, &nbsp;</div>)}
                   </div>
-                  <div style={{ display: "flex", flexDirection: "row"}}>
+                  <div style={{ display: "flex", flexDirection: "row" }}>
                     <div >Attributes: &nbsp;</div>{this.state.selectedBusinessAttributes.map((at) => <div> {at.attrib}, &nbsp;</div>)}
                   </div>
                   <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
                     <div >Hours: &nbsp;</div>{this.state.selectedBusinessHours.map((openclose) => <div> {openclose.date}: {openclose.open}0 AM - {openclose.close}0 PM </div>)}
                   </div>
-                  <Button variant="primary" type="submit" onClick={() => this.checkinToBusiness(this.state.curBusiness.busid) }>
+                  <Button variant="primary" type="submit" onClick={() => this.checkinToBusiness(this.state.curBusiness.busid)}>
                     Checkin
                   </Button>
                 </div>
@@ -642,18 +844,18 @@ handleOnChange(event) {
                 <Form.Group controlId="exampleForm.ControlTextarea1">
                   <Form.Label>Write a New Tip</Form.Label>
                   <Form.Control onChange={(event) => this.handleOnChange(event)}
-                   value={this.state.tipText} as="textarea" rows="3" maxLength="500" />
+                    value={this.state.tipText} as="textarea" rows="3" maxLength="500" />
                 </Form.Group>
 
-                <Button variant="primary" type="submit" onClick={() => this.sendNewTip( this.state.selectedBusinessId, this.state.currentUser )}>
+                <Button variant="primary" type="submit" onClick={() => this.sendNewTip(this.state.selectedBusinessId, this.state.currentUser)}>
                   Submit
                 </Button>
 
               </Tab>
             </Tabs>
 
-            </div>
-          <Button onClick={this.hideModal} style={{ marginRight: "10px"}} variant="secondary">Close Modal</Button>
+          </div>
+          <Button onClick={this.hideModal} style={{ marginRight: "10px" }} variant="secondary">Close Modal</Button>
         </ReactModal>
       </div>
     );

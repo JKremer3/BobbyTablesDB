@@ -350,7 +350,7 @@ const putUserCoords = (request, response) => {
     var long = request.params.long;
     lat = parseFloat(lat);
     long = parseFloat(long);
-    pool.query('UPDATE users SET lat = $1, long = $2 WHERE userid = $3', [lat, long, userid], (error, results) => {
+    pool.query('UPDATE users SET lat = $1, long = $2 WHERE userid = ' + "'" + userid + "'", [lat, long], (error, results) => {
         if (error) {
             throw error
         }
