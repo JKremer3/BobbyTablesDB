@@ -27,7 +27,7 @@ class App extends React.Component {
     this.state = {
       modalIsOpen: false, modalStateIGuess: "", busstates: [], cities: [], zips: [], businessCategories: [], businesses: [],
       selectedState: "", selectedCity: "", selectedZip: "", selectedBusiness: "", selectedBusinessAttributes: [], selectedBusinessId: "",
-      selectedBusinessHours: [], currentUser: "i_EASSNcEqc1JrfdBjBeVw", tipText: "", curBusiness: [],
+      selectedBusinessHours: [], currentUser: "i_EASSNcEqc1JrfdBjBeVw", currentFriends: [], tipText: "", curBusiness: [],
       selectedBusinessAddress: "", sCount: "", cCount: "", activeCategories: [], tips: [], selectedBusinessCategories: [],
       businessAttributes: ["BusinessAcceptsCreditCards", "RestaurantsReservations", "WheelchairAccessible",
         "OutdoorSeating", "GoodForKids", "RestaurantsGoodForGroups", "RestaurantsDelivery",
@@ -565,6 +565,23 @@ handleOnChange(event) {
               </div>
             </React.Fragment> :
             <div>
+              <div style={{ display: "flex", flexDirection: "column", minWidth: "80vw", minHeight: "80vh", backgroundColor: "#EEEEEE" }}>
+                <h2>User Page</h2>
+                <div>Search for a User</div>
+                
+                <div>User Information:</div>
+                <div>Friends</div>
+                {this.state.currentFriends.map((friend) => <li>{friend}</li>)}
+                <div>Friends Tips</div>
+                <React.Fragment>
+                  {this.state.currentFriends.map((friend) =>
+                    <React.Fragment>
+                      <div>{friend.name} {friend.tip} </div> 
+                    </React.Fragment>)
+                  }
+                </React.Fragment>
+              </div>
+
             </div>
           }
 
@@ -609,7 +626,7 @@ handleOnChange(event) {
                     </tr>
                   </thead>
                   <tbody>
-                    {this.state.tips.map((tip) => <tr key={tip.tiptext} value={tip.tiptext}>
+                    {this.state.tips.map((tip) => <tr key={tip.tiptext} value={tip.tiptext} onChange={this.updateTips(this.state.selectedBusinessId)}>
                       <td>{tip.tiptext}</td>
                       <td>{tip.userid}</td>
                       <td onClick={() => this.likeATip(tip)} >{tip.likecount}
