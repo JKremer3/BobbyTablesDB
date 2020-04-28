@@ -1,23 +1,19 @@
 // react includes 
 import React from 'react';
-import ReactDOM from 'react-dom';
 
 // these were from the Create React App script
-import logo from './logo.svg';
 import './App.css';
 
 // bootstrap includes 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Table from 'react-bootstrap/Table';
-import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import ToggleButton from 'react-bootstrap/ToggleButton';
 import Form from 'react-bootstrap/Form';
 import Navbar from 'react-bootstrap/Navbar';
-import InputGroup from 'react-bootstrap/InputGroup';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
+import { Bar } from 'react-chartjs-2';
 
 import ReactModal from 'react-modal';
 
@@ -33,8 +29,16 @@ class App extends React.Component {
         "OutdoorSeating", "GoodForKids", "RestaurantsGoodForGroups", "RestaurantsDelivery",
         "RestaurantsTakeOut", "WiFi", "BikeParking"],
       businessMeals: ["breakfast", "brunch", "lunch", "dinner", "dessert", "latenight"],
-      businessPrices: ["1", "2", "3", "4"], userpage: false, userSearch: "", userSearchRes: [], friendTips: [],
       busFriendTips: [],
+      businessPrices: ["1", "2", "3", "4"], userpage: false, userSearch: "", userSearchRes: [], friendTips: [], 
+      chartData: {
+        labels: ["empty"],
+        datasets: [{
+          label: 'Months',
+          data: [0],
+        }]
+      }
+      
     };
 
     this.bName = React.createRef();
@@ -43,6 +47,9 @@ class App extends React.Component {
     this.sCount = React.createRef();
     this.tCount = React.createRef();
     this.tipTextArea = React.createRef();
+    this.chartRef = React.createRef();
+    this.context = [];
+
 
   }
 
@@ -276,6 +283,7 @@ class App extends React.Component {
     this.showModal();
     this.updateTips(b.id);
     this.updateFriendTips(this.state.currentUser[0].userId, b.id)
+    this.generateChart(b.id);
   }
 
   fetchBusinessCategories = (id) => {
@@ -336,28 +344,25 @@ class App extends React.Component {
   }
 
 
-  sendNewTip = (busID, userid) => {
+  sendNewTip = (busID, user) => {
     // userid, tipTime, tip date, tip text, busID
     // get the tip text and then clear the text box
     var text = this.state.tipText
     this.setState({ tipText: "" })
 
-    var d = new Date();
-    // pull the date and time out of this
-    var date = d.getFullYear() + "-" + (d.getUTCMonth() + 1) + "-" + (d.getUTCDate())
-    var time = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+    var d = new Date().toISOString().substr(0, 19).replace('T', ' ');
+    var datetime = d.split(' ')
 
-    console.log(date);
-    console.log(date);
-    console.log(time);
+    console.log("date and time " + datetime[0] + datetime[1]);
+    console.log("user: " + this.state.currentUser[0])
 
     var newTip = {
       busid: this.state.selectedBusinessId,
-      userid: userid,
+      userid: this.state.currentUser[0].userId,
       likecount: 0,
       tiptext: text,
-      tipdate: date,
-      tiptime: time
+      tipdate: datetime[0],
+      tiptime: datetime[1]
     };
 
     try {
@@ -379,15 +384,21 @@ class App extends React.Component {
 
   }
 
-  checkinToBusiness(busID) {
-
+  checkinToBusiness() {
+    var d = new Date().toISOString().substr(0, 19).replace('T', ' ');
+    var datetime = d.split(' ')
+    var dates = datetime[0].split('-')
+    var newcheckin = {busid: this.state.selectedBusinessId, checkyear: dates[0], checkdate: dates[2],
+                       checkmonth: dates[1], checktime: datetime[1]};
+    console.log("checkdata: " + this.state.selectedBusinessId + " " + JSON.stringify(newcheckin))
     try {
-      const response = fetch('http://localhost:3030/business/checkin/' + busID, {
+      const response = fetch('http://localhost:3030/business/checkin/' + this.state.selectedBusinessId, {
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
         },
-        method: 'post'
+        method: 'post',
+        body: JSON.stringify(newcheckin)
       })
     } catch (error) {
       console.log(error)
@@ -557,6 +568,50 @@ class App extends React.Component {
   togglepage = () => {
     this.setState({ userpage: !this.state.userpage })
     console.log("togglepane")
+  }
+
+  generateChart(id) {
+    console.log("generating chart");
+
+    var months = [];
+    var counts = [];
+    
+    fetch("http://localhost:3030/chart/" + id)
+      .then((response) => {
+        return response.json();
+      })
+      .then(data => {
+        let fromApi = data.map(d => {
+          return {
+            month: d.checkmonth, count: d.monthcount
+          }
+        });
+        console.log("FromAPI: ")
+        console.log(fromApi)
+
+        for (var x in fromApi){
+          months.push(fromApi[x].month) 
+          counts.push(fromApi[x].count) 
+        }
+
+        console.log("PLSSSSSSSSS")
+        console.log(months)
+        console.log(counts)
+        this.setState({
+          chartData: {
+            labels: months,
+            datasets: [{
+              label: 'Checkins',
+              data: counts,
+            }]
+          }
+        })
+
+      }).catch(error => {
+        console.log(error);
+      });
+
+
   }
 
   render() {
@@ -868,24 +923,45 @@ class App extends React.Component {
           <div style={{ backgroundColor: "#EEEEEE" }} className="modalBody" >
             <Tabs defaultActiveKey="BusinessInfo" id="uncontrolled-tab-example">
               <Tab eventKey="BusinessInfo" title="Business Info" style={{ width: "90vw" }}>
-                <div>
+                <div style={{display: "flex", flexDirection: "row", maxHieght: "90vw"}}>
+
+                <div style={{ maxWidth: "45vw"}}>
                   <h2 id="bName">{this.state.selectedBusiness}</h2>
                   <div id="cName">City: {this.state.selectedCity}</div>
                   <div id="sName">State: {this.state.selectedState}</div>
                   <div >Address: {this.state.selectedBusinessAddress}</div>
-                  <div style={{ display: "flex", flexDirection: "row" }}>
-                    <div >Categories: &nbsp;</div>{this.state.selectedBusinessCategories.map((cat) => <div> {cat.value}, &nbsp;</div>)}
-                  </div>
-                  <div style={{ display: "flex", flexDirection: "row" }}>
-                    <div >Attributes: &nbsp;</div>{this.state.selectedBusinessAttributes.map((at) => <div> {at.attrib}, &nbsp;</div>)}
+                  <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
+                    <div >Categories:&nbsp;&nbsp;</div>
+                    {this.state.selectedBusinessCategories.map((cat) => <div> {cat.value}, &nbsp;</div>)}
                   </div>
                   <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
-                    <div >Hours: &nbsp;</div>{this.state.selectedBusinessHours.map((openclose) => <div> {openclose.date}: {openclose.open}0 AM - {openclose.close}0 PM </div>)}
+                    <div >Attributes:&nbsp;&nbsp;</div>
+                    {this.state.selectedBusinessAttributes.map((at) => 
+                            <div> { 
+                              at.attrib.replace("(", "").replace(")", "").replace(",", " ")
+                            }, &nbsp;</div>)}
                   </div>
-                  <Button variant="primary" type="submit" onClick={() => this.checkinToBusiness(this.state.curBusiness.busid)}>
+                  <div style={{ display: "flex", flexDirection: "row" }}>
+                    <div>Hours:&nbsp;&nbsp;</div>
+                    {this.state.selectedBusinessHours.map((openclose) => <div> {openclose.date}: {openclose.open}0 AM - {openclose.close}0 PM </div>)}
+                  </div>
+                </div>
+
+                <div style={{padding: "10px", width: "45vw" }} className="container">
+                  <Bar data={this.state.chartData} 
+                      options={{
+                        responsive: true,
+                        maintainAspectRatio: true,
+                      }} 
+                  />
+                </div>
+
+
+
+                </div>
+                  <Button variant="primary" type="submit" onClick={() => this.checkinToBusiness()}>
                     Checkin
                   </Button>
-                </div>
               </Tab>
               <Tab eventKey="Tips" title="Tips">
                 <div style={{display: "flex", flexDirection: "row"}}>
