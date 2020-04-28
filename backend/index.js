@@ -62,5 +62,5 @@ app.get('/user/:userid', db.getUserInfo)
 app.get('/user/friends/:userid', db.getUserFriends)
 app.get('/user/friendTips/:userid', db.getUserFriendTips)
 app.post('/user/location/:userid/:lat/:long', db.putUserCoords)
-app.get('/user/namelist/:username', db.getUsersByName)
-
+app.get('/user/namelist/:username', db.getUsersByName),
+app.get('/buslist/:busid', db.getBusinessList)

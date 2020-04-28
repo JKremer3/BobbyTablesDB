@@ -215,6 +215,24 @@ const postBusinessCheckin = (request, response) => {
     });
 }
 
+const getBusinessList = (request, response) => {
+    console.log(request.body)
+    var business = request.params.busid;
+
+    console.log(business)
+
+    query = 'SELECT DISTINCT * FROM business WHERE busid in (' + business + ')'
+
+    console.log( "query: " + query)
+
+    pool.query('SELECT DISTINCT * FROM business WHERE busid in (' + business + ')', (error, results) => {
+        if (error) {
+            throw error
+        }
+        response.status(200).json(results.rows)
+    });
+}
+
 const getBusinessCategories = async (request, response) => {
     console.log('in getBusinessCategories()')
     const busid = request.params.busid;
@@ -423,5 +441,6 @@ module.exports = {
     getUserFriends,
     getUserFriendTips,
     putUserCoords,
-    getUsersByName
+    getUsersByName,
+    getBusinessList
 }
