@@ -18,6 +18,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
+import Chart from 'chart.js';
 
 import ReactModal from 'react-modal';
 
@@ -43,6 +44,7 @@ class App extends React.Component {
     this.sCount = React.createRef();
     this.tCount = React.createRef();
     this.tipTextArea = React.createRef();
+    this.chartRef = React.createRef();
 
   }
 
@@ -559,6 +561,21 @@ class App extends React.Component {
     console.log("togglepane")
   }
 
+  generateChart() {
+    var ctx = this.chartRef;    
+
+    var myChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+        datasets: [{
+          label: '# of Votes',
+          data: [12, 19, 3, 5, 2, 3]
+        }]
+      }
+    });
+  }
+
   render() {
     // Render Business Page ****************************************
     var sortedCategories = this.state.businessCategories.sort();
@@ -868,6 +885,8 @@ class App extends React.Component {
           <div style={{ backgroundColor: "#EEEEEE" }} className="modalBody" >
             <Tabs defaultActiveKey="BusinessInfo" id="uncontrolled-tab-example">
               <Tab eventKey="BusinessInfo" title="Business Info" style={{ width: "90vw" }}>
+                <div style={{display: "flex", flexDirection: "row", maxHieght: "90vw"}}>
+
                 <div>
                   <h2 id="bName">{this.state.selectedBusiness}</h2>
                   <div id="cName">City: {this.state.selectedCity}</div>
@@ -882,10 +901,19 @@ class App extends React.Component {
                   <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
                     <div >Hours: &nbsp;</div>{this.state.selectedBusinessHours.map((openclose) => <div> {openclose.date}: {openclose.open}0 AM - {openclose.close}0 PM </div>)}
                   </div>
+                </div>
+
+                <div class="container">
+                  <div ref={this.chartRef}></div>
+                  Chart
+                </div>
+
+
+
+                </div>
                   <Button variant="primary" type="submit" onClick={() => this.checkinToBusiness(this.state.curBusiness.busid)}>
                     Checkin
                   </Button>
-                </div>
               </Tab>
               <Tab eventKey="Tips" title="Tips">
                 <div style={{display: "flex", flexDirection: "row"}}>
