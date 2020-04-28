@@ -713,6 +713,7 @@ class App extends React.Component {
                 </div>
                 <div style={{ display: "flex", flexDirection: "row", minWidth: "80vw", minHeight: "20vh", backgroundColor: "#EEEEEE" }}>
                 <div style={{ display: "flex", flexDirection: "column", width: "700px", padding: "10px", minHeight: "20vh", backgroundColor: "#EEEEEE" }}> Friends
+                <div style={{ maxHeight: "350px", overflow: "auto"}}>
                 <table style={{ border: "1px solid grey", width: "100%" }} className="sortable" id="dataTable">
                       <thead>
                         <tr>
@@ -722,7 +723,7 @@ class App extends React.Component {
                           <th style={{ border: "1px solid grey" }} >Yelping Since</th>
                         </tr>
                       </thead>
-                      <tbody style = {{display: "block", width: "100%", height: "350px", overflowY: "scroll"}}>
+                      <tbody style = {{height: "350px"}}>
                           {this.state.currentFriends.map((friend) => <tr key={friend.userName} value={friend.userName}>
                             <td style={{ border: "1px solid grey"}}>{friend.userName}</td>
                             <td style={{ border: "1px solid grey"}}>{friend.totalLikes}</td>
@@ -732,6 +733,7 @@ class App extends React.Component {
                           }
                       </tbody>
                     </table>
+                    </div>
                 </div>
                 </div>
             </div>
