@@ -293,15 +293,7 @@ class App extends React.Component {
         intersection = this.intersect(freshId, oldId)
         console.log("intersect: " + intersection)
 
-        var finallist = []
-        for(var x in intersection){
-          for(var y in businessFromApi)
-            if(x = businessFromApi[y].id)
-              finallist.push(businessFromApi[y])
-        }
-
-
-        this.setState({ businesses: finallist })
+        this.setState({ businesses: businessFromApi })
 
 
       }).catch(error => {
@@ -404,15 +396,18 @@ class App extends React.Component {
         return response.json();
       })
       .then(data => {
-        let catFromApi = data.map(cat => {
-          return { value: cat.buscat }
+        //console.log("data: " + data);
+        let atFromApi = data.map(at => {
+          return { attrib: at.busatt }
         });
+        //console.log("attribs: " + atFromApi)
         this.setState({
-          selectedBusinessAttributes: catFromApi,
+          selectedBusinessAttributes: atFromApi,
         });
       }).catch(error => {
         console.log(error);
       });
+
   }
 
   fetchBusinessHours = (id) => {
@@ -1031,7 +1026,7 @@ class App extends React.Component {
                     <div >Attributes:&nbsp;&nbsp;</div>
                     {this.state.selectedBusinessAttributes.map((at) => 
                             <div> { 
-                              at.attrib.replace("(", "").replace(")", "").replace(",", " ")
+                              at.attrib
                             }, &nbsp;</div>)}
                   </div>
                   <div style={{ display: "flex", flexDirection: "row" }}>
