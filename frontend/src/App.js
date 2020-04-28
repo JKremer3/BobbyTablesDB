@@ -1,24 +1,18 @@
 // react includes 
 import React from 'react';
-import ReactDOM from 'react-dom';
 
 // these were from the Create React App script
-import logo from './logo.svg';
 import './App.css';
 
 // bootstrap includes 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Table from 'react-bootstrap/Table';
-import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import ToggleButton from 'react-bootstrap/ToggleButton';
 import Form from 'react-bootstrap/Form';
 import Navbar from 'react-bootstrap/Navbar';
-import InputGroup from 'react-bootstrap/InputGroup';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
-import Dygraph from 'dygraphs';
 import { Bar } from 'react-chartjs-2';
 
 import ReactModal from 'react-modal';
@@ -350,28 +344,25 @@ class App extends React.Component {
   }
 
 
-  sendNewTip = (busID, userid) => {
+  sendNewTip = (busID, user) => {
     // userid, tipTime, tip date, tip text, busID
     // get the tip text and then clear the text box
     var text = this.state.tipText
     this.setState({ tipText: "" })
 
-    var d = new Date();
-    // pull the date and time out of this
-    var date = d.getFullYear() + "-" + (d.getUTCMonth() + 1) + "-" + (d.getUTCDate())
-    var time = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+    var d = new Date().toISOString().substr(0, 19).replace('T', ' ');
+    var datetime = d.split(' ')
 
-    console.log(date);
-    console.log(date);
-    console.log(time);
+    console.log("date and time " + datetime[0] + datetime[1]);
+    console.log("user: " + this.state.currentUser[0])
 
     var newTip = {
       busid: this.state.selectedBusinessId,
-      userid: userid,
+      userid: this.state.currentUser[0].userId,
       likecount: 0,
       tiptext: text,
-      tipdate: date,
-      tiptime: time
+      tipdate: datetime[0],
+      tiptime: datetime[1]
     };
 
     try {
@@ -393,15 +384,21 @@ class App extends React.Component {
 
   }
 
-  checkinToBusiness(busID) {
-
+  checkinToBusiness() {
+    var d = new Date().toISOString().substr(0, 19).replace('T', ' ');
+    var datetime = d.split(' ')
+    var dates = datetime[0].split('-')
+    var newcheckin = {busid: this.state.selectedBusinessId, checkyear: dates[0], checkdate: dates[2],
+                       checkmonth: dates[1], checktime: datetime[1]};
+    console.log("checkdata: " + this.state.selectedBusinessId + " " + JSON.stringify(newcheckin))
     try {
-      const response = fetch('http://localhost:3030/business/checkin/' + busID, {
+      const response = fetch('http://localhost:3030/business/checkin/' + this.state.selectedBusinessId, {
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
         },
-        method: 'post'
+        method: 'post',
+        body: JSON.stringify(newcheckin)
       })
     } catch (error) {
       console.log(error)
@@ -604,7 +601,7 @@ class App extends React.Component {
           chartData: {
             labels: months,
             datasets: [{
-              label: 'Months',
+              label: 'Checkins',
               data: counts,
             }]
           }
@@ -962,7 +959,7 @@ class App extends React.Component {
 
 
                 </div>
-                  <Button variant="primary" type="submit" onClick={() => this.checkinToBusiness(this.state.curBusiness.busid)}>
+                  <Button variant="primary" type="submit" onClick={() => this.checkinToBusiness()}>
                     Checkin
                   </Button>
               </Tab>
