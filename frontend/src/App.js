@@ -34,6 +34,7 @@ class App extends React.Component {
         "RestaurantsTakeOut", "WiFi", "BikeParking"],
       businessMeals: ["breakfast", "brunch", "lunch", "dinner", "dessert", "latenight"],
       businessPrices: ["1", "2", "3", "4"], userpage: false, userSearch: "", userSearchRes: [], friendTips: [],
+      busFriendTips: [],
     };
 
     this.bName = React.createRef();
@@ -243,6 +244,28 @@ class App extends React.Component {
     this.setState({ activeCategories: activeCategories })
   }
 
+  updateFriendTips = (userid, busid) =>{
+    fetch("http://localhost:3030/business/friendTips/" + busid + "/" + userid)
+    .then((response) => {
+      return response.json();
+    })
+    .then(data => {
+      let FromApi = data.map(tip => {
+        return {
+          tiptext: tip.tiptext, likecount: tip.likecount,
+          userid: tip.userid, busid: tip.busid,
+          tipdate: tip.tipdate, tiptime: tip.tiptime, userName: tip.username
+        }
+      });
+      this.setState({
+        busFriendTips: FromApi,
+      });
+      console.log(FromApi)
+    }).catch(error => {
+      console.log(error);
+    });
+  }
+
   viewBusiness = (b) => {
     console.log("Selected Business: " + this.state.selectedBusiness)
     this.fetchBusinessCategories(b.id);
@@ -252,6 +275,7 @@ class App extends React.Component {
     this.setState({ curBusiness: b, selectedBusiness: b.busname, selectedBusinessAddress: b.address, selectedBusinessId: b.id });
     this.showModal();
     this.updateTips(b.id);
+    this.updateFriendTips(this.state.currentUser[0].userId, b.id)
   }
 
   fetchBusinessCategories = (id) => {
@@ -864,6 +888,8 @@ class App extends React.Component {
                 </div>
               </Tab>
               <Tab eventKey="Tips" title="Tips">
+                <div style={{display: "flex", flexDirection: "row"}}>
+                <div>
                 <Table striped bordered hover id="tipTable">
                   <thead>
                     <tr>
@@ -885,6 +911,32 @@ class App extends React.Component {
                     </tr>)}
                   </tbody>
                 </Table>
+                </div>
+                <div>
+                <h2>Friends Tips</h2>
+                <Table striped bordered hover id="friendTipTable">
+                  <thead>
+                    <tr>
+                      <th>Tip</th>
+                      <th>User</th>
+                      <th>Likes</th>
+                      <th>Date</th>
+                      <th>Time</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {this.state.busFriendTips.map((tip) => <tr key={tip.tiptext} value={tip.tiptext} onChange={() => this.updateTips(this.state.selectedBusinessId)}>
+                      <td>{tip.tiptext}</td>
+                      <td>{tip.userName}</td>
+                      <td onClick={() => this.likeATip(tip)} >{tip.likecount}
+                      </td>
+                      <td>{tip.tipdate}</td>
+                      <td>{tip.tiptime}</td>
+                    </tr>)}
+                  </tbody>
+                </Table>
+                </div>
+                </div>
 
               </Tab>
               <Tab eventKey="NewTip" title="Write a New Tip">
