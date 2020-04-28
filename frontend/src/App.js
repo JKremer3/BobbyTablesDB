@@ -267,6 +267,7 @@ class App extends React.Component {
 
   updateAttributeFilter = (zip, aat) => {
     console.log("Filter fetch called")
+    var intersection = []
     fetch("http://localhost:3030/busattrib/" + zip + "/" + aat)
       .then((response) => {
         return response.json();
@@ -289,16 +290,43 @@ class App extends React.Component {
           oldId.push(this.state.businesses[x].id)
         }
 
-        var intersection = []
         intersection = this.intersect(freshId, oldId)
+        console.log("BIG BRAIN")
+        console.log(intersection)
+        intersection = intersection.map((id) =>  "'" + id + "'")
+
+
+
         console.log("intersect: " + intersection)
 
         this.setState({ businesses: businessFromApi })
 
-
       }).catch(error => {
         console.log(error);
       });
+
+
+    fetch("http://localhost:3030/buslist/" + intersection)
+      .then((response) => {
+        return response.json();
+      })
+      .then(data => {
+        let businessFromApi = data.map(business => {
+          return {
+            id: business.busid, busname: business.busname, address: business.address,
+            city: business.city, busstate: business.busstate, stars: business.stars, distance: business.distance,
+            numtips: business.numtips, numcheckins: business.numcheckins
+          }
+        });
+        console.log(data)
+        console.log(businessFromApi)
+        this.setState({
+          businesses: businessFromApi
+        });
+      }).catch(error => {
+        console.log(error);
+      });
+
   }
 
   activateAttribute = async (att) => {
