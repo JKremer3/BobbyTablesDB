@@ -48,7 +48,8 @@ const getAllBusinesses = (request, response) => {
 
 const getBusinessesInZip = (request, response) => {
     const zip = request.params.zip;
-    pool.query('SELECT DISTINCT * FROM business WHERE postalcode = $1 ORDER BY busName', [zip], (error, results) => {
+    const userid = request.params.userid;
+    pool.query('SELECT DISTINCT busid, busname, address, city, busstate, postalcode, business.lat, business.long, stars, revcount, isopen, numcheckins, numtips, Trunc(distance(business.lat, business.long, users.lat, users.long), 2) as distance FROM business, users WHERE postalcode = $1 and userid = $2 ORDER BY busName', [zip, userid], (error, results) => {
         if (error) {
             throw error
         }
