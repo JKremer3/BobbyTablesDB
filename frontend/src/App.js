@@ -33,7 +33,7 @@ class App extends React.Component {
         "OutdoorSeating", "GoodForKids", "RestaurantsGoodForGroups", "RestaurantsDelivery",
         "RestaurantsTakeOut", "WiFi", "BikeParking"],
       businessMeals: ["breakfast", "brunch", "lunch", "dinner", "dessert", "latenight"],
-      businessPrices: ["1", "2", "3", "4"], userpage: false, userSearch: "", userSearchRes: [],
+      businessPrices: ["1", "2", "3", "4"], userpage: false, userSearch: "", userSearchRes: [], friendTips: [],
     };
 
     this.bName = React.createRef();
@@ -488,6 +488,28 @@ class App extends React.Component {
       });
   }
 
+  fetchFriendTips = (userid) => {
+    fetch("http://localhost:3030/user/friendTips/" + userid)
+      .then((response) => {
+        return response.json();
+      })
+      .then(data => {
+        let fromApi = data.map(tips => {
+          return {
+            userName: tips.username, busName: tips.busname,
+            busCity: tips.city, tipText: tips.tiptext,
+            likeCount: tips.likecount, tipTime: tips.tiptime,
+            tipDate: tips.tipdate
+          }
+        });
+        this.setState({
+          friendTips: fromApi,
+        });
+      }).catch(error => {
+        console.log(error);
+      });
+  }
+
   putCoords = (id, lat, long) => {
     try {
       const response = fetch('http://localhost:3030/user/location/' +
@@ -506,6 +528,7 @@ class App extends React.Component {
   getCurrentUser = (userid) => {
     this.selectUser(userid)
     this.fetchFriends(userid)
+    this.fetchFriendTips(userid)
   }
 
   togglepage = () => {
@@ -750,15 +773,40 @@ class App extends React.Component {
                 </Button>
                   </div>
                 </div>
-                <div>Friends Tips</div>
-                <React.Fragment>
-                  {this.state.currentFriends.map((friend) =>
-                    <React.Fragment>
-                      <div>{friend.name} {friend.tip} </div>
-                    </React.Fragment>)
-                  }
-                </React.Fragment>
+
+
+                <div style={{ display: "flex", flexDirection: "column", width: "650px", padding: "10px", minHeight: "20vh", backgroundColor: "#EEEEEE" }}> Friend Tips
+                <div style={{ maxHeight: "80vh", overflow: "auto" }}>
+                    <table style={{ border: "1px solid grey", width: "100%" }} className="sortable" id="dataTable">
+                      <thead>
+                        <tr>
+                          <th style={{ border: "1px solid grey" }} >User Name</th>
+                          <th style={{ border: "1px solid grey" }} >Business</th>
+                          <th style={{ border: "1px solid grey" }} >City</th>
+                          <th style={{ border: "1px solid grey" }} >Text</th>
+                          <th style={{ border: "1px solid grey" }} >Date</th>
+                          <th style={{ border: "1px solid grey" }} >Time</th>
+                          <th style={{ border: "1px solid grey" }} >Like Count</th>
+                        </tr>
+                      </thead>
+                      <tbody style={{ height: "100%" }}>
+                        {this.state.friendTips.map((tips) => <tr key={tips.userName} value={tips.userName}>
+                          <td style={{ border: "1px solid grey" }}>{tips.userName}</td>
+                          <td style={{ border: "1px solid grey" }}>{tips.busName}</td>
+                          <td style={{ border: "1px solid grey" }}>{tips.busCity}</td>
+                          <td style={{ border: "1px solid grey" }}>{tips.tipText}</td>
+                          <td style={{ border: "1px solid grey" }}>{tips.tipDate}</td>
+                          <td style={{ border: "1px solid grey" }}>{tips.tipTime}</td>
+                          <td style={{ border: "1px solid grey" }}>{tips.likeCount}</td>
+
+                        </tr>)
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               </div>
+
               <div style={{ display: "flex", flexDirection: "row", minWidth: "80vw", minHeight: "20vh", backgroundColor: "#EEEEEE" }}>
                 <div style={{ display: "flex", flexDirection: "column", width: "700px", padding: "10px", minHeight: "20vh", backgroundColor: "#EEEEEE" }}> Friends
                 <div style={{ maxHeight: "350px", overflow: "auto" }}>
