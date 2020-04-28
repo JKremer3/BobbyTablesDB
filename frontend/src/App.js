@@ -24,7 +24,7 @@ class App extends React.Component {
       modalIsOpen: false, modalStateIGuess: "", busstates: [], cities: [], zips: [], businessCategories: [], businesses: [],
       selectedState: "", selectedCity: "", selectedZip: "", selectedBusiness: "", selectedBusinessAttributes: [], selectedBusinessId: "",
       selectedBusinessHours: [], currentUser: "i_EASSNcEqc1JrfdBjBeVw", currentFriends: [], tipText: "", curBusiness: [],
-      selectedBusinessAddress: "", sCount: "", cCount: "", activeCategories: [], tips: [], selectedBusinessCategories: [],
+      selectedBusinessAddress: "", sCount: "", cCount: "", activeCategories: [], activeAttributes: [], tips: [], selectedBusinessCategories: [],
       businessAttributes: ["BusinessAcceptsCreditCards", "RestaurantsReservations", "WheelchairAccessible",
         "OutdoorSeating", "GoodForKids", "RestaurantsGoodForGroups", "RestaurantsDelivery",
         "RestaurantsTakeOut", "WiFi", "BikeParking"],
@@ -37,7 +37,8 @@ class App extends React.Component {
           label: 'Months',
           data: [0],
         }]
-      }
+      },
+      activeBusinessAtttributes: [], activeBusinessCategories: [], activeBusinessMeals: [], activeBusinessPrice: [],
       
     };
 
@@ -251,6 +252,100 @@ class App extends React.Component {
     this.setState({ activeCategories: activeCategories })
   }
 
+
+  intersect(a, b) {
+    var t;
+    if (b.length > a.length){
+      t = b
+      b = a
+      a = t
+     } // indexOf to loop over shorter
+    return a.filter(function (e) {
+        return b.indexOf(e) > -1;
+    });
+  }
+
+  updateAttributeFilter = (zip, aat) => {
+    console.log("Filter fetch called")
+    fetch("http://localhost:3030/busattrib/" + zip + "/" + aat)
+      .then((response) => {
+        return response.json();
+      })
+      .then(data => {
+        let businessFromApi = data.map(business => {
+          return {
+            id: business.busid, busname: business.busname, address: business.address,
+            city: business.city, busstate: business.busstate, stars: business.stars, distance: business.distance,
+            numtips: business.numtips, numcheckins: business.numcheckins
+          }
+        });
+        console.log("businesses " + businessFromApi)
+        var freshId = []
+        for(var x in businessFromApi){
+          freshId.push(businessFromApi[x].id)
+        }
+        var oldId = []
+        for(var x in this.state.businesses){
+          oldId.push(this.state.businesses[x].id)
+        }
+
+        var intersection = []
+        intersection = this.intersect(freshId, oldId)
+        console.log("intersect: " + intersection)
+
+        var finallist = []
+        for(var x in intersection){
+          for(var y in businessFromApi)
+            if(x = businessFromApi[y].id)
+              finallist.push(businessFromApi[y])
+        }
+
+
+        this.setState({ businesses: finallist })
+
+
+      }).catch(error => {
+        console.log(error);
+      });
+  }
+
+  activateAttribute = async (att) => {
+    console.log("Activate Category called (" + att + ")");
+    console.log("ActiveCatagories: " + this.state.activeCategories)
+    var activeAttributes = this.state.activeAttributes;
+    var freshAtts = activeAttributes;
+    const index = activeAttributes.indexOf(att);
+    if (index == -1) {
+      activeAttributes.push(att);
+    }
+    this.setState({ activeAttributes: activeAttributes });
+    console.log("Fresh Attributes: " + freshAtts)
+
+    this.updateAttributeFilter(this.state.selectedZip, freshAtts)
+
+  }
+
+  deactivateAttribute = (cat) => {
+    console.log("Deactivate Attribute called (" + cat + ")");
+    var activeAttributes = this.state.activeAttributes
+
+    const index = activeAttributes.indexOf(cat);
+    if (index > -1) {
+      activeAttributes.splice(index, 1);
+    }
+
+    // if there are no active categories just call the regular fetch
+    if (activeAttributes.length == 0) {
+      this.updateTable(this.state.currentUser[0].userId, this.state.selectedZip);
+    }
+    else {
+      // if there are active categories we call the filter fetch
+      this.updateAttributeFilter(this.state.selectedZip, activeAttributes)
+    }
+
+    this.setState({ activeAttributes: activeAttributes })
+  }
+
   updateFriendTips = (userid, busid) =>{
     fetch("http://localhost:3030/business/friendTips/" + busid + "/" + userid)
     .then((response) => {
@@ -309,13 +404,11 @@ class App extends React.Component {
         return response.json();
       })
       .then(data => {
-        //console.log("data: " + data);
-        let atFromApi = data.map(at => {
-          return { attrib: at.busatt }
+        let catFromApi = data.map(cat => {
+          return { value: cat.buscat }
         });
-        //console.log("attribs: " + atFromApi)
         this.setState({
-          selectedBusinessAttributes: atFromApi,
+          selectedBusinessAttributes: catFromApi,
         });
       }).catch(error => {
         console.log(error);
@@ -683,13 +776,13 @@ class App extends React.Component {
                       </ListGroup>
                       <ListGroup> Attributes
                       {sortedAttributes.map((businessAttributes) =>
-                        this.state.activeCategories.indexOf(businessAttributes.value) == -1 ?
+                        this.state.activeAttributes.indexOf(businessAttributes) == -1 ?
                           <ListGroup.Item
-                            onClick={() => this.activateCategory(businessAttributes)} >{businessAttributes}
+                            onClick={() => this.activateAttribute(businessAttributes)} >{businessAttributes}
                           </ListGroup.Item>
                           :
                           <ListGroup.Item
-                            onClick={() => this.deactivateCategory(businessAttributes)} active>{businessAttributes}
+                            onClick={() => this.deactivateAttribute(businessAttributes)} active>{businessAttributes}
                           </ListGroup.Item>
                       )}
                       </ListGroup>
