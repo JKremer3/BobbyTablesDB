@@ -18,6 +18,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
+import FormControl from 'react-bootstrap/FormControl';
 
 import ReactModal from 'react-modal';
 
@@ -34,6 +35,7 @@ class App extends React.Component {
         "RestaurantsTakeOut", "WiFi", "BikeParking"],
       businessMeals: ["breakfast", "brunch", "lunch", "dinner", "dessert", "latenight"],
       businessPrices: ["1", "2", "3", "4"], userpage: true,
+      searchUserText: ""
     };
 
     this.bName = React.createRef();
@@ -396,6 +398,12 @@ likeATip(tip){
   this.updateTips(tip.busid);
 }
 
+handleOnChangeSearchUser(event) {
+  this.setState({
+    searchUserText: event.target.value
+  })
+}
+
 handleOnChange(event) {
   this.setState({
     tipText: event.target.value
@@ -568,6 +576,18 @@ handleOnChange(event) {
               <div style={{ display: "flex", flexDirection: "column", minWidth: "80vw", minHeight: "80vh", backgroundColor: "#EEEEEE" }}>
                 <h2>User Page</h2>
                 <div>Search for a User</div>
+                <InputGroup className="mb-3">
+                  <InputGroup.Prepend>
+                    <InputGroup.Text  id="inputGroup-sizing-default">Default</InputGroup.Text>
+                  </InputGroup.Prepend>
+                  <FormControl
+                  onChange={(event) => this.handleOnChangeSearchUser(event)}
+                   value={this.state.searchUserText}/>
+                </InputGroup>
+                <Button style={{ width: "70px"}} variant="primary" type="submit" onClick={() => this.searchUser(this.state.searchUserText)}>
+                  Search
+                </Button>
+                
                 
                 <div>User Information:</div>
                 <div>Friends</div>
