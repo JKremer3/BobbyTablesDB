@@ -615,7 +615,6 @@ class App extends React.Component {
       });
 
 
-
   }
 
   render() {
@@ -929,24 +928,35 @@ class App extends React.Component {
               <Tab eventKey="BusinessInfo" title="Business Info" style={{ width: "90vw" }}>
                 <div style={{display: "flex", flexDirection: "row", maxHieght: "90vw"}}>
 
-                <div style={{ maxWidth: "50%"}}>
+                <div style={{ maxWidth: "45vw"}}>
                   <h2 id="bName">{this.state.selectedBusiness}</h2>
                   <div id="cName">City: {this.state.selectedCity}</div>
                   <div id="sName">State: {this.state.selectedState}</div>
                   <div >Address: {this.state.selectedBusinessAddress}</div>
-                  <div style={{ display: "flex", flexDirection: "row" }}>
-                    <div >Categories: &nbsp;</div>{this.state.selectedBusinessCategories.map((cat) => <div> {cat.value}, &nbsp;</div>)}
-                  </div>
-                  <div style={{ display: "flex", flexDirection: "row" }}>
-                    <div >Attributes: &nbsp;</div>{this.state.selectedBusinessAttributes.map((at) => <div> {at.attrib}, &nbsp;</div>)}
+                  <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
+                    <div >Categories:&nbsp;&nbsp;</div>
+                    {this.state.selectedBusinessCategories.map((cat) => <div> {cat.value}, &nbsp;</div>)}
                   </div>
                   <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
-                    <div >Hours: &nbsp;</div>{this.state.selectedBusinessHours.map((openclose) => <div> {openclose.date}: {openclose.open}0 AM - {openclose.close}0 PM </div>)}
+                    <div >Attributes:&nbsp;&nbsp;</div>
+                    {this.state.selectedBusinessAttributes.map((at) => 
+                            <div> { 
+                              at.attrib.replace("(", "").replace(")", "")
+                            }, &nbsp;</div>)}
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "row" }}>
+                    <div>Hours:&nbsp;&nbsp;</div>
+                    {this.state.selectedBusinessHours.map((openclose) => <div> {openclose.date}: {openclose.open}0 AM - {openclose.close}0 PM </div>)}
                   </div>
                 </div>
 
-                <div className="container">
-                  <Bar data={this.state.chartData}/>
+                <div style={{padding: "10px", width: "45vw" }} className="container">
+                  <Bar data={this.state.chartData} 
+                      options={{
+                        responsive: true,
+                        maintainAspectRatio: true,
+                      }} 
+                  />
                 </div>
 
 
