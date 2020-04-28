@@ -104,9 +104,8 @@ class App extends React.Component {
       });
   }
 
-  updateTable = (value) => {
-    console.log(value)
-    fetch("http://localhost:3030/businesses/" + value)
+  updateTable = (userid, zip) => {
+    fetch("http://localhost:3030/businesses/" + userid + "/" + zip)
       .then((response) => {
         return response.json();
       })
@@ -114,7 +113,7 @@ class App extends React.Component {
         let businessFromApi = data.map(business => {
           return {
             id: business.busid, busname: business.busname, address: business.address,
-            city: business.city, busstate: business.busstate, stars: business.stars, distance: 0,
+            city: business.city, busstate: business.busstate, stars: business.stars, distance: business.distance,
             numtips: business.numtips, numcheckins: business.numcheckins
           }
         });
@@ -129,7 +128,7 @@ class App extends React.Component {
   }
 
   fetchSort = (e) => {
-    this.updateTable(e.target.value)
+    this.updateTable(this.state.currentUser[0].userId, e.target.value)
     this.setState({ selectedZip: e.target.value })
     this.fetchCategories(e.target.value)
   }
@@ -193,7 +192,7 @@ class App extends React.Component {
         let businessFromApi = data.map(business => {
           return {
             id: business.busid, busname: business.busname, address: business.address,
-            city: business.city, busstate: business.busstate, stars: business.stars, distance: 0,
+            city: business.city, busstate: business.busstate, stars: business.stars, distance: business.distance,
             numtips: business.numtips, numcheckins: business.numcheckins
           }
         });
@@ -234,7 +233,7 @@ class App extends React.Component {
 
     // if there are no active categories just call the regular fetch
     if (activeCategories.length == 0) {
-      this.updateTable(this.state.selectedZip);
+      this.updateTable(this.state.currentUser[0].userId, this.state.selectedZip);
     }
     else {
       // if there are active categories we call the filter fetch
