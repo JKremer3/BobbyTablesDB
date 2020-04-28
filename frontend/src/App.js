@@ -410,6 +410,22 @@ class App extends React.Component {
     })
   }
 
+  handleOnChangeUserLat(event) {
+    var user = this.state.currentUser
+    user[0].userLat = event.target.value
+    this.setState({
+      currentUser: user
+    })
+  }
+
+  handleOnChangeUserLong(event) {
+    var user = this.state.currentUser
+    user[0].userLong = event.target.value
+    this.setState({
+      currentUser: user
+    })
+  }
+
   fetchUsers = (name) => {
     fetch("http://localhost:3030/user/namelist/" + name)
       .then((response) => {
@@ -438,7 +454,7 @@ class App extends React.Component {
           return {
             userName: user.username, userId: user.userid, avgStars: user.avgStars,
             cool: user.cool, funny: user.funny, totalLikes: user.totallikes, fans: user.fans,
-            userLat: user.userlat, userLong: user.userlong, tipCount: user.tipcount,
+            userLat: user.lat, userLong: user.long, tipCount: user.tipcount,
             useful: user.useful, yelpStartDate: user.yelpstartdate, yelpStartTime: user.yelpstarttime
           }
         });
@@ -470,6 +486,21 @@ class App extends React.Component {
       }).catch(error => {
         console.log(error);
       });
+  }
+
+  putCoords = (id, lat, long) => {
+    try {
+      const response = fetch('http://localhost:3030/user/location/' +
+        id + '/' + lat + '/' + long , {
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        method: 'post'
+      })
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   getCurrentUser = (userid) => {
@@ -698,13 +729,25 @@ class App extends React.Component {
                     Tip Likes: {this.state.currentUser[0].totalLikes}
                   </div>
                   <div>
-                    Lat: {this.state.currentUser[0].userLat}
+                  <Form.Group controlId="exampleForm.ControlTextarea1" >
+                    <Form.Label>Lat</Form.Label>
+                    <Form.Control onChange={(event) => this.handleOnChangeUserLat(event)}
+                      value={this.state.currentUser[0].userLat} as="textarea" maxLength="9" style= {{height:"35px"}}/>
+                  </Form.Group>
                   </div>
                   <div>
-                    Long: {this.state.currentUser[0].userLong}
+                  <Form.Group controlId="exampleForm.ControlTextarea1">
+                    <Form.Label>Long</Form.Label>
+                    <Form.Control onChange={(event) => this.handleOnChangeUserLong(event)}
+                      value={this.state.currentUser[0].userLong} as="textarea" maxLength="9" style= {{height:"35px"}}/>
+                  </Form.Group>
                   </div>
                   <div>
-                    Long: {this.state.currentUser[0].userLong}
+                  <Button variant="primary" type="submit" onClick={() => this.putCoords(this.state.currentUser[0].userId,
+                                                                                        this.state.currentUser[0].userLat,
+                                                                                        this.state.currentUser[0].userLong)}>
+                    Update
+                </Button>
                   </div>
                 </div>
                 <div>Friends Tips</div>
