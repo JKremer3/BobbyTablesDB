@@ -449,6 +449,32 @@ class App extends React.Component {
       });
   }
 
+  fetchFriends = (userid) => {
+    fetch("http://localhost:3030/user/friends/" + userid)
+      .then((response) => {
+        return response.json();
+      })
+      .then(data => {
+        let fromApi = data.map(user => {
+          return { userName: user.username, avgStars: user.avgstars,
+                   totalLikes: user.totallikes,
+                   tipCount: user.tipcount,
+                   yelpStartDate: user.yelpstartdate
+                 }
+        });
+        this.setState({
+          currentFriends: fromApi,
+        });
+      }).catch(error => {
+        console.log(error);
+      });
+  }
+
+  getCurrentUser = (userid) => {
+    this.selectUser(userid)
+    this.fetchFriends(userid)
+  }
+
   togglepage = () => {
     this.setState({ userpage: !this.state.userpage })
     console.log("togglepane")
@@ -632,7 +658,7 @@ class App extends React.Component {
                         </tr>
                       </thead>
                       <tbody style = {{display: "block", height: "200px", overflowY: "scroll"}}>
-                          {this.state.userSearchRes.map((user) => <tr onClick={() => this.selectUser(user.userId)} key={user.userId} value={user.userId}>
+                          {this.state.userSearchRes.map((user) => <tr onClick={() => this.getCurrentUser(user.userId)} key={user.userId} value={user.userId}>
                             <td style={{ textAlign: "center", alignItems: "center" }}>{user.userId}</td>
                           </tr>)
                           }
@@ -696,12 +722,12 @@ class App extends React.Component {
                           <th style={{ border: "1px solid grey" }} >Yelping Since</th>
                         </tr>
                       </thead>
-                      <tbody style = {{display: "block", height: "350px", overflowY: "scroll"}}>
-                          {this.state.currentFriends.map((friend) => <tr key={friend.userId} value={friend.userId}>
-                            <td style={{ textAlign: "center", alignItems: "center" }}>{friend.userName}</td>
-                            <td style={{ textAlign: "center", alignItems: "center" }}>{friend.totalLikes}</td>
-                            <td style={{ textAlign: "center", alignItems: "center" }}>{friend.avgStars}</td>
-                            <td style={{ textAlign: "center", alignItems: "center" }}>{friend.yelpStartDate}</td>
+                      <tbody style = {{display: "block", width: "100%", height: "350px", overflowY: "scroll"}}>
+                          {this.state.currentFriends.map((friend) => <tr key={friend.userName} value={friend.userName}>
+                            <td style={{ border: "1px solid grey"}}>{friend.userName}</td>
+                            <td style={{ border: "1px solid grey"}}>{friend.totalLikes}</td>
+                            <td style={{ border: "1px solid grey"}}>{friend.avgStars}</td>
+                            <td style={{ border: "1px solid grey"}}>{friend.yelpStartDate}</td>
                           </tr>)
                           }
                       </tbody>
